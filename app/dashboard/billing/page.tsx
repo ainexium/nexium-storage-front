@@ -384,7 +384,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
       </ul>
 
       {/* CTA */}
-      {isCurrent ? (
+      {isCurrent && plan.price_xof === 0 ? (
         <div className="w-full text-center py-2.5 rounded-xl text-[13px] text-gray-600 bg-white/[0.03] border border-white/[0.05] cursor-default">
           Plan actuel
         </div>
@@ -393,7 +393,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
           onClick={onUpgrade}
           className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] ${cfg.btnClass}`}
         >
-          Choisir {plan.name} <ArrowRight size={13} />
+          {isCurrent ? <>Renouveler <ArrowRight size={13} /></> : <>Choisir {plan.name} <ArrowRight size={13} /></>}
         </button>
       ) : null}
     </div>
@@ -578,7 +578,7 @@ export default function BillingPage() {
                 <p className="text-sm font-semibold text-white">Plan {sub?.plan?.name} · actif</p>
                 {subscription.current_period_end && (
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Renouvellement le {fmt.date(subscription.current_period_end)}
+                    Expire le {fmt.date(subscription.current_period_end)}
                   </p>
                 )}
               </div>
