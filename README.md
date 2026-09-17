@@ -43,10 +43,14 @@ The API must be running on `NEXT_PUBLIC_API_URL` before starting the frontend.
 | `/` | Landing page |
 | `/login` | Login |
 | `/register` | Registration |
+| `/verify-email` | Email verification |
 | `/forgot-password` | Password reset request |
+| `/reset-password` | Password reset (with code) |
 | `/dashboard` | Main dashboard |
 | `/dashboard/projects` | Projects list |
-| `/dashboard/projects/[id]/buckets` | Buckets in a project |
+| `/dashboard/projects/[id]` | Project detail (buckets & API keys) |
+| `/dashboard/projects/[id]/buckets/[bucketId]` | Files in a bucket |
+| `/dashboard/projects/[id]/webhooks` | Webhook configuration |
 | `/dashboard/api-keys` | API keys management |
 | `/dashboard/usage` | Storage usage |
 | `/dashboard/billing` | Plans, payments, add-ons |

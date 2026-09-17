@@ -121,16 +121,14 @@ const upload: Record<Lang, string> = {
   ${BASE}/api/v1/ext/buckets/<bucket_id>/files`,
 
   js: `const form = new FormData()
-form.append('file', fileInput.files[0])           // browser
-// or: form.append('file', fs.createReadStream('./photo.jpg')) // Node.js
+form.append('file', fileInput.files[0])
 
 const res = await fetch('${BASE}/api/v1/ext/buckets/<bucket_id>/files', {
   method: 'POST',
   headers: { Authorization: 'Bearer ' + process.env.NEXIUM_API_KEY },
   body: form,
 })
-const file = await res.json()
-// save file.id to your database`,
+const file = await res.json()`,
 
   python: `import requests, os
 
@@ -141,7 +139,7 @@ with open('photo.jpg', 'rb') as f:
         files={'file': ('photo.jpg', f, 'image/jpeg')},
     )
 file = res.json()
-print(file['id'])  # save to your database`,
+print(file['id'])`,
 
   go: `package main
 
@@ -217,14 +215,14 @@ res = requests.get(
     params={'search': 'photo'},
     headers={'Authorization': f'Bearer {os.getenv("NEXIUM_API_KEY")}'},
 )
-for f in res.json():
+for f in res.json()['files']:
     print(f['filename'], f['size_bytes'])`,
 
   go: `req, _ := http.NewRequest("GET",
     "${BASE}/api/v1/ext/buckets/<bucket_id>/files?search=photo", nil)
 req.Header.Set("Authorization", "Bearer "+os.Getenv("NEXIUM_API_KEY"))
 resp, _ := http.DefaultClient.Do(req)
-// decode resp.Body as []File`,
+// decode resp.Body as { "files": [...], "total": N, "page": 1, "per_page": 24 }`,
 
   php: `<?php
 $curl = curl_init();
@@ -233,8 +231,8 @@ curl_setopt_array($curl, [
     CURLOPT_RETURNTRANSFER => true,
     CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . getenv('NEXIUM_API_KEY')],
 ]);
-$files = json_decode(curl_exec($curl), true);
-foreach ($files as $f) echo $f['filename'] . PHP_EOL;`,
+$data = json_decode(curl_exec($curl), true);
+foreach ($data['files'] as $f) echo $f['filename'] . PHP_EOL;`,
 };
 
 const download: Record<Lang, string> = {
@@ -243,8 +241,7 @@ const download: Record<Lang, string> = {
 
   js: `const { url } = await fetch('${BASE}/api/v1/ext/files/<file_id>/download', {
   headers: { Authorization: 'Bearer ' + process.env.NEXIUM_API_KEY },
-}).then(r => r.json())
-// url is permanent — use directly in <img src={url}> or redirect`,
+}).then(r => r.json())`,
 
   python: `import requests, os
 
@@ -252,13 +249,12 @@ res = requests.get(
     '${BASE}/api/v1/ext/files/<file_id>/download',
     headers={'Authorization': f'Bearer {os.getenv("NEXIUM_API_KEY")}'},
 )
-url = res.json()['url']  # permanent public URL`,
+url = res.json()['url']`,
 
   go: `req, _ := http.NewRequest("GET",
     "${BASE}/api/v1/ext/files/<file_id>/download", nil)
 req.Header.Set("Authorization", "Bearer "+os.Getenv("NEXIUM_API_KEY"))
-resp, _ := http.DefaultClient.Do(req)
-// decode resp.Body → { "url": "..." }`,
+resp, _ := http.DefaultClient.Do(req)`,
 
   php: `<?php
 $curl = curl_init();
@@ -321,39 +317,33 @@ echo $file['filename'];`,
 const deleteFile: Record<Lang, string> = {
   curl: `curl -X DELETE \\
   -H "Authorization: Bearer nx_live_..." \\
-  ${BASE}/api/v1/ext/files/<file_id>
-# Returns 204 No Content on success`,
+  ${BASE}/api/v1/ext/files/<file_id>`,
 
-  js: `const res = await fetch('${BASE}/api/v1/ext/files/<file_id>', {
+  js: `await fetch('${BASE}/api/v1/ext/files/<file_id>', {
   method: 'DELETE',
   headers: { Authorization: 'Bearer ' + process.env.NEXIUM_API_KEY },
-})
-// res.status === 204 → deleted`,
+})`,
 
   python: `import requests, os
 
-res = requests.delete(
+requests.delete(
     '${BASE}/api/v1/ext/files/<file_id>',
     headers={'Authorization': f'Bearer {os.getenv("NEXIUM_API_KEY")}'},
-)
-# res.status_code == 204 → deleted`,
+)`,
 
   go: `req, _ := http.NewRequest("DELETE",
     "${BASE}/api/v1/ext/files/<file_id>", nil)
 req.Header.Set("Authorization", "Bearer "+os.Getenv("NEXIUM_API_KEY"))
-resp, _ := http.DefaultClient.Do(req)
-// resp.StatusCode == 204 → deleted`,
+http.DefaultClient.Do(req)`,
 
   php: `<?php
 $curl = curl_init();
 curl_setopt_array($curl, [
-    CURLOPT_URL            => '${BASE}/api/v1/ext/files/<file_id>',
-    CURLOPT_RETURNTRANSFER => true,
-    CURLOPT_CUSTOMREQUEST  => 'DELETE',
-    CURLOPT_HTTPHEADER     => ['Authorization: Bearer ' . getenv('NEXIUM_API_KEY')],
+    CURLOPT_URL           => '${BASE}/api/v1/ext/files/<file_id>',
+    CURLOPT_CUSTOMREQUEST => 'DELETE',
+    CURLOPT_HTTPHEADER    => ['Authorization: Bearer ' . getenv('NEXIUM_API_KEY')],
 ]);
-curl_exec($curl);
-// curl_getinfo($curl, CURLINFO_HTTP_CODE) === 204 → deleted`,
+curl_exec($curl);`,
 };
 
 const presignStep1: Record<Lang, string> = {
@@ -576,11 +566,41 @@ def webhook():
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+const NAV_ITEMS = [
+  { href: "#getting-started", label: "Getting started" },
+  { href: "#sdks",            label: "SDKs" },
+  { href: "#authentication",  label: "Authentication" },
+  { href: "#upload",          label: "Upload a file" },
+  { href: "#list",            label: "List & search" },
+  { href: "#download",        label: "Download a file" },
+  { href: "#rename",          label: "Rename a file" },
+  { href: "#direct-upload",   label: "Direct upload" },
+  { href: "#delete",          label: "Delete a file" },
+  { href: "#errors",          label: "Errors" },
+];
+
 export default function DocsPage() {
   const [loggedIn, setLoggedIn] = useState(false);
+  const [activeSection, setActiveSection] = useState("getting-started");
 
   useEffect(() => {
     setLoggedIn(!!localStorage.getItem("access_token"));
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px" }
+    );
+    NAV_ITEMS.forEach(({ href }) => {
+      const el = document.getElementById(href.slice(1));
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -613,23 +633,20 @@ export default function DocsPage() {
         {/* Sidebar */}
         <aside className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-1 text-sm">
-            {[
-              { href: "#getting-started", label: "Getting started" },
-              { href: "#sdks",            label: "SDKs" },
-              { href: "#authentication",  label: "Authentication" },
-              { href: "#upload",          label: "Upload a file" },
-              { href: "#list",            label: "List & search" },
-              { href: "#download",        label: "Download a file" },
-              { href: "#rename",          label: "Rename a file" },
-              { href: "#direct-upload",   label: "Direct upload" },
-              { href: "#delete",          label: "Delete a file" },
-              { href: "#errors",          label: "Errors" },
-            ].map((l) => (
-              <a key={l.href} href={l.href}
-                className="block px-3 py-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-gray-800 transition">
-                {l.label}
-              </a>
-            ))}
+            {NAV_ITEMS.map((l) => {
+              const isActive = activeSection === l.href.slice(1);
+              return (
+                <a key={l.href} href={l.href}
+                  className={`block px-3 py-1.5 rounded-lg transition ${
+                    isActive
+                      ? "text-white bg-gray-800 font-medium"
+                      : "text-gray-500 hover:text-white hover:bg-gray-800"
+                  }`}>
+                  {isActive && <span className="inline-block w-1 h-1 rounded-full bg-[#007BFF] mr-2 mb-0.5" />}
+                  {l.label}
+                </a>
+              );
+            })}
           </div>
         </aside>
 
@@ -724,17 +741,22 @@ export default function DocsPage() {
             </p>
             <LanguageTabs examples={list} />
             <p className="text-sm text-gray-500 mt-1">Response <code className="text-green-400">200 OK</code>:</p>
-            <Block lang="javascript" code={`[
-  {
-    "id":         "87e60d98-...",
-    "bucket_id":  "71438929-...",
-    "filename":   "photo.jpg",
-    "mime_type":  "image/jpeg",
-    "size_bytes": 245120,
-    "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
-    "created_at": "2026-08-16T00:53:23Z"
-  }
-]`} />
+            <Block lang="javascript" code={`{
+  "files": [
+    {
+      "id":         "87e60d98-...",
+      "bucket_id":  "71438929-...",
+      "filename":   "photo.jpg",
+      "mime_type":  "image/jpeg",
+      "size_bytes": 245120,
+      "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
+      "created_at": "2026-08-16T00:53:23Z"
+    }
+  ],
+  "total":    1,
+  "page":     1,
+  "per_page": 24
+}`} />
           </Section>
 
           <Section id="download" icon={Download} title="Download a file">
