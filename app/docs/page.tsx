@@ -466,13 +466,13 @@ echo $saved['url'];`,
 
 const sdkInstall: Partial<Record<Lang, string>> = {
   js: `# npm
-npm install @ainexium/storage
+npm install @nexium/storage
 
 # pnpm
-pnpm add @ainexium/storage
+pnpm add @nexium/storage
 
 # yarn
-yarn add @ainexium/storage`,
+yarn add @nexium/storage`,
 
   python: `pip install nexium-storage
 
@@ -481,7 +481,7 @@ pip install "nexium-storage[requests]"`,
 };
 
 const sdkUsage: Partial<Record<Lang, string>> = {
-  js: `import { NexiumStorage } from '@ainexium/storage'
+  js: `import { NexiumStorage } from '@nexium/storage'
 
 const storage = new NexiumStorage({ apiKey: process.env.NEXIUM_API_KEY })
 
@@ -529,7 +529,7 @@ storage.delete(file.id)`,
 };
 
 const sdkWebhook: Partial<Record<Lang, string>> = {
-  js: `import { NexiumStorage } from '@ainexium/storage'
+  js: `import { NexiumStorage } from '@nexium/storage'
 
 // Express / Node.js example
 app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
