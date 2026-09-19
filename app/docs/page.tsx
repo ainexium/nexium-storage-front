@@ -569,17 +569,17 @@ def webhook():
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 const NAV_ITEMS = [
-  { href: "#getting-started", label: "Getting started" },
-  { href: "#sdks",            label: "SDKs" },
-  { href: "#authentication",  label: "Authentication" },
-  { href: "#upload",          label: "Upload a file" },
-  { href: "#list",            label: "List & search" },
-  { href: "#download",        label: "Download a file" },
-  { href: "#rename",          label: "Rename a file" },
-  { href: "#direct-upload",   label: "Direct upload" },
-  { href: "#delete",          label: "Delete a file" },
-  { href: "#errors",          label: "Errors" },
-];
+  { href: "#getting-started", key: "gettingStarted" },
+  { href: "#sdks",            key: "sdks" },
+  { href: "#authentication",  key: "authentication" },
+  { href: "#upload",          key: "upload" },
+  { href: "#list",            key: "list" },
+  { href: "#download",        key: "download" },
+  { href: "#rename",          key: "rename" },
+  { href: "#direct-upload",   key: "directUpload" },
+  { href: "#delete",          key: "delete" },
+  { href: "#errors",          key: "errors" },
+] as const;
 
 export default function DocsPage() {
   const t = useTranslations("docs");
@@ -590,7 +590,30 @@ export default function DocsPage() {
     setLoggedIn(!!localStorage.getItem("access_token"));
   }, []);
 
-  const code = (chunks: React.ReactNode) => (\n    <code className="text-[#007BFF]">{chunks}</code>\n  );\n  const grayCode = (chunks: React.ReactNode) => (\n    <code className="text-gray-300">{chunks}</code>\n  );\n  const ok = (chunks: React.ReactNode) => (\n    <code className="text-green-400">{chunks}</code>\n  );\n  useEffect(() => {\n    const observer = new IntersectionObserver(\n      (entries) => {\n        entries.forEach((entry) => {\n          if (entry.isIntersecting) setActiveSection(entry.target.id);\n        });\n      },\n      { rootMargin: "-20% 0px -70% 0px" }\n    );\n    NAV_ITEMS.forEach(({ href }) => {\n      const el = document.getElementById(href.slice(1));\n      if (el) observer.observe(el);\n    });\n    return () => observer.disconnect();\n  }, []);
+  const code = (chunks: React.ReactNode) => (
+    <code className="text-[#007BFF]">{chunks}</code>
+  );
+  const grayCode = (chunks: React.ReactNode) => (
+    <code className="text-gray-300">{chunks}</code>
+  );
+  const ok = (chunks: React.ReactNode) => (
+    <code className="text-green-400">{chunks}</code>
+  );
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) setActiveSection(entry.target.id);
+        });
+      },
+      { rootMargin: "-20% 0px -70% 0px" }
+    );
+    NAV_ITEMS.forEach(({ href }) => {
+      const el = document.getElementById(href.slice(1));
+      if (el) observer.observe(el);
+    });
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
@@ -624,7 +647,20 @@ export default function DocsPage() {
       <div className="max-w-5xl mx-auto px-6 py-14 flex gap-12">
         <aside className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-1 text-sm">
-{NAV_ITEMS.map((l) => {\n              const isActive = activeSection === l.href.slice(1);\n              return (\n                <a key={l.href} href={l.href}\n                  className={`block px-3 py-1.5 rounded-lg transition ${\n                    isActive\n                      ? "text-white bg-gray-800 font-medium"\n                      : "text-gray-500 hover:text-white hover:bg-gray-800"\n                  }`}>\n                  {isActive && <span className="inline-block w-1 h-1 rounded-full bg-[#007BFF] mr-2 mb-0.5" />}\n                  {l.label}\n                </a>\n              );\n            })}
+            {NAV_ITEMS.map((l) => {
+              const isActive = activeSection === l.href.slice(1);
+              return (
+                <a key={l.href} href={l.href}
+                  className={`block px-3 py-1.5 rounded-lg transition ${
+                    isActive
+                      ? "text-white bg-gray-800 font-medium"
+                      : "text-gray-500 hover:text-white hover:bg-gray-800"
+                  }`}>
+                  {isActive && <span className="inline-block w-1 h-1 rounded-full bg-[#007BFF] mr-2 mb-0.5" />}
+                  {t(`nav.${l.key}`)}
+                </a>
+              );
+            })}
           </div>
         </aside>
 
@@ -708,7 +744,23 @@ export default function DocsPage() {
               {t.rich("listIntro", { search: code })}
             </p>
             <LanguageTabs examples={list} />
-<p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">200 OK</code> })}</p>\n            <Block lang="javascript" code={`{\n  "files": [\n    {\n      "id":         "87e60d98-...",\n      "bucket_id":  "71438929-...",\n      "filename":   "photo.jpg",\n      "mime_type":  "image/jpeg",\n      "size_bytes": 245120,\n      "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",\n      "created_at": "2026-08-16T00:53:23Z"\n    }\n  ],\n  "total":    1,\n  "page":     1,\n  "per_page": 24\n}`} />
+            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">200 OK</code> })}</p>
+            <Block lang="javascript" code={`{
+  "files": [
+    {
+      "id":         "87e60d98-...",
+      "bucket_id":  "71438929-...",
+      "filename":   "photo.jpg",
+      "mime_type":  "image/jpeg",
+      "size_bytes": 245120,
+      "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
+      "created_at": "2026-08-16T00:53:23Z"
+    }
+  ],
+  "total":    1,
+  "page":     1,
+  "per_page": 24
+}`} />
           </Section>
 
           <Section id="download" icon={Download} title={t("download")}>
