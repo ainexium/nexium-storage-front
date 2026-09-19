@@ -7,21 +7,21 @@ import { z } from "zod";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLogin } from "@/hooks/use-auth";
+import { useTranslations } from "next-intl";
 
-const schema = z.object({
-  email: z.string().email("Invalid email"),
-  password: z.string().min(1, "Password is required"),
-});
-
-type FormData = z.infer<typeof schema>;
+type FormData = { email: string; password: string };
 
 export default function LoginPage() {
+  const t = useTranslations("auth");
   const router = useRouter();
   const searchParams = useSearchParams();
   const [resetSuccess, setResetSuccess] = useState(false);
   const { mutate, isPending, error } = useLogin();
-  const { register, handleSubmit, getValues, formState: { errors } } = useForm<FormData>({
-    resolver: zodResolver(schema),
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+    resolver: zodResolver(z.object({
+      email: z.string().email(t("invalidEmail")),
+      password: z.string().min(1, t("passwordRequired")),
+    })),
   });
 
   useEffect(() => {
@@ -44,18 +44,18 @@ export default function LoginPage() {
 
   return (
     <div className="w-full max-w-sm">
-      <h1 className="text-2xl font-bold text-center mb-2">Welcome back</h1>
-      <p className="text-gray-400 text-sm text-center mb-8">Sign in to your account</p>
+      <h1 className="text-2xl font-bold text-center mb-2">{t("welcomeBack")}</h1>
+      <p className="text-gray-400 text-sm text-center mb-8">{t("signInSubtitle")}</p>
 
       {resetSuccess && (
         <p className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-lg px-3 py-2 mb-4">
-          Password updated — you can sign in with your new password.
+          {t("passwordUpdated")}
         </p>
       )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-1.5">Email</label>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">{t("email")}</label>
           <input
             {...register("email")}
             type="email"
@@ -67,9 +67,9 @@ export default function LoginPage() {
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="block text-sm font-medium text-gray-300">Password</label>
+            <label className="block text-sm font-medium text-gray-300">{t("password")}</label>
             <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-[#007BFF] transition">
-              Forgot password?
+              {t("forgotPassword")}
             </Link>
           </div>
           <input
@@ -92,14 +92,14 @@ export default function LoginPage() {
           disabled={isPending}
           className="w-full py-2.5 bg-[#007BFF] hover:bg-blue-600 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
         >
-          {isPending ? "Signing in…" : "Sign in"}
+          {isPending ? t("signingIn") : t("signIn")}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">
-        No account?{" "}
+        {t("noAccount")}{" "}
         <Link href="/register" className="text-[#007BFF] hover:underline">
-          Create one
+          {t("createOne")}
         </Link>
       </p>
     </div>

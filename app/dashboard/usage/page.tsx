@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Project, UsageSummary } from "@/types";
 import { useMe } from "@/hooks/use-auth";
+import { useTranslations } from "next-intl";
 
 function formatBytes(b: number) {
   if (b < 1024) return `${b} B`;
@@ -13,6 +14,8 @@ function formatBytes(b: number) {
 }
 
 function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: number }) {
+  const t = useTranslations("usage");
+  const tc = useTranslations("common");
   const { data, isLoading } = useQuery({
     queryKey: ["usage", project.id],
     queryFn: () => api.get<UsageSummary>(`/api/v1/projects/${project.id}/usage`),
@@ -40,7 +43,7 @@ function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: nu
           <div className="mb-5">
             <div className="flex justify-between text-xs text-gray-500 mb-2">
               <span>{formatBytes(data.storage_bytes)}</span>
-              <span>{quotaBytes === 0 ? "Unlimited" : formatBytes(quotaBytes)}</span>
+              <span>{quotaBytes === 0 ? tc("unlimited") : formatBytes(quotaBytes)}</span>
             </div>
             <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden">
               <div
@@ -52,7 +55,7 @@ function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: nu
               />
             </div>
             <p className="text-xs text-gray-600 mt-1.5">
-              {quotaBytes === 0 ? "No limit" : `${pct.toFixed(1)}% of quota`}
+              {quotaBytes === 0 ? t("noLimit") : t("ofQuota", { pct: pct.toFixed(1) })}
             </p>
           </div>
 
@@ -60,11 +63,11 @@ function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: nu
           <div className="grid grid-cols-2 divide-x divide-white/[0.07] border border-white/[0.07] rounded-lg overflow-hidden">
             <div className="px-4 py-3">
               <p className="text-lg font-semibold tabular-nums">{data.bucket_count}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Buckets</p>
+              <p className="text-xs text-gray-500 mt-0.5">{t("buckets")}</p>
             </div>
             <div className="px-4 py-3">
               <p className="text-lg font-semibold tabular-nums">{data.file_count}</p>
-              <p className="text-xs text-gray-500 mt-0.5">Files</p>
+              <p className="text-xs text-gray-500 mt-0.5">{t("files")}</p>
             </div>
           </div>
         </>
@@ -74,6 +77,8 @@ function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: nu
 }
 
 export default function UsagePage() {
+  const t = useTranslations("usage");
+  const tc = useTranslations("common");
   const { data: me } = useMe();
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
@@ -86,17 +91,17 @@ export default function UsagePage() {
     <div className="px-8 py-8 max-w-4xl">
       <div className="flex items-end justify-between mb-8">
         <div>
-          <h1 className="text-base font-semibold">Usage</h1>
-          <p className="text-xs text-gray-500 mt-1">Storage consumption per project</p>
+          <h1 className="text-base font-semibold">{t("title")}</h1>
+          <p className="text-xs text-gray-500 mt-1">{t("subtitle")}</p>
         </div>
         <span className="text-xs text-gray-500">
-          Quota : {quotaBytes === 0 ? "Unlimited" : formatBytes(quotaBytes)}
+          {t("quota", { value: quotaBytes === 0 ? tc("unlimited") : formatBytes(quotaBytes) })}
         </span>
       </div>
 
       {projects.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/[0.07] py-16 text-center">
-          <p className="text-sm text-gray-600">Create a project to track usage.</p>
+          <p className="text-sm text-gray-600">{t("empty")}</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

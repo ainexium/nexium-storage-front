@@ -7,6 +7,8 @@ import { Plus, Trash2, ChevronDown, ChevronUp, Check, Copy } from "lucide-react"
 import { ConfirmModal } from "@/components/confirm-modal";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
+import { useTranslations } from "next-intl";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 const ALL_EVENTS = ["file.created", "file.deleted", "file.renamed"];
 
@@ -52,6 +54,8 @@ function DeliveryRow({ d }: { d: Delivery }) {
 }
 
 function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
+  const t = useTranslations("webhooks");
+  const tc = useTranslations("common");
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
   const [confirmDelete, setConfirmDelete] = useState(false);
@@ -79,9 +83,9 @@ function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
     <>
       {confirmDelete && (
         <ConfirmModal
-          title="Delete webhook"
-          description={`Remove the webhook for ${hook.url}? All delivery logs will be lost.`}
-          confirmLabel="Delete"
+          title={t("deleteTitle")}
+          description={t("deleteBody", { url: hook.url })}
+          confirmLabel={tc("delete")}
           onConfirm={() => { remove.mutate(); setConfirmDelete(false); }}
           onCancel={() => setConfirmDelete(false)}
         />
@@ -106,7 +110,7 @@ function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
                 : "border-white/[0.1] text-gray-600 hover:text-green-400"
             }`}
           >
-            {hook.is_active ? "Disable" : "Enable"}
+            {hook.is_active ? t("disable") : t("enable")}
           </button>
           <button
             onClick={() => setOpen(!open)}
@@ -124,11 +128,11 @@ function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
 
         {open && (
           <div className="border-t border-white/[0.06]">
-            <div className="px-4 py-2 text-xs text-gray-600 font-medium">Recent deliveries</div>
+            <div className="px-4 py-2 text-xs text-gray-600 font-medium">{t("recentDeliveries")}</div>
             {loadingDeliveries ? (
-              <div className="px-4 py-3 text-xs text-gray-600">Loading…</div>
+              <div className="px-4 py-3 text-xs text-gray-600">{t("loading")}</div>
             ) : !deliveries?.length ? (
-              <div className="px-4 py-3 text-xs text-gray-600">No deliveries yet.</div>
+              <div className="px-4 py-3 text-xs text-gray-600">{t("noDeliveries")}</div>
             ) : (
               deliveries.map((d) => <DeliveryRow key={d.id} d={d} />)
             )}
@@ -140,6 +144,9 @@ function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
 }
 
 export default function WebhooksPage({ params }: { params: { id: string } }) {
+  const t = useTranslations("webhooks");
+  const tc = useTranslations("common");
+  const errMsg = useErrorMessage();
   const { id: projectId } = params;
   const qc = useQueryClient();
 
@@ -169,7 +176,7 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
       setCreating(false);
       setFormError("");
     },
-    onError: (e) => setFormError(e instanceof Error ? e.message : "Failed to create webhook"),
+    onError: (e) => setFormError(errMsg(e) || t("createFailed")),
   });
 
   function toggleEvent(e: string) {
@@ -191,28 +198,28 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
         href={`/dashboard/projects/${projectId}`}
         className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-6 transition"
       >
-        <ArrowLeft size={13} /> Back to project
+        <ArrowLeft size={13} /> {t("backToProject")}
       </Link>
 
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-base font-semibold">Webhooks</h1>
+          <h1 className="text-base font-semibold">{t("title")}</h1>
           <p className="text-xs text-gray-500 mt-1">
-            NEXIUM calls your endpoint when file events occur.
+            {t("subtitle")}
           </p>
         </div>
         <button
           onClick={() => { setCreating(true); setNewSecret(null); }}
           className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[#007BFF] hover:bg-blue-600 rounded-lg font-medium transition"
         >
-          <Plus size={13} /> Add webhook
+          <Plus size={13} /> {t("add")}
         </button>
       </div>
 
       {newSecret && (
         <div className="rounded-xl border border-green-400/20 bg-green-400/[0.05] p-4 mb-6">
           <p className="text-xs text-green-400 font-medium mb-2">
-            Webhook created — copy your signing secret now, it will not be shown again.
+            {t("created")}
           </p>
           <div className="flex items-center gap-2">
             <code className="flex-1 text-xs font-mono text-gray-300 bg-black/30 px-3 py-2 rounded-lg truncate">
@@ -230,10 +237,10 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
 
       {creating && (
         <div className="rounded-xl border border-white/[0.07] p-5 mb-6">
-          <h2 className="text-sm font-medium mb-4">New webhook</h2>
+          <h2 className="text-sm font-medium mb-4">{t("newWebhook")}</h2>
           <div className="space-y-4">
             <div>
-              <label className="block text-xs text-gray-400 mb-1.5">Endpoint URL</label>
+              <label className="block text-xs text-gray-400 mb-1.5">{t("endpointUrl")}</label>
               <input
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
@@ -243,7 +250,7 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
               />
             </div>
             <div>
-              <label className="block text-xs text-gray-400 mb-2">Events</label>
+              <label className="block text-xs text-gray-400 mb-2">{t("events")}</label>
               <div className="flex gap-2 flex-wrap">
                 {ALL_EVENTS.map((e) => (
                   <button
@@ -271,13 +278,13 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
                 disabled={create.isPending || !url || selectedEvents.length === 0}
                 className="px-4 py-2 bg-[#007BFF] hover:bg-blue-600 disabled:opacity-50 rounded-lg text-sm font-medium transition"
               >
-                {create.isPending ? "Creating…" : "Create"}
+                {create.isPending ? t("creating") : tc("create")}
               </button>
               <button
                 onClick={() => { setCreating(false); setFormError(""); }}
                 className="px-4 py-2 text-sm text-gray-500 hover:text-gray-300 transition"
               >
-                Cancel
+                {tc("cancel")}
               </button>
             </div>
           </div>
@@ -292,8 +299,8 @@ export default function WebhooksPage({ params }: { params: { id: string } }) {
         </div>
       ) : webhooks.length === 0 ? (
         <div className="rounded-xl border border-dashed border-white/[0.07] py-14 text-center">
-          <p className="text-sm text-gray-600">No webhooks yet.</p>
-          <p className="text-xs text-gray-700 mt-1">Add one to receive real-time file events.</p>
+          <p className="text-sm text-gray-600">{t("empty")}</p>
+          <p className="text-xs text-gray-700 mt-1">{t("emptyHint")}</p>
         </div>
       ) : (
         webhooks.map((hook) => (

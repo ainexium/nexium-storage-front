@@ -5,6 +5,7 @@ import { api } from "@/lib/api-client";
 import type { Project, UsageSummary } from "@/types";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
 
 function formatBytes(b: number) {
   if (b < 1024) return `${b} B`;
@@ -23,6 +24,8 @@ function Stat({ value, label }: { value: string; label: string }) {
 }
 
 export default function DashboardPage() {
+  const t = useTranslations("dashboard");
+  const locale = useLocale();
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
     queryFn: () => api.get<Project[]>("/api/v1/projects"),
@@ -44,31 +47,31 @@ export default function DashboardPage() {
 
       {/* Page header */}
       <div className="mb-8">
-        <h1 className="text-base font-semibold">Overview</h1>
+        <h1 className="text-base font-semibold">{t("overview")}</h1>
       </div>
 
       {/* Stats */}
       <div className="rounded-xl border border-white/[0.07] divide-x divide-white/[0.07] flex mb-10">
-        <Stat value={projects.length.toString()} label="Projects" />
-        <Stat value={totalBuckets.toString()} label="Buckets" />
-        <Stat value={totalFiles.toString()} label="Files" />
-        <Stat value={formatBytes(totalStorage)} label="Storage used" />
+        <Stat value={projects.length.toString()} label={t("projects")} />
+        <Stat value={totalBuckets.toString()} label={t("buckets")} />
+        <Stat value={totalFiles.toString()} label={t("files")} />
+        <Stat value={formatBytes(totalStorage)} label={t("storageUsed")} />
       </div>
 
       {/* Recent projects */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-sm font-medium text-gray-300">Recent projects</h2>
+          <h2 className="text-sm font-medium text-gray-300">{t("recentProjects")}</h2>
           <Link href="/dashboard/projects" className="text-xs text-gray-500 hover:text-gray-300 transition-colors">
-            View all
+            {t("viewAll")}
           </Link>
         </div>
 
         {projects.length === 0 ? (
           <div className="rounded-xl border border-dashed border-white/[0.07] py-14 text-center">
-            <p className="text-sm text-gray-600">No projects yet.</p>
+            <p className="text-sm text-gray-600">{t("noProjects")}</p>
             <Link href="/dashboard/projects" className="text-xs text-[#007BFF] hover:underline mt-2 inline-block">
-              Create your first project →
+              {t("createFirstProject")}
             </Link>
           </div>
         ) : (
@@ -85,7 +88,7 @@ export default function DashboardPage() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-xs text-gray-600">
-                    {new Date(p.created_at).toLocaleDateString()}
+                    {new Date(p.created_at).toLocaleDateString(locale)}
                   </span>
                   <ChevronRight size={13} className="text-gray-700 group-hover:text-gray-400 transition-colors" />
                 </div>

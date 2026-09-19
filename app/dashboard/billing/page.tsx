@@ -25,6 +25,8 @@ import {
   ArrowRight,
   Sparkles,
 } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 // ─── utils ────────────────────────────────────────────────────────────────────
 
@@ -34,12 +36,12 @@ const fmt = {
     if (b >= 1_073_741_824)    return `${(b / 1_073_741_824).toFixed(0)} GB`;
     return `${(b / 1_048_576).toFixed(0)} MB`;
   },
-  xof(n: number) {
-    return new Intl.NumberFormat("fr-FR").format(n);
+  xof(n: number, locale: string) {
+    return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(n);
   },
-  date(d: string | null) {
+  date(d: string | null, locale: string) {
     if (!d) return null;
-    return new Date(d).toLocaleDateString("fr-FR", { day: "2-digit", month: "long", year: "numeric" });
+    return new Date(d).toLocaleDateString(locale, { day: "2-digit", month: "long", year: "numeric" });
   },
 };
 
@@ -53,8 +55,6 @@ const PLAN_CONFIG: Record<string, {
   border: string;
   ring: string;
   btnClass: string;
-  tagline: string;
-  features: string[];
 }> = {
   free: {
     accent:   "text-gray-400",
@@ -62,8 +62,6 @@ const PLAN_CONFIG: Record<string, {
     border:   "border-white/[0.07]",
     ring:     "",
     btnClass: "bg-white/[0.06] hover:bg-white/[0.1] text-gray-300",
-    tagline:  "Pour tester et démarrer",
-    features: ["10 GB stockage", "Fichiers ≤ 100 MB", "Accès API", "Support communauté"],
   },
   starter: {
     accent:   "text-blue-400",
@@ -71,8 +69,6 @@ const PLAN_CONFIG: Record<string, {
     border:   "border-blue-500/20",
     ring:     "",
     btnClass: "bg-blue-600 hover:bg-blue-500 text-white",
-    tagline:  "Pour les projets sérieux",
-    features: ["50 GB stockage", "Fichiers ≤ 1 GB", "Accès API", "Support email"],
   },
   pro: {
     accent:   "text-purple-400",
@@ -80,8 +76,6 @@ const PLAN_CONFIG: Record<string, {
     border:   "border-purple-500/30",
     ring:     "ring-1 ring-purple-500/20 shadow-[0_0_40px_-8px_rgba(168,85,247,0.25)]",
     btnClass: "bg-purple-600 hover:bg-purple-500 text-white",
-    tagline:  "Pour les équipes qui scalent",
-    features: ["300 GB stockage", "Fichiers ≤ 5 GB", "Accès API", "Support prioritaire", "Add-ons disponibles"],
   },
   business: {
     accent:   "text-amber-400",
@@ -89,26 +83,28 @@ const PLAN_CONFIG: Record<string, {
     border:   "border-amber-500/20",
     ring:     "",
     btnClass: "bg-amber-600 hover:bg-amber-500 text-white",
-    tagline:  "Pour les entreprises",
-    features: ["1 TB stockage", "Fichiers ≤ 20 GB", "Accès API", "Support dédié", "SLA garanti", "Add-ons disponibles"],
   },
 };
 
 // ─── status chip ──────────────────────────────────────────────────────────────
 
 function Chip({ status }: { status: string }) {
-  const styles: Record<string, { cls: string; label: string; Icon: React.ElementType }> = {
-    pending:    { cls: "text-yellow-400 bg-yellow-400/8 border-yellow-400/15",  label: "En attente",  Icon: Clock },
-    processing: { cls: "text-blue-400 bg-blue-400/8 border-blue-400/15",        label: "Traitement",  Icon: Loader2 },
-    completed:  { cls: "text-emerald-400 bg-emerald-400/8 border-emerald-400/15", label: "Payé",      Icon: CheckCircle2 },
-    failed:     { cls: "text-red-400 bg-red-400/8 border-red-400/15",           label: "Échoué",      Icon: XCircle },
-    expired:    { cls: "text-gray-500 bg-gray-500/8 border-gray-500/15",         label: "Expiré",     Icon: XCircle },
+  const t = useTranslations("billing.status");
+  const styles: Record<string, { cls: string; Icon: React.ElementType }> = {
+    pending:    { cls: "text-yellow-400 bg-yellow-400/8 border-yellow-400/15", Icon: Clock },
+    processing: { cls: "text-blue-400 bg-blue-400/8 border-blue-400/15", Icon: Loader2 },
+    completed:  { cls: "text-emerald-400 bg-emerald-400/8 border-emerald-400/15", Icon: CheckCircle2 },
+    failed:     { cls: "text-red-400 bg-red-400/8 border-red-400/15", Icon: XCircle },
+    expired:    { cls: "text-gray-500 bg-gray-500/8 border-gray-500/15", Icon: XCircle },
   };
   const s = styles[status] ?? styles.pending;
+  const labelKey = (["pending", "processing", "completed", "failed", "expired"].includes(status)
+    ? status
+    : "pending") as "pending" | "processing" | "completed" | "failed" | "expired";
   return (
     <span className={`inline-flex items-center gap-1.5 text-[11px] font-medium px-2 py-0.5 rounded-full border ${s.cls}`}>
       <s.Icon size={9} className={status === "processing" ? "animate-spin" : ""} />
-      {s.label}
+      {t(labelKey)}
     </span>
   );
 }
@@ -127,6 +123,10 @@ interface ModalProps {
 }
 
 function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll, onSuccess }: ModalProps) {
+  const t = useTranslations("billing");
+  const tc = useTranslations("common");
+  const locale = useLocale();
+  const formatError = useErrorMessage();
   const [step, setStep]       = useState<"form" | "pending" | "done" | "error">("form");
   const [channel, setChannel] = useState("");
   const [phone, setPhone]         = useState<string | undefined>(undefined);
@@ -144,7 +144,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
         const d = await onPoll(pendingID);
         setPollStatus(d.status);
         if (d.status === "completed") { clearInterval(intervalRef.current!); setStep("done"); setTimeout(onSuccess, 1400); }
-        if (d.status === "failed" || d.status === "expired") { clearInterval(intervalRef.current!); setStep("error"); setErrMsg("Paiement " + d.status + ". Réessayez."); }
+        if (d.status === "failed" || d.status === "expired") { clearInterval(intervalRef.current!); setStep("error"); setErrMsg(t("paymentRetry", { status: t(`status.${d.status}` as "status.failed" | "status.expired") })); }
       } catch { /* retry */ }
     }, 3000);
     return () => clearInterval(intervalRef.current!);
@@ -159,7 +159,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
       if (d.status === "completed") { setStep("done"); setTimeout(onSuccess, 1400); }
       else setStep("pending");
     } catch (e) {
-      setErrMsg(e instanceof Error ? e.message : "Erreur"); setStep("error");
+      setErrMsg(formatError(e)); setStep("error");
     } finally { setLoading(false); }
   }
 
@@ -188,8 +188,8 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
               <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center">
                 <CheckCircle2 size={26} className="text-emerald-400" />
               </div>
-              <p className="text-[15px] font-semibold text-white">Paiement confirmé</p>
-              <p className="text-xs text-gray-500 text-center">Votre compte est mis à jour…</p>
+              <p className="text-[15px] font-semibold text-white">{t("paymentConfirmed")}</p>
+              <p className="text-xs text-gray-500 text-center">{t("accountUpdating")}</p>
             </div>
           )}
 
@@ -202,14 +202,14 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                 </div>
               </div>
               <div className="text-center">
-                <p className="text-[15px] font-semibold text-white mb-1">En attente de confirmation</p>
+                <p className="text-[15px] font-semibold text-white mb-1">{t("waitingConfirm")}</p>
                 {redirectURL ? (
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    Cliquez sur le bouton ci-dessous pour confirmer<br />le paiement dans votre app Wave.
+                    {t("waveHint")}
                   </p>
                 ) : (
                   <p className="text-xs text-gray-500 leading-relaxed">
-                    Notification envoyée sur<br />
+                    {t("notifSent")}<br />
                     <span className="text-gray-300 font-medium">{phone}</span>
                   </p>
                 )}
@@ -221,7 +221,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm font-semibold text-white transition-all"
                 >
-                  Ouvrir Wave pour payer
+                  {t("openWave")}
                 </a>
               )}
               <Chip status={pollStatus || "pending"} />
@@ -239,7 +239,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                 onClick={() => setStep("form")}
                 className="mt-1 px-5 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-xs font-medium text-gray-300 transition-all"
               >
-                Réessayer
+                {tc("retry")}
               </button>
             </div>
           )}
@@ -253,7 +253,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
 
               {/* operator */}
               <div>
-                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">Opérateur</p>
+                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("operator")}</p>
                 <div className="grid grid-cols-2 gap-2">
                   {channels.map((ch) => {
                     const active = channel === ch.slug;
@@ -275,7 +275,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                         }
                         <span className="truncate">{ch.name}</span>
                         {disabled && (
-                          <span className="absolute top-1 right-1 text-[8px] font-bold text-orange-400 uppercase tracking-wide">Indispo</span>
+                          <span className="absolute top-1 right-1 text-[8px] font-bold text-orange-400 uppercase tracking-wide">{t("unavailable")}</span>
                         )}
                       </button>
                     );
@@ -285,7 +285,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
 
               {/* phone */}
               <div>
-                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">Numéro</p>
+                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("number")}</p>
                 <PhoneInput
                   defaultCountry="CI"
                   countries={["CI","SN","BJ","ML","BF","TG","GN","NE","CM","GH","NG"]}
@@ -296,16 +296,16 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                   className="phone-input"
                 />
                 {phone && !isValidPhoneNumber(phone) && (
-                  <p className="text-[11px] text-red-400 mt-1.5">Numéro invalide pour ce pays</p>
+                  <p className="text-[11px] text-red-400 mt-1.5">{t("invalidPhone")}</p>
                 )}
               </div>
 
               {/* total + CTA */}
               <div className="pt-1">
                 <div className="flex items-center justify-between px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-3">
-                  <span className="text-xs text-gray-500">Total dû</span>
+                  <span className="text-xs text-gray-500">{t("totalDue")}</span>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-lg font-bold text-white">{fmt.xof(priceXOF)}</span>
+                    <span className="text-lg font-bold text-white">{fmt.xof(priceXOF, locale)}</span>
                     <span className="text-xs text-gray-600">XOF</span>
                   </div>
                 </div>
@@ -315,7 +315,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#007BFF] hover:bg-blue-500 active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed text-sm font-semibold text-white transition-all"
                 >
                   {loading ? <Loader2 size={15} className="animate-spin" /> : <CreditCard size={15} />}
-                  {loading ? "Connexion…" : "Confirmer le paiement"}
+                  {loading ? t("connecting") : t("confirmPayment")}
                 </button>
               </div>
             </div>
@@ -329,8 +329,16 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
 // ─── plan card ────────────────────────────────────────────────────────────────
 
 function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boolean; onUpgrade: () => void }) {
+  const t = useTranslations("billing");
+  const tp = useTranslations("billing.plans");
+  const locale = useLocale();
   const cfg = PLAN_CONFIG[plan.slug] ?? PLAN_CONFIG.starter;
   const isPro = plan.slug === "pro";
+  const slug = (["free", "starter", "pro", "business"].includes(plan.slug)
+    ? plan.slug
+    : "starter") as "free" | "starter" | "pro" | "business";
+  const features = tp.raw(`${slug}.features` as `${typeof slug}.features`) as string[];
+  const tagline = tp(`${slug}.tagline` as `${typeof slug}.tagline`);
 
   return (
     <div className={`relative flex flex-col rounded-2xl border p-6 transition-all ${cfg.bg} ${cfg.border} ${cfg.ring}`}>
@@ -338,7 +346,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
         <div className="absolute -top-3.5 inset-x-0 flex justify-center">
           <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-purple-600 text-white shadow-lg">
             <Sparkles size={9} />
-            Recommandé
+            {t("recommended")}
           </span>
         </div>
       )}
@@ -349,23 +357,23 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
           <span className={`text-[11px] font-bold uppercase tracking-widest ${cfg.accent}`}>{plan.name}</span>
           {isCurrent && (
             <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 font-medium">
-              <Check size={10} strokeWidth={3} /> Actuel
+              <Check size={10} strokeWidth={3} /> {t("current")}
             </span>
           )}
         </div>
-        <p className="text-[12px] text-gray-600">{cfg.tagline}</p>
+        <p className="text-[12px] text-gray-600">{tagline}</p>
       </div>
 
       {/* price */}
       <div className="mb-6">
         {plan.price_xof === 0 ? (
-          <div className="text-4xl font-black text-white tracking-tight">Gratuit</div>
+          <div className="text-4xl font-black text-white tracking-tight">{t("free")}</div>
         ) : (
           <div className="flex items-end gap-1.5">
             <span className="text-4xl font-black text-white tracking-tight leading-none">
-              {fmt.xof(plan.price_xof)}
+              {fmt.xof(plan.price_xof, locale)}
             </span>
-            <span className="text-xs text-gray-600 mb-1.5">XOF / mois</span>
+            <span className="text-xs text-gray-600 mb-1.5">{t("perMonth")}</span>
           </div>
         )}
         <p className={`text-[13px] font-semibold mt-1.5 ${cfg.accent}`}>{fmt.bytes(plan.storage_bytes)}</p>
@@ -373,7 +381,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
 
       {/* features */}
       <ul className="space-y-2.5 mb-7 flex-1">
-        {cfg.features.map((f) => (
+        {features.map((f) => (
           <li key={f} className="flex items-center gap-2.5 text-[13px] text-gray-400">
             <span className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isCurrent ? "bg-emerald-500/15" : "bg-white/[0.06]"}`}>
               <Check size={9} strokeWidth={3} className={isCurrent ? "text-emerald-400" : "text-gray-500"} />
@@ -386,14 +394,14 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
       {/* CTA */}
       {isCurrent && plan.price_xof === 0 ? (
         <div className="w-full text-center py-2.5 rounded-xl text-[13px] text-gray-600 bg-white/[0.03] border border-white/[0.05] cursor-default">
-          Plan actuel
+          {t("currentPlan")}
         </div>
       ) : plan.price_xof > 0 ? (
         <button
           onClick={onUpgrade}
           className={`w-full flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-[13px] font-semibold transition-all active:scale-[0.98] ${cfg.btnClass}`}
         >
-          {isCurrent ? <>Renouveler <ArrowRight size={13} /></> : <>Choisir {plan.name} <ArrowRight size={13} /></>}
+          {isCurrent ? <>{t("renew")} <ArrowRight size={13} /></> : <>{t("choose", { name: plan.name })} <ArrowRight size={13} /></>}
         </button>
       ) : null}
     </div>
@@ -403,6 +411,8 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
 // ─── add-on section ───────────────────────────────────────────────────────────
 
 function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: AddonPackage) => void }) {
+  const t = useTranslations("billing");
+  const locale = useLocale();
   const { data: pkgs   } = useQuery<AddonPackage[]>({ queryKey: ["addon-packages"], queryFn: () => api.get("/api/v1/billing/addons/packages") });
   const { data: addons } = useQuery<StorageAddon[]>({ queryKey: ["addons"],          queryFn: () => api.get("/api/v1/billing/addons") });
 
@@ -415,13 +425,13 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
     <div>
       <div className="flex items-end justify-between mb-5">
         <div>
-          <h2 className="text-sm font-semibold text-white">Add-ons de stockage</h2>
-          <p className="text-xs text-gray-500 mt-0.5">Ajoutez du stockage sans changer de plan</p>
+          <h2 className="text-sm font-semibold text-white">{t("addonsTitle")}</h2>
+          <p className="text-xs text-gray-500 mt-0.5">{t("addonsSubtitle")}</p>
         </div>
         {addonSum > 0 && (
           <div className="text-right">
-            <p className="text-xs text-gray-600">{fmt.bytes(planBytes)} plan + {fmt.bytes(addonSum)} add-ons</p>
-            <p className="text-sm font-bold text-white">{fmt.bytes(planBytes + addonSum)} total</p>
+            <p className="text-xs text-gray-600">{t("planPlusAddons", { plan: fmt.bytes(planBytes), addons: fmt.bytes(addonSum) })}</p>
+            <p className="text-sm font-bold text-white">{t("total", { total: fmt.bytes(planBytes + addonSum) })}</p>
           </div>
         )}
       </div>
@@ -430,7 +440,7 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
       {addonSum > 0 && (
         <div className="mb-5 rounded-xl bg-white/[0.03] border border-white/[0.06] p-4">
           <div className="flex items-center justify-between text-xs mb-2.5">
-            <span className="text-gray-500">Capacité totale</span>
+            <span className="text-gray-500">{t("totalCapacity")}</span>
             <span className="font-semibold text-white">{fmt.bytes(planBytes + addonSum)}</span>
           </div>
           <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
@@ -441,10 +451,10 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
           </div>
           <div className="flex items-center gap-4 mt-2">
             <span className="flex items-center gap-1.5 text-[11px] text-gray-600">
-              <span className="w-2 h-2 rounded-sm bg-[#007BFF]" /> Plan de base
+              <span className="w-2 h-2 rounded-sm bg-[#007BFF]" /> {t("basePlan")}
             </span>
             <span className="flex items-center gap-1.5 text-[11px] text-gray-600">
-              <span className="w-2 h-2 rounded-sm bg-purple-500" /> Add-ons
+              <span className="w-2 h-2 rounded-sm bg-purple-500" /> {t("addons")}
             </span>
           </div>
         </div>
@@ -460,7 +470,7 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
           >
             <HardDrive size={18} className="text-gray-600 group-hover:text-[#007BFF] transition-colors" />
             <span className="text-[15px] font-bold text-white">{pkg.label}</span>
-            <span className="text-[11px] text-gray-500">{fmt.xof(pkg.price_xof)} XOF</span>
+            <span className="text-[11px] text-gray-500">{fmt.xof(pkg.price_xof, locale)} XOF</span>
           </button>
         ))}
       </div>
@@ -469,7 +479,7 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
       {done.length > 0 && (
         <div className="rounded-xl border border-white/[0.07] overflow-hidden">
           <div className="px-4 py-2.5 border-b border-white/[0.05]">
-            <span className="text-[11px] font-medium text-gray-600 uppercase tracking-wider">Add-ons actifs</span>
+            <span className="text-[11px] font-medium text-gray-600 uppercase tracking-wider">{t("activeAddons")}</span>
           </div>
           {done.map((a) => (
             <div key={a.id} className="flex items-center justify-between px-4 py-3 border-b border-white/[0.04] last:border-0">
@@ -494,6 +504,8 @@ type Modal =
   | null;
 
 export default function BillingPage() {
+  const t = useTranslations("billing");
+  const locale = useLocale();
   const qc    = useQueryClient();
   const [modal, setModal] = useState<Modal>(null);
 
@@ -537,9 +549,9 @@ export default function BillingPage() {
       {/* ── modals ── */}
       {modal?.kind === "plan" && (
         <PaymentModal
-          title={`Passer au plan ${modal.plan.name}`}
+          title={t("upgradeTitle", { name: modal.plan.name })}
           priceXOF={modal.plan.price_xof}
-          badge={modal.plan.slug === "pro" ? "Recommandé" : undefined}
+          badge={modal.plan.slug === "pro" ? t("recommended") : undefined}
           channels={channels}
           onClose={() => setModal(null)}
           onPay={(ch, ph) => api.post("/api/v1/billing/checkout", { plan_id: modal.plan.id, channel: ch, phone: ph })}
@@ -549,7 +561,7 @@ export default function BillingPage() {
       )}
       {modal?.kind === "addon" && (
         <PaymentModal
-          title={`Ajouter ${modal.pkg.label} de stockage`}
+          title={t("addonTitle", { label: modal.pkg.label })}
           priceXOF={modal.pkg.price_xof}
           channels={channels}
           onClose={() => setModal(null)}
@@ -563,8 +575,8 @@ export default function BillingPage() {
 
         {/* ── page header ── */}
         <div className="mb-10">
-          <h1 className="text-xl font-bold text-white tracking-tight">Billing & Plans</h1>
-          <p className="text-sm text-gray-500 mt-1">Choisissez le plan qui correspond à vos besoins.</p>
+          <h1 className="text-xl font-bold text-white tracking-tight">{t("title")}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t("subtitle")}</p>
         </div>
 
         {/* ── current plan status (only when paid) ── */}
@@ -575,10 +587,10 @@ export default function BillingPage() {
                 <CheckCircle2 size={15} className="text-emerald-400" />
               </div>
               <div>
-                <p className="text-sm font-semibold text-white">Plan {sub?.plan?.name} · actif</p>
+                <p className="text-sm font-semibold text-white">{t("activePlan", { name: sub?.plan?.name ?? "" })}</p>
                 {subscription.current_period_end && (
                   <p className="text-xs text-gray-500 mt-0.5">
-                    Expire le {fmt.date(subscription.current_period_end)}
+                    {t("expiresOn", { date: fmt.date(subscription.current_period_end, locale) ?? "" })}
                   </p>
                 )}
               </div>
@@ -614,7 +626,7 @@ export default function BillingPage() {
         {/* ── payment history ── */}
         {payments && payments.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-white mb-4">Historique des paiements</h2>
+            <h2 className="text-sm font-semibold text-white mb-4">{t("history")}</h2>
             <div className="rounded-2xl border border-white/[0.07] overflow-hidden">
               {payments.map((p, i) => (
                 <div
@@ -626,12 +638,12 @@ export default function BillingPage() {
                       <CreditCard size={13} className="text-gray-500" />
                     </div>
                     <div>
-                      <p className="text-[13px] font-medium text-gray-200">Plan {p.plan?.name}</p>
-                      <p className="text-[11px] text-gray-600 mt-0.5">{fmt.date(p.created_at)}</p>
+                      <p className="text-[13px] font-medium text-gray-200">{t("planPrefix", { name: p.plan?.name ?? "" })}</p>
+                      <p className="text-[11px] text-gray-600 mt-0.5">{fmt.date(p.created_at, locale)}</p>
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
-                    <span className="text-[13px] font-semibold text-gray-300">{fmt.xof(p.amount_xof)} XOF</span>
+                    <span className="text-[13px] font-semibold text-gray-300">{fmt.xof(p.amount_xof, locale)} XOF</span>
                     <Chip status={p.status} />
                   </div>
                 </div>

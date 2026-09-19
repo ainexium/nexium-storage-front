@@ -4,8 +4,12 @@ import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { verifyResetCode, resetPassword } from "@/lib/auth";
+import { useTranslations } from "next-intl";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 export default function ResetPasswordPage() {
+  const t = useTranslations("auth");
+  const errMsg = useErrorMessage();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
@@ -38,7 +42,7 @@ export default function ResetPasswordPage() {
       setVerifiedCode(code);
       setStep("password");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid or expired code");
+      setError(errMsg(err) || t("invalidCode"));
       setDigits(["", "", "", "", "", ""]);
       setTimeout(() => inputRefs.current[0]?.focus(), 50);
     } finally {
@@ -94,8 +98,8 @@ export default function ResetPasswordPage() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (password.length < 8) { setError("Password must be at least 8 characters"); return; }
-    if (password !== confirm) { setError("Passwords do not match"); return; }
+    if (password.length < 8) { setError(t("passwordMin")); return; }
+    if (password !== confirm) { setError(t("passwordsMismatch")); return; }
 
     setIsPending(true);
     try {
@@ -103,7 +107,7 @@ export default function ResetPasswordPage() {
       sessionStorage.removeItem("reset_email");
       router.push("/login?reset=1");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(errMsg(err));
     } finally {
       setIsPending(false);
     }
@@ -112,10 +116,10 @@ export default function ResetPasswordPage() {
   if (step === "code") {
     return (
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-bold text-center mb-2">Enter your code</h1>
+        <h1 className="text-2xl font-bold text-center mb-2">{t("enterCode")}</h1>
         <p className="text-gray-400 text-sm text-center mb-8">
-          Code sent to{" "}
-          <span className="text-gray-300">{email || "your email"}</span>
+          {t("codeSentTo")}{" "}
+          <span className="text-gray-300">{email || t("yourEmail")}</span>
         </p>
 
         <div className="flex gap-2 justify-center mb-6">
@@ -137,7 +141,7 @@ export default function ResetPasswordPage() {
         </div>
 
         {isVerifying && (
-          <p className="text-xs text-gray-500 text-center mb-4">Checking…</p>
+          <p className="text-xs text-gray-500 text-center mb-4">{t("checking")}</p>
         )}
 
         {error && (
@@ -147,14 +151,14 @@ export default function ResetPasswordPage() {
         )}
 
         <p className="text-center text-sm text-gray-600">
-          Didn&apos;t receive it?{" "}
+          {t("didntReceive")}{" "}
           <Link href="/forgot-password" className="text-[#007BFF] hover:underline">
-            Resend code
+            {t("resendCode")}
           </Link>
         </p>
         <p className="text-center text-sm text-gray-600 mt-2">
           <Link href="/login" className="hover:text-gray-400 transition">
-            Back to login
+            {t("backToLogin")}
           </Link>
         </p>
       </div>
@@ -163,35 +167,35 @@ export default function ResetPasswordPage() {
 
   return (
     <div className="w-full max-w-sm">
-      <h1 className="text-2xl font-bold text-center mb-2">New password</h1>
+      <h1 className="text-2xl font-bold text-center mb-2">{t("newPassword")}</h1>
       <p className="text-gray-400 text-sm text-center mb-8">
-        Choose a strong password for your account.
+        {t("chooseStrong")}
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            New password
+            {t("newPassword")}
           </label>
           <input
             ref={passwordRef}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             type="password"
-            placeholder="Min 8 characters"
+            placeholder={t("min8")}
             className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-sm transition"
           />
         </div>
 
         <div>
           <label className="block text-sm font-medium text-gray-300 mb-1.5">
-            Confirm password
+            {t("confirmPassword")}
           </label>
           <input
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
             type="password"
-            placeholder="Repeat password"
+            placeholder={t("repeatPassword")}
             className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-sm transition"
           />
         </div>
@@ -207,7 +211,7 @@ export default function ResetPasswordPage() {
           disabled={isPending}
           className="w-full py-2.5 bg-[#007BFF] hover:bg-blue-600 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
         >
-          {isPending ? "Updating…" : "Reset password"}
+          {isPending ? t("updating") : t("resetPassword")}
         </button>
       </form>
     </div>

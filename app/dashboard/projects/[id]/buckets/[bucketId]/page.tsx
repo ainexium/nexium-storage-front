@@ -12,6 +12,8 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { ConfirmModal } from "@/components/confirm-modal";
+import { useLocale, useTranslations } from "next-intl";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -63,6 +65,9 @@ function getPageRange(current: number, total: number): (number | "...")[] {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function BucketPage({ params }: { params: { id: string; bucketId: string } }) {
+  const t = useTranslations("files");
+  const tc = useTranslations("common");
+  const errMsg = useErrorMessage();
   const qc = useQueryClient();
   const fileInput = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
@@ -136,7 +141,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
       );
       qc.invalidateQueries({ queryKey: ["files", params.bucketId] });
     } catch (err) {
-      setUploadError(err instanceof Error ? err.message : "Upload failed");
+      setUploadError(errMsg(err));
     } finally {
       setUploadPhase("idle");
     }
@@ -210,12 +215,12 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
       {isDragging && (
         <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0f]/90 border-2 border-dashed border-[#007BFF]/60 pointer-events-none">
           <CloudUpload size={48} className="text-[#007BFF] mb-3 animate-bounce" />
-          <p className="text-lg font-semibold text-[#007BFF]">Drop to upload</p>
+          <p className="text-lg font-semibold text-[#007BFF]">{t("dropToUpload")}</p>
         </div>
       )}
 
       <Link href={`/dashboard/projects/${params.id}`} className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-8 transition-colors">
-        <ArrowLeft size={12} /> Workspace
+        <ArrowLeft size={12} /> {t("workspace")}
       </Link>
 
       {/* Header */}
@@ -232,14 +237,14 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
                     ? "text-green-500 bg-green-500/10 hover:bg-green-500/20"
                     : "text-amber-500 bg-amber-500/10 hover:bg-amber-500/20"
                 }`}
-                title={bucket.is_public ? "Click to make private" : "Click to make public"}
+                title={bucket.is_public ? t("makePrivate") : t("makePublic")}
               >
                 {bucket.is_public ? <Globe size={9} /> : <Lock size={9} />}
-                {bucket.is_public ? "Public" : "Private"}
+                {bucket.is_public ? tc("public") : tc("private")}
               </button>
             )}
           </div>
-          <p className="text-xs text-gray-600">{total} fichier{total !== 1 ? "s" : ""}{debouncedSearch ? ` · "${debouncedSearch}"` : ""}</p>
+          <p className="text-xs text-gray-600">{t("fileCount", { count: total })}{debouncedSearch ? ` · "${debouncedSearch}"` : ""}</p>
         </div>
         <div className="flex items-center gap-2">
           {/* Search */}
@@ -248,7 +253,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
             <input
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              placeholder="Rechercher…"
+              placeholder={t("search")}
               className="pl-8 pr-3 py-1.5 bg-[#111118] border border-gray-800 rounded text-sm text-gray-200 placeholder-gray-600 focus:outline-none focus:border-gray-600 w-44"
             />
           </div>
@@ -257,14 +262,14 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
             <button
               onClick={() => setView("grid")}
               className={`p-1.5 transition ${viewMode === "grid" ? "bg-gray-800 text-white" : "text-gray-600 hover:text-gray-300"}`}
-              title="Vue grille"
+              title={t("gridView")}
             >
               <LayoutGrid size={15} />
             </button>
             <button
               onClick={() => setView("list")}
               className={`p-1.5 transition ${viewMode === "list" ? "bg-gray-800 text-white" : "text-gray-600 hover:text-gray-300"}`}
-              title="Vue liste"
+              title={t("listView")}
             >
               <LayoutList size={15} />
             </button>
@@ -278,7 +283,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
             className="flex items-center gap-1.5 px-3 py-1.5 bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 rounded text-sm font-medium transition-colors"
           >
             <Upload size={13} />
-            {uploadPhase === "saving" ? "Saving…" : uploadPhase === "uploading" ? "Uploading…" : "Upload"}
+            {uploadPhase === "saving" ? t("saving") : uploadPhase === "uploading" ? t("uploading") : t("upload")}
           </button>
         </div>
       </div>
@@ -286,7 +291,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
       {/* Upload progress */}
       {isUploading && (
         <div className="mb-5">
-          <p className="text-xs text-gray-500 mb-1.5">{uploadPhase === "saving" ? "Saving to storage…" : "Uploading…"}</p>
+          <p className="text-xs text-gray-500 mb-1.5">{uploadPhase === "saving" ? t("savingToStorage") : t("uploading")}</p>
           <div className="relative h-px bg-gray-800 overflow-hidden rounded-full">
             <div className="animate-slide-bar" />
           </div>
@@ -314,7 +319,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
         <div className="py-20 text-center border border-dashed border-gray-800 rounded-xl">
           <CloudUpload size={36} className="mx-auto text-gray-700 mb-3" />
           <p className="text-sm text-gray-600">
-            {debouncedSearch ? `Aucun fichier ne correspond à "${debouncedSearch}".` : "Glissez des fichiers ici ou cliquez sur Upload."}
+            {debouncedSearch ? t("emptySearch", { query: debouncedSearch }) : t("emptyDrop")}
           </p>
         </div>
       ) : viewMode === "grid" ? (
@@ -347,8 +352,8 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
       {/* Delete confirm */}
       {confirmDeleteId && (
         <ConfirmModal
-          title="Supprimer le fichier ?"
-          description="Ce fichier sera définitivement supprimé du stockage."
+          title={t("deleteTitle")}
+          description={t("deleteBody")}
           onConfirm={() => { remove.mutate(confirmDeleteId); setConfirmDeleteId(null); }}
           onCancel={() => setConfirmDeleteId(null)}
         />
@@ -374,30 +379,31 @@ type ActionProps = {
 };
 
 function ActionButtons({ f, actions, size = 12, className = "" }: { f: StoredFile; actions: ActionProps; size?: number; className?: string }) {
+  const t = useTranslations("files");
   return (
     <div className={`flex items-center gap-0.5 ${className}`}>
       {f.url && (
         <button onClick={(e) => { e.stopPropagation(); actions.copyURL(f); }}
-          className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title="Copier l'URL">
+          className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title={t("copyUrl")}>
           {actions.copiedId === f.id ? <Check size={size} className="text-green-400" /> : <Copy size={size} />}
         </button>
       )}
       {isPreviewable(f.mime_type) && (
         <button onClick={(e) => { e.stopPropagation(); actions.setPreviewFile(f); }}
-          className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title="Aperçu">
+          className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title={t("preview")}>
           <Eye size={size} />
         </button>
       )}
       <button onClick={(e) => { e.stopPropagation(); actions.download.mutate(f.id); }}
-        className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title="Télécharger">
+        className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title={t("download")}>
         <Download size={size} />
       </button>
       <button onClick={(e) => { e.stopPropagation(); actions.startRename(f); }}
-        className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title="Renommer">
+        className="p-1.5 rounded text-gray-400 hover:text-white hover:bg-white/10 transition" title={t("rename")}>
         <Pencil size={size} />
       </button>
       <button onClick={(e) => { e.stopPropagation(); actions.setConfirmDeleteId(f.id); }}
-        className="p-1.5 rounded text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition" title="Supprimer">
+        className="p-1.5 rounded text-gray-400 hover:text-red-400 hover:bg-red-400/10 transition" title={t("delete")}>
         <Trash2 size={size} />
       </button>
     </div>
@@ -519,14 +525,16 @@ function ListView({ files, actions, renamingId, renameValue, setRenameValue, sub
   submitRename: (id: string) => void;
   cancelRename: () => void;
 }) {
+  const t = useTranslations("files");
+  const locale = useLocale();
   return (
     <div className="divide-y divide-gray-800/60 border border-gray-800/60 rounded-lg overflow-hidden">
       <div className="grid grid-cols-[auto_1fr_auto_auto_auto_auto] gap-4 px-4 py-2 text-xs text-gray-600 border-b border-gray-800/60">
         <span />
-        <span>Nom</span>
-        <span>Type</span>
-        <span>Taille</span>
-        <span>Ajouté</span>
+        <span>{t("name")}</span>
+        <span>{t("type")}</span>
+        <span>{t("size")}</span>
+        <span>{t("added")}</span>
         <span />
       </div>
       {files.map((f) => {
@@ -567,7 +575,7 @@ function ListView({ files, actions, renamingId, renameValue, setRenameValue, sub
 
             <span className={`text-xs font-mono font-semibold ${info.iconColor}`}>{info.label}</span>
             <span className="text-xs text-gray-500">{formatBytes(f.size_bytes)}</span>
-            <span className="text-xs text-gray-600">{new Date(f.created_at).toLocaleDateString("fr-FR")}</span>
+            <span className="text-xs text-gray-600">{new Date(f.created_at).toLocaleDateString(locale)}</span>
 
             {/* Actions */}
             <div className="opacity-0 group-hover:opacity-100 transition">
@@ -583,6 +591,7 @@ function ListView({ files, actions, renamingId, renameValue, setRenameValue, sub
 // ─── Preview modal ────────────────────────────────────────────────────────────
 
 function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void }) {
+  const t = useTranslations("files");
   const { data, isLoading } = useQuery({
     queryKey: ["download-url", file.id],
     queryFn: () => api.get<{ url: string }>(`/api/v1/files/${file.id}/download`),
@@ -624,7 +633,7 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
                 className="text-xs text-gray-500 hover:text-white transition flex items-center gap-1"
                 onClick={(e) => e.stopPropagation()}
               >
-                <Download size={12} /> Ouvrir dans un onglet
+                <Download size={12} /> {t("openTab")}
               </a>
             )}
             <button onClick={onClose} className="p-1 rounded hover:bg-gray-800 text-gray-500 hover:text-white transition">
@@ -652,7 +661,7 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
                 style={{ outline: "none" }}
               >
                 <source src={url} type={file.mime_type} />
-                Votre navigateur ne supporte pas la lecture vidéo.
+                {t("noVideo")}
               </video>
             </div>
           ) : isPdf ? (
@@ -667,7 +676,7 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
           ) : (
             <div className="flex flex-col items-center justify-center h-48 gap-3 text-gray-500">
               <File size={32} />
-              <p className="text-sm">Prévisualisation non disponible pour ce type de fichier.</p>
+              <p className="text-sm">{t("noPreview")}</p>
             </div>
           )}
         </div>
@@ -681,6 +690,7 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
 function TextPreview({ file, mime }: { file: StoredFile; mime: string }) {
+  const t = useTranslations("files");
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState(false);
 
@@ -710,7 +720,7 @@ function TextPreview({ file, mime }: { file: StoredFile; mime: string }) {
 
   if (error) return (
     <div className="flex items-center justify-center h-48 text-sm text-red-400">
-      Impossible de charger le contenu.
+      {t("loadFailed")}
     </div>
   );
   if (!content) return (

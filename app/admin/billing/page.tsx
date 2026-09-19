@@ -5,6 +5,7 @@ import { api } from "@/lib/api-client";
 import type { PaymentChannel, Plan } from "@/types";
 import { useState, useRef } from "react";
 import { Pencil, Trash2, Check, X, Plus, Upload, ToggleLeft, ToggleRight, AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 // ─── utils ────────────────────────────────────────────────────────────────────
 
@@ -57,6 +58,8 @@ function EditableField({
 // ─── Plans tab ────────────────────────────────────────────────────────────────
 
 function PlansTab() {
+  const t = useTranslations("admin");
+  const tc = useTranslations("common");
   const qc = useQueryClient();
   const { data: plans = [], isLoading } = useQuery<Plan[]>({
     queryKey: ["admin-billing-plans"],
@@ -74,20 +77,20 @@ function PlansTab() {
     qc.invalidateQueries({ queryKey: ["billing-plans"] });
   }
 
-  if (isLoading) return <div className="py-10 text-center text-sm text-gray-600">Chargement…</div>;
+  if (isLoading) return <div className="py-10 text-center text-sm text-gray-600">{tc("loading")}</div>;
 
   return (
     <div className="overflow-x-auto rounded-xl border border-white/[0.07]">
       <table className="w-full text-sm">
         <thead>
           <tr className="border-b border-white/[0.06] text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-            <th className="text-left px-4 py-3">Plan</th>
-            <th className="text-left px-4 py-3">Prix / mois</th>
-            <th className="text-left px-4 py-3">Stockage</th>
-            <th className="text-left px-4 py-3">Fichier max</th>
-            <th className="text-left px-4 py-3">Projets max</th>
-            <th className="text-left px-4 py-3">Add-ons</th>
-            <th className="text-left px-4 py-3">Actif</th>
+            <th className="text-left px-4 py-3">{t("plan")}</th>
+            <th className="text-left px-4 py-3">{t("priceMonth")}</th>
+            <th className="text-left px-4 py-3">{t("storage")}</th>
+            <th className="text-left px-4 py-3">{t("maxFile")}</th>
+            <th className="text-left px-4 py-3">{t("maxProjects")}</th>
+            <th className="text-left px-4 py-3">{t("addons")}</th>
+            <th className="text-left px-4 py-3">{t("active")}</th>
           </tr>
         </thead>
         <tbody className="divide-y divide-white/[0.04]">
@@ -131,7 +134,7 @@ function PlansTab() {
                   className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors ${p.addons_enabled ? "text-emerald-400" : "text-gray-600"}`}
                 >
                   {p.addons_enabled ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
-                  {p.addons_enabled ? "Oui" : "Non"}
+                  {p.addons_enabled ? tc("yes") : tc("no")}
                 </button>
               </td>
               <td className="px-4 py-3">
@@ -140,7 +143,7 @@ function PlansTab() {
                   className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors ${p.is_active ? "text-emerald-400" : "text-gray-600"}`}
                 >
                   {p.is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
-                  {p.is_active ? "Actif" : "Caché"}
+                  {p.is_active ? t("active") : t("hidden")}
                 </button>
               </td>
             </tr>
@@ -154,6 +157,8 @@ function PlansTab() {
 // ─── Channels tab ─────────────────────────────────────────────────────────────
 
 function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => void }) {
+  const t = useTranslations("admin");
+  const tc = useTranslations("common");
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState(ch.name);
   const [logoUrl, setLogoUrl] = useState(ch.logo_url);
@@ -193,7 +198,7 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
   }
 
   async function remove() {
-    if (!confirm(`Supprimer ${ch.name} ?`)) return;
+    if (!confirm(t("deleteChannel", { name: ch.name }))) return;
     await api.delete(`/api/v1/admin/billing/channels/${ch.id}`);
     onRefresh();
   }
@@ -238,7 +243,7 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
         <td className="px-4 py-3">
           <button onClick={toggle} className={`flex items-center gap-1.5 text-[12px] font-medium transition-colors ${ch.is_active ? "text-emerald-400" : "text-orange-400"}`}>
             {ch.is_active ? <ToggleRight size={16} /> : <ToggleLeft size={16} />}
-            {ch.is_active ? "Actif" : "Indisponible"}
+            {ch.is_active ? t("active") : t("unavailable")}
           </button>
         </td>
         <td className="px-4 py-3">
@@ -247,7 +252,7 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
               onClick={() => setEditing(v => !v)}
               className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg border text-xs font-medium transition-all ${editing ? "border-white/15 text-gray-200 bg-white/[0.06]" : "border-white/[0.06] text-gray-500 hover:text-gray-300"}`}
             >
-              <Pencil size={11} /> {editing ? "En cours…" : "Modifier"}
+              <Pencil size={11} /> {editing ? t("editing") : t("edit")}
             </button>
             {!editing && (
               <button onClick={remove} className="p-1.5 rounded-lg border border-red-500/20 text-red-500/60 hover:text-red-400 hover:border-red-500/40 transition-all"><Trash2 size={12} /></button>
@@ -262,7 +267,7 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
           <td colSpan={5} className="px-4 pb-4 pt-2">
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
+                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("name")}</label>
                 <input
                   value={name}
                   onChange={e => setName(e.target.value)}
@@ -270,16 +275,16 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Note maintenance</label>
+                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("maintenanceNote")}</label>
                 <input
                   value={maintenanceNote}
                   onChange={e => setMaintenanceNote(e.target.value)}
-                  placeholder="Ex: En maintenance jusqu'à 18h"
+                  placeholder={t("maintenancePlaceholder")}
                   className="w-full px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/10 text-sm text-gray-200 outline-none focus:border-white/20"
                 />
               </div>
               <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">URL du logo</label>
+                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("logoUrl")}</label>
                 <div className="flex gap-2">
                   <input
                     value={logoUrl}
@@ -291,13 +296,13 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
                     onClick={() => fileRef.current?.click()}
                     className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/10 text-xs text-gray-400 hover:text-gray-200 hover:border-white/20 transition-all shrink-0"
                   >
-                    <Upload size={11} /> {uploading ? "Upload…" : "Upload"}
+                    <Upload size={11} /> {uploading ? t("upload") : "Upload"}
                   </button>
                   <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && uploadLogo(e.target.files[0])} />
                 </div>
               </div>
               <div>
-                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Ordre d'affichage</label>
+                <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("displayOrder")}</label>
                 <input
                   type="number"
                   value={displayOrder}
@@ -312,13 +317,13 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
                 disabled={saving}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 text-sm font-medium transition-all disabled:opacity-40"
               >
-                <Check size={13} /> {saving ? "Enregistrement…" : "Enregistrer"}
+                <Check size={13} /> {saving ? t("saving") : tc("save")}
               </button>
               <button
                 onClick={cancel}
                 className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-white/[0.08] text-gray-400 hover:text-gray-200 text-sm font-medium transition-all"
               >
-                <X size={13} /> Annuler
+                <X size={13} /> {tc("cancel")}
               </button>
             </div>
           </td>
@@ -329,6 +334,8 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
 }
 
 function ChannelsTab() {
+  const t = useTranslations("admin");
+  const tc = useTranslations("common");
   const qc = useQueryClient();
   const { data: channels = [], isLoading } = useQuery<PaymentChannel[]>({
     queryKey: ["admin-billing-channels"],
@@ -378,7 +385,7 @@ function ChannelsTab() {
     }
   }
 
-  if (isLoading) return <div className="py-10 text-center text-sm text-gray-600">Chargement…</div>;
+  if (isLoading) return <div className="py-10 text-center text-sm text-gray-600">{tc("loading")}</div>;
 
   return (
     <div>
@@ -386,11 +393,11 @@ function ChannelsTab() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-white/[0.06] text-[11px] font-medium text-gray-500 uppercase tracking-wider">
-              <th className="text-left px-4 py-3">Canal</th>
-              <th className="text-left px-4 py-3">Slug</th>
-              <th className="text-left px-4 py-3">Note maintenance</th>
-              <th className="text-left px-4 py-3">Statut</th>
-              <th className="text-left px-4 py-3">Actions</th>
+              <th className="text-left px-4 py-3">{t("channel")}</th>
+              <th className="text-left px-4 py-3">{t("slug")}</th>
+              <th className="text-left px-4 py-3">{t("maintenanceNote")}</th>
+              <th className="text-left px-4 py-3">{t("status")}</th>
+              <th className="text-left px-4 py-3">{t("actionsCol")}</th>
             </tr>
           </thead>
           <tbody>
@@ -404,28 +411,28 @@ function ChannelsTab() {
       {/* ── formulaire d'ajout ── */}
       {adding ? (
         <div className="rounded-xl border border-white/[0.1] bg-white/[0.02] p-4">
-          <p className="text-xs font-medium text-gray-400 mb-3">Nouveau canal de paiement</p>
+          <p className="text-xs font-medium text-gray-400 mb-3">{t("newChannel")}</p>
           <div className="grid grid-cols-2 gap-3 mb-3">
             <div>
-              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Nom</label>
+              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("name")}</label>
               <input
                 value={newName}
                 onChange={e => setNewName(e.target.value)}
-                placeholder="Ex: MTN MoMo Sénégal"
+                placeholder={t("channelNamePlaceholder")}
                 className="w-full px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/10 text-sm text-gray-200 outline-none focus:border-white/20"
               />
             </div>
             <div>
-              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Slug</label>
+              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("slug")}</label>
               <input
                 value={newSlug}
                 onChange={e => setNewSlug(e.target.value)}
-                placeholder="ex: mtnSN"
+                placeholder={t("slugPlaceholder")}
                 className="w-full px-3 py-1.5 rounded-lg bg-white/[0.06] border border-white/10 text-sm text-gray-200 outline-none focus:border-white/20 font-mono"
               />
             </div>
             <div className="col-span-2">
-              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">Logo</label>
+              <label className="block text-[10px] font-medium text-gray-500 uppercase tracking-wider mb-1">{t("logo")}</label>
               <button
                 type="button"
                 onClick={() => newLogoRef.current?.click()}
@@ -435,7 +442,7 @@ function ChannelsTab() {
                   ? <img src={newLogoPreview} className="w-5 h-5 rounded object-contain" />
                   : <Upload size={12} />
                 }
-                {newLogoPreview ? `${newLogoFile?.name} — Changer` : "Choisir un fichier logo"}
+                {newLogoPreview ? t("changeFile", { name: newLogoFile?.name ?? "" }) : t("chooseLogo")}
               </button>
               <input ref={newLogoRef} type="file" accept="image/*" className="hidden" onChange={e => e.target.files?.[0] && pickFile(e.target.files[0])} />
             </div>
@@ -446,13 +453,13 @@ function ChannelsTab() {
               disabled={saving || !newName || !newSlug}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-emerald-500/15 border border-emerald-500/25 text-emerald-400 hover:bg-emerald-500/25 text-sm font-medium transition-all disabled:opacity-40"
             >
-              <Check size={13} /> {saving ? "Création…" : "Créer le canal"}
+              <Check size={13} /> {saving ? t("creatingChannel") : t("createChannel")}
             </button>
             <button
               onClick={resetForm}
               className="flex items-center gap-1.5 px-4 py-2 rounded-lg border border-white/[0.08] text-gray-400 hover:text-gray-200 text-sm font-medium transition-all"
             >
-              <X size={13} /> Annuler
+              <X size={13} /> {tc("cancel")}
             </button>
           </div>
         </div>
@@ -461,7 +468,7 @@ function ChannelsTab() {
           onClick={() => setAdding(true)}
           className="flex items-center gap-2 px-4 py-2 rounded-xl border border-dashed border-white/10 text-sm text-gray-500 hover:text-gray-300 hover:border-white/20 transition-all"
         >
-          <Plus size={14} /> Ajouter un canal de paiement
+          <Plus size={14} /> {t("addChannel")}
         </button>
       )}
     </div>
@@ -471,25 +478,26 @@ function ChannelsTab() {
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function AdminBillingPage() {
+  const t = useTranslations("admin");
   const [tab, setTab] = useState<"plans" | "channels">("plans");
 
   return (
     <div className="px-8 py-8 max-w-5xl">
       <div className="mb-8">
-        <h1 className="text-base font-semibold">Billing</h1>
-        <p className="text-xs text-gray-500 mt-1">Gestion des plans et canaux de paiement</p>
+        <h1 className="text-base font-semibold">{t("billingTitle")}</h1>
+        <p className="text-xs text-gray-500 mt-1">{t("billingSubtitle")}</p>
       </div>
 
       <div className="flex gap-1 mb-6 border-b border-white/[0.06]">
-        {(["plans", "channels"] as const).map(t => (
+        {(["plans", "channels"] as const).map((tabKey) => (
           <button
-            key={t}
-            onClick={() => setTab(t)}
+            key={tabKey}
+            onClick={() => setTab(tabKey)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-all -mb-px ${
-              tab === t ? "border-[#007BFF] text-white" : "border-transparent text-gray-500 hover:text-gray-300"
+              tab === tabKey ? "border-[#007BFF] text-white" : "border-transparent text-gray-500 hover:text-gray-300"
             }`}
           >
-            {t === "plans" ? "Plans" : "Canaux de paiement"}
+            {tabKey === "plans" ? t("tabPlans") : t("tabChannels")}
           </button>
         ))}
       </div>

@@ -5,8 +5,12 @@ import { useRouter } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { verifyEmail, resendVerification } from "@/lib/auth";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 export default function VerifyEmailPage() {
+  const t = useTranslations("auth");
+  const errMsg = useErrorMessage();
   const router = useRouter();
   const qc = useQueryClient();
   const [email, setEmail] = useState("");
@@ -33,7 +37,7 @@ export default function VerifyEmailPage() {
       sessionStorage.removeItem("verify_email");
       router.push("/dashboard");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Invalid or expired code");
+      setError(errMsg(err) || t("invalidCode"));
       setDigits(["", "", "", "", "", ""]);
       setTimeout(() => inputRefs.current[0]?.focus(), 50);
     } finally {
@@ -102,10 +106,10 @@ export default function VerifyEmailPage() {
 
   return (
     <div className="w-full max-w-sm">
-      <h1 className="text-2xl font-bold text-center mb-2">Check your inbox</h1>
-      <p className="text-gray-400 text-sm text-center mb-1">We sent a 6-digit code to</p>
+      <h1 className="text-2xl font-bold text-center mb-2">{t("checkInbox")}</h1>
+      <p className="text-gray-400 text-sm text-center mb-1">{t("weSentCode")}</p>
       <p className="text-sm text-center font-mono text-white mb-8">
-        {email || "your email address"}
+        {email || t("yourEmailAddress")}
       </p>
 
       <div className="flex gap-2 justify-center mb-6">
@@ -127,7 +131,7 @@ export default function VerifyEmailPage() {
       </div>
 
       {isVerifying && (
-        <p className="text-xs text-gray-500 text-center mb-4">Checking…</p>
+        <p className="text-xs text-gray-500 text-center mb-4">{t("checking")}</p>
       )}
 
       {error && (
@@ -138,24 +142,24 @@ export default function VerifyEmailPage() {
 
       {resent && (
         <p className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-lg px-3 py-2 mb-4">
-          New code sent — check your inbox.
+          {t("newCodeSent")}
         </p>
       )}
 
       <div className="text-center space-y-2">
         <p className="text-sm text-gray-500">
-          {"Didn't receive it? "}
+          {t("didntReceive")}{" "}
           <button
             onClick={handleResend}
             disabled={resending}
             className="text-[#007BFF] hover:underline disabled:opacity-50"
           >
-            {resending ? "Sending…" : "Resend code"}
+            {resending ? t("sending") : t("resendCode")}
           </button>
         </p>
         <p className="text-sm text-gray-600">
           <Link href="/login" className="hover:text-gray-400 transition">
-            Back to login
+            {t("backToLogin")}
           </Link>
         </p>
       </div>

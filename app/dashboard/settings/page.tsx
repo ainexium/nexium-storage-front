@@ -6,8 +6,16 @@ import type { User } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Check } from "lucide-react";
+import { useLocale, useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
+import { useErrorMessage } from "@/hooks/use-error-message";
 
 export default function SettingsPage() {
+  const t = useTranslations("settings");
+  const tc = useTranslations("common");
+  const tl = useTranslations("language");
+  const locale = useLocale();
+  const errMsg = useErrorMessage();
   const { data: user } = useMe();
   const qc = useQueryClient();
   const [editName, setEditName] = useState(false);
@@ -24,12 +32,12 @@ export default function SettingsPage() {
     mutationFn: (body: object) => api.patch<User>("/api/v1/auth/me", body),
     onSuccess: (u) => {
       qc.setQueryData(["me"], u);
-      setSaved("Saved");
+      setSaved(t("saved"));
       setEditName(false); setEditEmail(false); setEditPassword(false);
       setCurrentPw(""); setNewPw("");
       setTimeout(() => setSaved(null), 2000);
     },
-    onError: (e) => setError(e instanceof Error ? e.message : "Update failed"),
+    onError: (e) => setError(errMsg(e)),
   });
 
   function startEdit(field: "name" | "email" | "password") {
@@ -42,8 +50,8 @@ export default function SettingsPage() {
   return (
     <div className="px-8 py-8 max-w-2xl">
       <div className="mb-8">
-        <h1 className="text-base font-semibold">Settings</h1>
-        <p className="text-xs text-gray-500 mt-1">Manage your account</p>
+        <h1 className="text-base font-semibold">{t("title")}</h1>
+        <p className="text-xs text-gray-500 mt-1">{t("subtitle")}</p>
       </div>
 
       {saved && (
@@ -58,84 +66,88 @@ export default function SettingsPage() {
       )}
 
       <div className="mb-8">
-        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">Account</h2>
+        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("account")}</h2>
         <div className="rounded-xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.07]">
 
-          {/* Name */}
           <div className="px-5 py-3.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500 w-28">Name</span>
+              <span className="text-xs text-gray-500 w-28">{t("name")}</span>
               {editName ? (
                 <div className="flex items-center gap-2 flex-1 justify-end">
                   <input autoFocus value={name} onChange={(e) => setName(e.target.value)}
                     className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
                   <button onClick={() => update.mutate({ name })} disabled={update.isPending}
-                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">Save</button>
-                  <button onClick={() => setEditName(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Cancel</button>
+                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">{tc("save")}</button>
+                  <button onClick={() => setEditName(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-gray-200">{user?.name ?? "—"}</span>
-                  <button onClick={() => startEdit("name")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">Edit</button>
+                  <button onClick={() => startEdit("name")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Email */}
           <div className="px-5 py-3.5">
             <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500 w-28">Email</span>
+              <span className="text-xs text-gray-500 w-28">{t("email")}</span>
               {editEmail ? (
                 <div className="flex items-center gap-2 flex-1 justify-end">
                   <input autoFocus type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                     className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
                   <button onClick={() => update.mutate({ email })} disabled={update.isPending}
-                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">Save</button>
-                  <button onClick={() => setEditEmail(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">Cancel</button>
+                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">{tc("save")}</button>
+                  <button onClick={() => setEditEmail(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
                   <span className="text-sm text-gray-200">{user?.email ?? "—"}</span>
-                  <button onClick={() => startEdit("email")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">Edit</button>
+                  <button onClick={() => startEdit("email")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Member since */}
           <div className="flex items-center justify-between px-5 py-3.5">
-            <span className="text-xs text-gray-500 w-28">Member since</span>
-            <span className="text-sm text-gray-200">{user ? new Date(user.created_at).toLocaleDateString() : "—"}</span>
+            <span className="text-xs text-gray-500 w-28">{t("memberSince")}</span>
+            <span className="text-sm text-gray-200">{user ? new Date(user.created_at).toLocaleDateString(locale) : "—"}</span>
           </div>
         </div>
       </div>
 
-      {/* Password */}
       <div className="mb-8">
-        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">Password</h2>
+        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("password")}</h2>
         <div className="rounded-xl border border-white/[0.07] overflow-hidden">
           <div className="px-5 py-3.5">
             {editPassword ? (
               <div className="space-y-3">
-                <input type="password" placeholder="Current password" value={currentPw} onChange={(e) => setCurrentPw(e.target.value)}
+                <input type="password" placeholder={t("currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)}
                   className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
-                <input type="password" placeholder="New password (min. 8 chars)" value={newPw} onChange={(e) => setNewPw(e.target.value)}
+                <input type="password" placeholder={t("newPasswordMin")} value={newPw} onChange={(e) => setNewPw(e.target.value)}
                   className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
                 <div className="flex gap-2">
                   <button onClick={() => update.mutate({ current_password: currentPw, new_password: newPw })} disabled={update.isPending || !currentPw || !newPw}
-                    className="px-3 py-1.5 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-sm font-medium transition-colors">Update password</button>
-                  <button onClick={() => { setEditPassword(false); setCurrentPw(""); setNewPw(""); }} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">Cancel</button>
+                    className="px-3 py-1.5 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-sm font-medium transition-colors">{t("updatePassword")}</button>
+                  <button onClick={() => { setEditPassword(false); setCurrentPw(""); setNewPw(""); }} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>
               </div>
             ) : (
               <div className="flex items-center justify-between">
                 <span className="text-sm text-gray-400">••••••••</span>
-                <button onClick={() => startEdit("password")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">Change</button>
+                <button onClick={() => startEdit("password")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{t("change")}</button>
               </div>
             )}
           </div>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("language")}</h2>
+        <p className="text-xs text-gray-600 mb-3">
+          {tl("description")}
+        </p>
+        <LanguageSwitcher variant="settings" />
       </div>
     </div>
   );

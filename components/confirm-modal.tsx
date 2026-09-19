@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { AlertTriangle } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 interface Props {
   title: string;
@@ -11,7 +12,10 @@ interface Props {
   onCancel: () => void;
 }
 
-export function ConfirmModal({ title, description, confirmLabel = "Delete", onConfirm, onCancel }: Props) {
+export function ConfirmModal({ title, description, confirmLabel, onConfirm, onCancel }: Props) {
+  const t = useTranslations("common");
+  const label = confirmLabel ?? t("delete");
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onCancel(); };
     window.addEventListener("keydown", onKey);
@@ -36,13 +40,13 @@ export function ConfirmModal({ title, description, confirmLabel = "Delete", onCo
             onClick={onCancel}
             className="px-3 py-1.5 rounded-md border border-white/[0.08] text-sm text-gray-400 hover:text-white hover:border-white/20 transition-colors"
           >
-            Cancel
+            {t("cancel")}
           </button>
           <button
             onClick={onConfirm}
             className="px-3 py-1.5 rounded-md bg-red-500 hover:bg-red-400 text-sm font-medium text-white transition-colors"
           >
-            {confirmLabel}
+            {label}
           </button>
         </div>
       </div>

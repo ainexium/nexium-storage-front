@@ -5,15 +5,18 @@ import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Users, Activity, LogOut, ArrowLeft, ShieldCheck, Crown, CreditCard } from "lucide-react";
 import { useMe, useLogout } from "@/hooks/use-auth";
 import { useEffect } from "react";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 const nav = [
-  { href: "/admin",         label: "Overview", icon: LayoutDashboard, superAdminOnly: false },
-  { href: "/admin/users",   label: "Users",    icon: Users,           superAdminOnly: false },
-  { href: "/admin/logs",    label: "Logs",     icon: Activity,        superAdminOnly: false },
-  { href: "/admin/billing", label: "Billing",  icon: CreditCard,      superAdminOnly: true  },
-];
+  { href: "/admin",         key: "overview", superAdminOnly: false, icon: LayoutDashboard },
+  { href: "/admin/users",   key: "users",    superAdminOnly: false, icon: Users },
+  { href: "/admin/logs",    key: "logs",     superAdminOnly: false, icon: Activity },
+  { href: "/admin/billing", key: "billing",  superAdminOnly: true,  icon: CreditCard },
+] as const;
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const { data: user, isError, isSuccess, isLoading } = useMe();
   const { mutate: logoutFn } = useLogout();
@@ -37,7 +40,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
 
         <nav className="flex-1 space-y-0.5">
-          {nav.map(({ href, label, icon: Icon, superAdminOnly }) => {
+          {nav.map(({ href, key, icon: Icon, superAdminOnly }) => {
             if (superAdminOnly && !user?.is_super_admin) return null;
             const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
             return (
@@ -52,20 +55,21 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 }`}
               >
                 <Icon size={15} className={active ? "text-white" : "text-gray-500"} />
-                {label}
+                {t(key)}
               </Link>
             );
           })}
         </nav>
 
         <div className="mt-4 pt-4 border-t border-white/[0.06] space-y-1">
+          <LanguageSwitcher variant="sidebar" />
           <Link
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             href={"/dashboard" as any}
             className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-gray-300 hover:bg-white/[0.04] transition-all"
           >
             <ArrowLeft size={15} />
-            Back to app
+            {t("backToApp")}
           </Link>
           <div className="px-2.5 py-2">
             <div className="flex items-center gap-1.5 mb-0.5">
@@ -78,7 +82,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </div>
             <p className="text-xs text-gray-600 truncate">{user?.email}</p>
             <p className="text-[10px] text-gray-700 mt-0.5">
-              {user?.is_super_admin ? "Super admin" : "Admin"}
+              {user?.is_super_admin ? t("superAdmin") : t("admin")}
             </p>
           </div>
           <button
@@ -86,7 +90,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
           >
             <LogOut size={15} />
-            Sign out
+            {t("signOut")}
           </button>
         </div>
       </aside>

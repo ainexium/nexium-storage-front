@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { useState, useEffect, useRef } from "react";
@@ -13,6 +13,8 @@ import python from "highlight.js/lib/languages/python";
 import go from "highlight.js/lib/languages/go";
 import php from "highlight.js/lib/languages/php";
 import "highlight.js/styles/github-dark.css";
+import { useTranslations } from "next-intl";
+import { LanguageSwitcher } from "@/components/language-switcher";
 
 hljs.registerLanguage("bash", bash);
 hljs.registerLanguage("javascript", javascript);
@@ -577,57 +579,70 @@ def webhook():
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
 export default function DocsPage() {
+  const t = useTranslations("docs");
   const [loggedIn, setLoggedIn] = useState(false);
 
   useEffect(() => {
     setLoggedIn(!!localStorage.getItem("access_token"));
   }, []);
 
+  const code = (chunks: React.ReactNode) => (
+    <code className="text-[#007BFF]">{chunks}</code>
+  );
+  const grayCode = (chunks: React.ReactNode) => (
+    <code className="text-gray-300">{chunks}</code>
+  );
+  const ok = (chunks: React.ReactNode) => (
+    <code className="text-green-400">{chunks}</code>
+  );
+
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
       <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 bg-[#0a0a0f]/95 backdrop-blur z-10">
         <Link href="/" className="text-xl font-bold tracking-tight">
           <span className="text-[#007BFF]">NEXIUM</span>{" "}
-          <span className="text-gray-300 text-base font-medium">Storage · Docs</span>
+          <span className="text-gray-300 text-base font-medium">{t("brand")}</span>
         </Link>
-        {loggedIn ? (
-          <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition">
-            Dashboard →
-          </Link>
-        ) : (
-          <div className="flex items-center gap-4">
-            <Link href="/login" className="text-sm text-gray-400 hover:text-white transition">
-              Log in
+        <div className="flex items-center gap-4">
+          <LanguageSwitcher />
+          {loggedIn ? (
+            <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition">
+              {t("dashboard")}
             </Link>
-            <Link
-              href="/register"
-              className="px-3.5 py-1.5 text-sm bg-[#007BFF] hover:bg-blue-500 rounded-md font-medium transition"
-            >
-              Get started
-            </Link>
-          </div>
-        )}
+          ) : (
+            <>
+              <Link href="/login" className="text-sm text-gray-400 hover:text-white transition">
+                {t("logIn")}
+              </Link>
+              <Link
+                href="/register"
+                className="px-3.5 py-1.5 text-sm bg-[#007BFF] hover:bg-blue-500 rounded-md font-medium transition"
+              >
+                {t("getStarted")}
+              </Link>
+            </>
+          )}
+        </div>
       </nav>
 
       <div className="max-w-5xl mx-auto px-6 py-14 flex gap-12">
-        {/* Sidebar */}
         <aside className="hidden lg:block w-48 flex-shrink-0">
           <div className="sticky top-24 space-y-1 text-sm">
             {[
-              { href: "#getting-started", label: "Getting started" },
-              { href: "#sdks",            label: "SDKs" },
-              { href: "#authentication",  label: "Authentication" },
-              { href: "#upload",          label: "Upload a file" },
-              { href: "#list",            label: "List & search" },
-              { href: "#download",        label: "Download a file" },
-              { href: "#rename",          label: "Rename a file" },
-              { href: "#direct-upload",   label: "Direct upload" },
-              { href: "#delete",          label: "Delete a file" },
-              { href: "#errors",          label: "Errors" },
+              { href: "#getting-started", key: "gettingStarted" as const },
+              { href: "#sdks",            key: "sdks" as const },
+              { href: "#authentication",  key: "authentication" as const },
+              { href: "#upload",          key: "upload" as const },
+              { href: "#list",            key: "list" as const },
+              { href: "#download",        key: "download" as const },
+              { href: "#rename",          key: "rename" as const },
+              { href: "#direct-upload",   key: "directUpload" as const },
+              { href: "#delete",          key: "delete" as const },
+              { href: "#errors",          key: "errors" as const },
             ].map((l) => (
               <a key={l.href} href={l.href}
                 className="block px-3 py-1.5 rounded-lg text-gray-500 hover:text-white hover:bg-gray-800 transition">
-                {l.label}
+                {t(`nav.${l.key}`)}
               </a>
             ))}
           </div>
@@ -636,21 +651,20 @@ export default function DocsPage() {
         <div className="flex-1 space-y-16 min-w-0">
           <div>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#007BFF]/30 bg-[#007BFF]/10 text-[#007BFF] text-xs font-medium mb-5">
-              V0 · Developer Preview
+              {t("badge")}
             </div>
-            <h1 className="text-4xl font-bold mb-4">Integration guide</h1>
+            <h1 className="text-4xl font-bold mb-4">{t("title")}</h1>
             <p className="text-gray-400 text-lg leading-relaxed">
-              NEXIUM Storage lets you upload, serve and manage files from any app via a simple REST API.
-              Integrate in minutes — no AWS knowledge required.
+              {t("intro")}
             </p>
           </div>
 
-          <Section id="getting-started" icon={BookOpen} title="Getting started">
+          <Section id="getting-started" icon={BookOpen} title={t("gettingStarted")}>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { n: "1", title: "Create an account",         body: "Sign up at nexium.ai — free, no credit card required." },
-                { n: "2", title: "Create a project & bucket", body: "A project groups your buckets. A bucket holds your files." },
-                { n: "3", title: "Generate an API key",        body: "Dashboard → API Keys → New key. Copy it immediately, shown only once." },
+                { n: "1", title: t("step1Title"), body: t("step1Body") },
+                { n: "2", title: t("step2Title"), body: t("step2Body") },
+                { n: "3", title: t("step3Title"), body: t("step3Body") },
               ].map((s) => (
                 <div key={s.n} className="rounded-xl border border-gray-800 bg-gray-900/40 p-5">
                   <div className="w-7 h-7 rounded-full bg-[#007BFF]/20 text-[#007BFF] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
@@ -661,51 +675,43 @@ export default function DocsPage() {
             </div>
           </Section>
 
-          <Section id="sdks" icon={Package} title="Official SDKs">
+          <Section id="sdks" icon={Package} title={t("sdks")}>
             <p className="text-gray-400">
-              The official SDKs wrap the REST API with typed methods and zero boilerplate.
-              The JavaScript SDK has no runtime dependencies — it uses native <code className="text-[#007BFF]">fetch</code> and{" "}
-              <code className="text-[#007BFF]">Web Crypto</code>. The Python SDK falls back to{" "}
-              <code className="text-[#007BFF]">urllib</code> when <code className="text-[#007BFF]">requests</code> is not installed
-              (file uploads require <code className="text-[#007BFF]">requests</code>).
+              {t.rich("sdksIntro", { fetch: code, crypto: code, urllib: code, requests: code })}
             </p>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Install</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("install")}</p>
               <LanguageTabs examples={sdkInstall} />
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Usage</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("usage")}</p>
               <LanguageTabs examples={sdkUsage} />
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Webhook verification</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("webhookVerification")}</p>
               <LanguageTabs examples={sdkWebhook} />
             </div>
             <div className="rounded-xl border border-[#007BFF]/20 bg-[#007BFF]/5 p-4 text-sm text-blue-300">
-              The sections below document the raw REST API — useful if you&apos;re using Go, PHP, or any other language.
+              {t("sdksNote")}
             </div>
           </Section>
 
-          <Section id="authentication" icon={Key} title="Authentication">
+          <Section id="authentication" icon={Key} title={t("authentication")}>
             <p className="text-gray-400">
-              Pass your API key in the <code className="text-[#007BFF]">Authorization</code> header on every request.
-              All external API endpoints are prefixed with <code className="text-[#007BFF]">/api/v1/ext/</code>.
-              Store your key in an environment variable — never expose it in client-side code.
+              {t.rich("authIntro", { auth: code, ext: code })}
             </p>
             <Block code={`Authorization: Bearer nx_live_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx`} />
             <div className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 p-4 text-sm text-yellow-300">
-              Your API key is scoped to a single project. Never commit it to git or include it in a frontend bundle.
+              {t("authWarn")}
             </div>
           </Section>
 
-          <Section id="upload" icon={Upload} title="Upload a file">
+          <Section id="upload" icon={Upload} title={t("upload")}>
             <p className="text-gray-400">
-              Send a <code className="text-[#007BFF]">multipart/form-data</code> POST with a{" "}
-              <code className="text-[#007BFF]">file</code> field.
-              Replace <code className="text-gray-300">&lt;bucket_id&gt;</code> with your bucket&apos;s ID from the dashboard.
+              {t.rich("uploadIntro", { mp: code, file: code, id: grayCode })}
             </p>
             <LanguageTabs examples={upload} />
-            <p className="text-sm text-gray-500 mt-1">Response <code className="text-green-400">201 Created</code>:</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">201 Created</code> })}</p>
             <Block lang="javascript" code={`{
   "id":         "87e60d98-6cde-4e8a-bc65-7ff0b448091b",
   "bucket_id":  "71438929-d96a-4424-a425-552ca5b7a464",
@@ -717,13 +723,12 @@ export default function DocsPage() {
 }`} />
           </Section>
 
-          <Section id="list" icon={List} title="List & search files">
+          <Section id="list" icon={List} title={t("list")}>
             <p className="text-gray-400">
-              Returns all files in a bucket, ordered by most recent first. Pass an optional{" "}
-              <code className="text-[#007BFF]">?search=</code> query parameter to filter by filename.
+              {t.rich("listIntro", { search: code })}
             </p>
             <LanguageTabs examples={list} />
-            <p className="text-sm text-gray-500 mt-1">Response <code className="text-green-400">200 OK</code>:</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">200 OK</code> })}</p>
             <Block lang="javascript" code={`[
   {
     "id":         "87e60d98-...",
@@ -737,37 +742,32 @@ export default function DocsPage() {
 ]`} />
           </Section>
 
-          <Section id="download" icon={Download} title="Download a file">
+          <Section id="download" icon={Download} title={t("download")}>
             <p className="text-gray-400">
-              Returns a permanent public URL. Use it directly in an{" "}
-              <code className="text-[#007BFF]">{`<img>`}</code> tag,{" "}
-              <code className="text-[#007BFF]">Image.network()</code> in Flutter, or any HTTP client — no expiration.
-              If public access is not configured, a presigned URL valid 1 hour is returned instead.
+              {t.rich("downloadIntro", { img: code, flutter: code })}
             </p>
             <LanguageTabs examples={download} />
-            <p className="text-sm text-gray-500 mt-1">Response <code className="text-green-400">200 OK</code>:</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">200 OK</code> })}</p>
             <Block lang="javascript" code={`{ "url": "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg" }`} />
           </Section>
 
-          <Section id="rename" icon={Pencil} title="Rename a file">
+          <Section id="rename" icon={Pencil} title={t("rename")}>
             <p className="text-gray-400">
-              Updates the display name of a file. The object key in R2 is unchanged — only the{" "}
-              <code className="text-[#007BFF]">filename</code> field is updated.
+              {t.rich("renameIntro", { filename: code })}
             </p>
             <LanguageTabs examples={renameFile} />
-            <p className="text-sm text-gray-500 mt-1">Response <code className="text-green-400">200 OK</code> — updated file object.</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("renameResponse", { ok })}</p>
           </Section>
 
-          <Section id="direct-upload" icon={Zap} title="Direct upload (mobile & browser)">
+          <Section id="direct-upload" icon={Zap} title={t("directUpload")}>
             <p className="text-gray-400">
-              For mobile apps (Flutter, React Native) or browser uploads, use the presign flow to upload
-              directly to R2 — the file never passes through your server.
+              {t("directIntro")}
             </p>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {[
-                { n: "1", title: "POST /files/presign", body: "Get a temporary upload URL and a file_id. Valid for 15 minutes." },
-                { n: "2", title: "PUT → R2 directly",   body: "Upload the file directly to the returned upload_url. No auth header needed." },
-                { n: "3", title: "POST /files/confirm", body: "Send the file_id, object_key and metadata to save the file record." },
+                { n: "1", title: t("presign1Title"), body: t("presign1Body") },
+                { n: "2", title: t("presign2Title"), body: t("presign2Body") },
+                { n: "3", title: t("presign3Title"), body: t("presign3Body") },
               ].map((s) => (
                 <div key={s.n} className="rounded-xl border border-gray-800 bg-gray-900/40 p-5">
                   <div className="w-7 h-7 rounded-full bg-[#007BFF]/20 text-[#007BFF] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
@@ -777,18 +777,18 @@ export default function DocsPage() {
               ))}
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Step 1 — POST /files/presign</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("step1Presign")}</p>
               <LanguageTabs examples={presignStep1} />
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Step 2 — PUT directly to R2</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("step2Put")}</p>
               <LanguageTabs examples={presignStep2} />
             </div>
             <div className="space-y-2">
-              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">Step 3 — POST /files/confirm</p>
+              <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("step3Confirm")}</p>
               <LanguageTabs examples={presignStep3} />
             </div>
-            <p className="text-sm text-gray-500 mt-1">Confirm response <code className="text-green-400">201 Created</code>:</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("confirmResponse", { code: () => <code className="text-green-400">201 Created</code> })}</p>
             <Block lang="javascript" code={`{
   "id":         "87e60d98-...",
   "filename":   "photo.jpg",
@@ -799,23 +799,23 @@ export default function DocsPage() {
 }`} />
           </Section>
 
-          <Section id="delete" icon={Trash2} title="Delete a file">
-            <p className="text-gray-400">Permanently removes the file from storage and R2. Cannot be undone.</p>
+          <Section id="delete" icon={Trash2} title={t("delete")}>
+            <p className="text-gray-400">{t("deleteIntro")}</p>
             <LanguageTabs examples={deleteFile} />
           </Section>
 
-          <Section id="errors" icon={BookOpen} title="Errors">
-            <p className="text-gray-400">All errors return JSON with a <code className="text-[#007BFF]">message</code> field.</p>
+          <Section id="errors" icon={BookOpen} title={t("errors")}>
+            <p className="text-gray-400">{t.rich("errorsIntro", { message: code })}</p>
             <Block lang="javascript" code={`{ "message": "unauthorized" }`} />
             <div className="rounded-xl border border-gray-800 overflow-hidden">
               {[
-                { code: "400", color: "text-orange-400", label: "Bad Request",       desc: "Invalid input — check your request body or parameters" },
-                { code: "401", color: "text-red-400",    label: "Unauthorized",      desc: "Missing or invalid API key" },
-                { code: "403", color: "text-red-400",    label: "Forbidden",         desc: "You don't have access to this resource" },
-                { code: "404", color: "text-yellow-400", label: "Not Found",         desc: "The resource doesn't exist" },
-                { code: "409", color: "text-yellow-400", label: "Conflict",          desc: "A bucket with this name already exists in this project" },
-                { code: "429", color: "text-orange-400", label: "Too Many Requests", desc: "Rate limit exceeded — wait before retrying (Retry-After header provided)" },
-                { code: "500", color: "text-red-400",    label: "Server Error",      desc: "Something went wrong on our end" },
+                { code: "400", color: "text-orange-400", label: "Bad Request",       desc: t("err400") },
+                { code: "401", color: "text-red-400",    label: "Unauthorized",      desc: t("err401") },
+                { code: "403", color: "text-red-400",    label: "Forbidden",         desc: t("err403") },
+                { code: "404", color: "text-yellow-400", label: "Not Found",         desc: t("err404") },
+                { code: "409", color: "text-yellow-400", label: "Conflict",          desc: t("err409") },
+                { code: "429", color: "text-orange-400", label: "Too Many Requests", desc: t("err429") },
+                { code: "500", color: "text-red-400",    label: "Server Error",      desc: t("err500") },
               ].map((e, i, arr) => (
                 <div key={e.code} className={`flex items-center gap-4 px-5 py-3.5 ${i < arr.length - 1 ? "border-b border-gray-800" : ""}`}>
                   <code className={`text-sm font-mono font-bold w-10 ${e.color}`}>{e.code}</code>

@@ -59,7 +59,7 @@ class APIClient {
         refreshQueue.forEach((cb) => newToken && cb(newToken));
         refreshQueue = [];
         if (newToken) return this.request<T>(path, init, false);
-        throw new Error("Session expirée");
+        throw new Error("Session expired");
       } else {
         // D'autres requêtes attendent le refresh en cours
         return new Promise((resolve, reject) => {
