@@ -8,8 +8,8 @@ import {
 } from "@/lib/locale";
 
 export default getRequestConfig(async () => {
-  const headerLocale = headers().get(LOCALE_HEADER);
-  const cookieLocale = cookies().get(LOCALE_COOKIE)?.value;
+  const headerLocale = (await headers()).get(LOCALE_HEADER);
+  const cookieLocale = (await cookies()).get(LOCALE_COOKIE)?.value;
   const locale = isAppLocale(headerLocale)
     ? headerLocale
     : isAppLocale(cookieLocale)

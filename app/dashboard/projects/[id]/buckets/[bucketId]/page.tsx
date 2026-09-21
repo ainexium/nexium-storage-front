@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { StoredFile, Bucket, PagedFiles } from "@/types";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, use } from "react";
 import {
   Upload, Trash2, Download, ArrowLeft, X, Copy, Check,
   Pencil, Eye, Search, CloudUpload, LayoutGrid, LayoutList,
@@ -44,6 +44,43 @@ function fileTypeInfo(mime: string): { bg: string; iconColor: string; Icon: Reac
   return { bg: "bg-gray-900", iconColor: "text-gray-500", Icon: File, label: mime.split("/")[1]?.toUpperCase() ?? "FILE" };
 }
 
+// ─── Video thumbnail ──────────────────────────────────────────────────────────
+
+function VideoThumbnail({ src, label, iconColor }: { src: string; label: string; iconColor: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const [ready, setReady] = useState(false);
+
+  return (
+    <div className="relative w-full h-full bg-slate-900">
+      <video
+        ref={videoRef}
+        src={src}
+        preload="metadata"
+        muted
+        playsInline
+        className={`w-full h-full object-cover transition-opacity duration-200 ${ready ? "opacity-100" : "opacity-0"}`}
+        onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 0.5; }}
+        onSeeked={() => setReady(true)}
+      />
+      {!ready && (
+        <div className="absolute inset-0 flex flex-col items-center justify-center">
+          <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+            <Play size={22} className={iconColor} fill="currentColor" />
+          </div>
+          {label && <span className="text-xs font-mono text-gray-500 mt-2">{label}</span>}
+        </div>
+      )}
+      {ready && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+          <div className="w-9 h-9 rounded-full bg-black/50 flex items-center justify-center">
+            <Play size={16} className="text-white" fill="white" />
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 // ─── Debounce ─────────────────────────────────────────────────────────────────
 
 function useDebounce<T>(value: T, delay: number): T {
@@ -64,7 +101,8 @@ function getPageRange(current: number, total: number): (number | "...")[] {
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
-export default function BucketPage({ params }: { params: { id: string; bucketId: string } }) {
+export default function BucketPage({ params }: { params: Promise<{ id: string; bucketId: string }> }) {
+  const { id, bucketId } = use(params);
   const t = useTranslations("files");
   const tc = useTranslations("common");
   const errMsg = useErrorMessage();
@@ -72,8 +110,10 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
   const fileInput = useRef<HTMLInputElement>(null);
   const dragCounter = useRef(0);
 
+  const uploadAbortRef = useRef<AbortController | null>(null);
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
   const [uploadPhase, setUploadPhase] = useState<"idle" | "uploading" | "saving">("idle");
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -92,34 +132,48 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
 
   useEffect(() => { setPage(1); }, [debouncedSearch]);
 
+  // Annule l'upload si l'utilisateur quitte la page, et avertit en cas de refresh
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (uploadAbortRef.current) {
+        e.preventDefault();
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      uploadAbortRef.current?.abort();
+    };
+  }, []);
+
   function setView(mode: "grid" | "list") {
     setViewMode(mode);
     localStorage.setItem("nexium-file-view", mode);
   }
 
   const { data: buckets = [] } = useQuery({
-    queryKey: ["buckets", params.id],
-    queryFn: () => api.get<Bucket[]>(`/api/v1/projects/${params.id}/buckets`),
+    queryKey: ["buckets", id],
+    queryFn: () => api.get<Bucket[]>(`/api/v1/projects/${id}/buckets`),
   });
-  const bucket = buckets.find((b) => b.id === params.bucketId);
+  const bucket = buckets.find((b) => b.id === bucketId);
 
   const toggleVisibility = useMutation({
     mutationFn: (isPublic: boolean) =>
-      api.patch<Bucket>(`/api/v1/buckets/${params.bucketId}`, { is_public: isPublic }),
+      api.patch<Bucket>(`/api/v1/buckets/${bucketId}`, { is_public: isPublic }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["buckets", params.id] });
-      qc.invalidateQueries({ queryKey: ["files", params.bucketId] });
+      qc.invalidateQueries({ queryKey: ["buckets", id] });
+      qc.invalidateQueries({ queryKey: ["files", bucketId] });
     },
   });
 
   const PER_PAGE = 24;
 
   const { data: pagedData, isLoading } = useQuery({
-    queryKey: ["files", params.bucketId, debouncedSearch, page],
+    queryKey: ["files", bucketId, debouncedSearch, page],
     queryFn: () => {
       const qs = new URLSearchParams({ page: String(page), per_page: String(PER_PAGE) });
       if (debouncedSearch) qs.set("search", debouncedSearch);
-      return api.get<PagedFiles>(`/api/v1/buckets/${params.bucketId}/files?${qs}`);
+      return api.get<PagedFiles>(`/api/v1/buckets/${bucketId}/files?${qs}`);
     },
     placeholderData: (prev) => prev,
   });
@@ -131,18 +185,45 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
   async function handleUpload(file: File) {
     setUploadError(null);
     setUploadPhase("uploading");
-    const form = new FormData();
-    form.append("file", file);
+    const controller = new AbortController();
+    uploadAbortRef.current = controller;
+    setUploadProgress(0);
     try {
-      await api.uploadWithProgress<StoredFile>(
-        `/api/v1/buckets/${params.bucketId}/files`,
-        form,
-        (pct) => { if (pct >= 100) setUploadPhase("saving"); }
+      // 1. Demander une URL presignée R2
+      const presign = await api.post<{
+        file_id: string;
+        object_key: string;
+        upload_url: string;
+      }>(`/api/v1/buckets/${bucketId}/files/presign`, {
+        filename: file.name,
+        mime_type: file.type || "application/octet-stream",
+      });
+
+      // 2. Uploader directement vers R2 (ne passe pas par Render)
+      await api.putToPresignedURL(presign.upload_url, file, (pct) => {
+        setUploadProgress(pct);
+        if (pct >= 100) setUploadPhase("saving");
+      }, controller.signal);
+
+      // 3. Confirmer en DB
+      await api.post<StoredFile>(
+        `/api/v1/buckets/${bucketId}/files/confirm`,
+        {
+          file_id: presign.file_id,
+          object_key: presign.object_key,
+          filename: file.name,
+          mime_type: file.type || "application/octet-stream",
+          size_bytes: file.size,
+        }
       );
-      qc.invalidateQueries({ queryKey: ["files", params.bucketId] });
+
+      qc.invalidateQueries({ queryKey: ["files", bucketId] });
     } catch (err) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
       setUploadError(errMsg(err));
     } finally {
+      uploadAbortRef.current = null;
+      setUploadProgress(0);
       setUploadPhase("idle");
     }
   }
@@ -163,7 +244,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
     const file = e.dataTransfer.files[0];
     if (file) handleUpload(file);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.bucketId]);
+  }, [bucketId]);
 
   const download = useMutation({
     mutationFn: async (fileId: string) => {
@@ -175,12 +256,12 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
   const rename = useMutation({
     mutationFn: ({ id, filename }: { id: string; filename: string }) =>
       api.patch<StoredFile>(`/api/v1/files/${id}`, { filename }),
-    onSuccess: () => { qc.invalidateQueries({ queryKey: ["files", params.bucketId] }); setRenamingId(null); },
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["files", bucketId] }); setRenamingId(null); },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => api.delete(`/api/v1/files/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["files", params.bucketId] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["files", bucketId] }),
   });
 
   async function copyURL(f: StoredFile) {
@@ -219,7 +300,7 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
         </div>
       )}
 
-      <Link href={`/dashboard/projects/${params.id}`} className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-8 transition-colors">
+      <Link href={`/dashboard/projects/${id}`} className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-8 transition-colors">
         <ArrowLeft size={12} /> {t("workspace")}
       </Link>
 
@@ -291,9 +372,23 @@ export default function BucketPage({ params }: { params: { id: string; bucketId:
       {/* Upload progress */}
       {isUploading && (
         <div className="mb-5">
-          <p className="text-xs text-gray-500 mb-1.5">{uploadPhase === "saving" ? t("savingToStorage") : t("uploading")}</p>
-          <div className="relative h-px bg-gray-800 overflow-hidden rounded-full">
-            <div className="animate-slide-bar" />
+          <div className="flex items-center justify-between mb-1.5">
+            <p className="text-xs text-gray-500">
+              {uploadPhase === "saving" ? t("savingToStorage") : t("uploading")}
+            </p>
+            {uploadPhase === "uploading" && (
+              <span className="text-xs tabular-nums text-gray-500">{uploadProgress}%</span>
+            )}
+          </div>
+          <div className="relative h-1 bg-gray-800 overflow-hidden rounded-full">
+            {uploadPhase === "saving" ? (
+              <div className="animate-slide-bar" />
+            ) : (
+              <div
+                className="h-full bg-[#007BFF] rounded-full transition-all duration-150 ease-out"
+                style={{ width: `${uploadProgress}%` }}
+              />
+            )}
           </div>
         </div>
       )}
@@ -466,12 +561,14 @@ function GridCard({ f, actions, renamingId, renameValue, setRenameValue, submitR
             loading="lazy"
           />
         ) : isVideo(f.mime_type) ? (
-          <div className="flex flex-col items-center gap-2">
-            <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
-              <Play size={22} className={info.iconColor} fill="currentColor" />
-            </div>
-            <span className="text-xs font-mono text-gray-500">{info.label}</span>
-          </div>
+          f.url
+            ? <VideoThumbnail src={f.url} label={info.label} iconColor={info.iconColor} />
+            : <div className="flex flex-col items-center gap-2">
+                <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
+                  <Play size={22} className={info.iconColor} fill="currentColor" />
+                </div>
+                <span className="text-xs font-mono text-gray-500">{info.label}</span>
+              </div>
         ) : (
           <div className="flex flex-col items-center gap-2">
             <info.Icon size={32} className={info.iconColor} />
@@ -548,9 +645,13 @@ function ListView({ files, actions, renamingId, renameValue, setRenameValue, sub
             >
               {isImage(f.mime_type) && f.url
                 ? <img src={f.url} alt="" className="w-8 h-8 object-cover rounded-md" loading="lazy" />
-                : isVideo(f.mime_type)
-                  ? <div className={`w-8 h-8 rounded-md ${info.bg} flex items-center justify-center`}><Play size={14} className={info.iconColor} fill="currentColor" /></div>
-                  : <div className={`w-8 h-8 rounded-md ${info.bg} flex items-center justify-center`}><info.Icon size={14} className={info.iconColor} /></div>
+                : isVideo(f.mime_type) && f.url
+                  ? <div className="w-8 h-8 rounded-md overflow-hidden relative">
+                      <VideoThumbnail src={f.url} label="" iconColor={info.iconColor} />
+                    </div>
+                  : isVideo(f.mime_type)
+                    ? <div className={`w-8 h-8 rounded-md ${info.bg} flex items-center justify-center`}><Play size={14} className={info.iconColor} fill="currentColor" /></div>
+                    : <div className={`w-8 h-8 rounded-md ${info.bg} flex items-center justify-center`}><info.Icon size={14} className={info.iconColor} /></div>
               }
             </div>
 

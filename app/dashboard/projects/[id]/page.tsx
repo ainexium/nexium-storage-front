@@ -3,7 +3,7 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Bucket, Project } from "@/types";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, use } from "react";
 import { Plus, Trash2, ChevronRight, ArrowLeft, Pencil, Globe, Lock } from "lucide-react";
 import Link from "next/link";
 import { ConfirmModal } from "@/components/confirm-modal";
@@ -41,7 +41,8 @@ function InlineEdit({ bucket, projectId, onDone }: { bucket: Bucket; projectId: 
   );
 }
 
-export default function ProjectDetailPage({ params }: { params: { id: string } }) {
+export default function ProjectDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = use(params);
   const t = useTranslations("projects");
   const tc = useTranslations("common");
   const locale = useLocale();
@@ -53,27 +54,27 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
 
   const { data: project } = useQuery({
-    queryKey: ["project", params.id],
-    queryFn: () => api.get<Project>(`/api/v1/projects/${params.id}`),
+    queryKey: ["project", id],
+    queryFn: () => api.get<Project>(`/api/v1/projects/${id}`),
   });
 
   const { data: buckets = [], isLoading } = useQuery({
-    queryKey: ["buckets", params.id],
-    queryFn: () => api.get<Bucket[]>(`/api/v1/projects/${params.id}/buckets`),
+    queryKey: ["buckets", id],
+    queryFn: () => api.get<Bucket[]>(`/api/v1/projects/${id}/buckets`),
   });
 
   const create = useMutation({
     mutationFn: ({ name, is_public }: { name: string; is_public: boolean }) =>
-      api.post<Bucket>(`/api/v1/projects/${params.id}/buckets`, { name, is_public }),
+      api.post<Bucket>(`/api/v1/projects/${id}/buckets`, { name, is_public }),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["buckets", params.id] });
+      qc.invalidateQueries({ queryKey: ["buckets", id] });
       setCreating(false); setNewName(""); setNewIsPublic(true);
     },
   });
 
   const remove = useMutation({
     mutationFn: (id: string) => api.delete(`/api/v1/buckets/${id}`),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["buckets", params.id] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["buckets", id] }),
   });
 
   const confirmBucket = buckets.find((b) => b.id === confirmDeleteId);
@@ -88,12 +89,12 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-base font-semibold">{project?.name ?? "…"}</h1>
-          <code className="text-xs text-gray-600 mt-1 block">{params.id}</code>
+          <code className="text-xs text-gray-600 mt-1 block">{id}</code>
         </div>
         <div className="flex items-center gap-2">
           <Link
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            href={`/dashboard/projects/${params.id}/webhooks` as any}
+            href={`/dashboard/projects/${id}/webhooks` as any}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-md border border-white/[0.1] text-sm text-gray-400 hover:text-gray-200 hover:border-white/[0.2] transition-colors"
           >
             {t("webhooks")}
@@ -154,9 +155,9 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
           {buckets.map((b) => (
             <div key={b.id} className="flex items-center px-5 py-3.5 hover:bg-white/[0.03] group transition-colors">
               {editingId === b.id ? (
-                <InlineEdit bucket={b} projectId={params.id} onDone={() => setEditingId(null)} />
+                <InlineEdit bucket={b} projectId={id} onDone={() => setEditingId(null)} />
               ) : (
-                <Link href={`/dashboard/projects/${params.id}/buckets/${b.id}`} className="flex items-center gap-3 flex-1 min-w-0">
+                <Link href={`/dashboard/projects/${id}/buckets/${b.id}`} className="flex items-center gap-3 flex-1 min-w-0">
                   <span className="text-sm font-mono font-medium">{b.name}</span>
                   {b.is_public
                     ? <span className="flex items-center gap-0.5 text-[10px] text-green-500"><Globe size={9} />{tc("public")}</span>
@@ -186,7 +187,7 @@ export default function ProjectDetailPage({ params }: { params: { id: string } }
                   <Trash2 size={12} />
                 </button>
                 {editingId !== b.id && (
-                  <Link href={`/dashboard/projects/${params.id}/buckets/${b.id}`}
+                  <Link href={`/dashboard/projects/${id}/buckets/${b.id}`}
                     className="p-1 rounded text-gray-600 hover:text-white opacity-0 group-hover:opacity-100 transition">
                     <ChevronRight size={12} />
                   </Link>

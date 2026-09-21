@@ -125,6 +125,31 @@ class APIClient {
       xhr.send(form);
     });
   }
+
+  // Upload direct vers une URL presignée R2 — sans auth header, avec progression et annulation
+  putToPresignedURL(
+    url: string,
+    file: File,
+    onProgress: (pct: number) => void,
+    signal?: AbortSignal
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      xhr.upload.onprogress = (e) => {
+        if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+      };
+      xhr.onload = () => {
+        if (xhr.status >= 200 && xhr.status < 300) resolve();
+        else reject(new Error(`R2 upload failed (${xhr.status})`));
+      };
+      xhr.onerror = () => reject(new Error("Erreur réseau — vérifiez votre connexion"));
+      xhr.onabort = () => reject(new DOMException("Upload annulé", "AbortError"));
+      if (signal) signal.addEventListener("abort", () => xhr.abort());
+      xhr.open("PUT", url);
+      xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+      xhr.send(file);
+    });
+  }
 }
 
 export const api = new APIClient(API_URL);

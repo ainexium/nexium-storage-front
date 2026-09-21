@@ -2,7 +2,7 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
-import { useState } from "react";
+import { useState, use } from "react";
 import { Plus, Trash2, ChevronDown, ChevronUp, Check, Copy } from "lucide-react";
 import { ConfirmModal } from "@/components/confirm-modal";
 import Link from "next/link";
@@ -143,11 +143,11 @@ function WebhookRow({ hook, projectId }: { hook: Webhook; projectId: string }) {
   );
 }
 
-export default function WebhooksPage({ params }: { params: { id: string } }) {
+export default function WebhooksPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id: projectId } = use(params);
   const t = useTranslations("webhooks");
   const tc = useTranslations("common");
   const errMsg = useErrorMessage();
-  const { id: projectId } = params;
   const qc = useQueryClient();
 
   const { data: webhooks = [], isLoading } = useQuery({

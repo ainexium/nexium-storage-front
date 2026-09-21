@@ -7,7 +7,7 @@ import {
   negotiateLocale,
 } from "@/lib/locale";
 
-export function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const cookieLocale = request.cookies.get(LOCALE_COOKIE)?.value;
   const locale = isAppLocale(cookieLocale)
     ? cookieLocale
