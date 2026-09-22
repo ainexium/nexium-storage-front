@@ -5,8 +5,21 @@ import "./globals.css";
 import { Providers } from "./providers";
 
 export const metadata: Metadata = {
-  title: "NEXIUM Storage",
-  description: "Object storage for developers",
+  title: {
+    default: "NEXIUM Storage — Object storage for developers",
+    template: "%s — NEXIUM Storage",
+  },
+  description:
+    "S3-compatible object storage for developers. Upload, manage and serve files via a clean REST API. Projects, buckets, API keys, webhooks.",
+  metadataBase: new URL("https://console.nexiumai.io"),
+  openGraph: {
+    siteName: "NEXIUM Storage",
+    type: "website",
+    locale: "fr_FR",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -1,27 +1,48 @@
-"use client";
-
 import Link from "next/link";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Mail, MessageCircle } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { AuthRedirect } from "@/components/auth-redirect";
+import type { Metadata } from "next";
 
 const CONTACT_EMAIL = "ai.nexium@gmail.com";
 const CONTACT_WHATSAPP = "+2250503020385";
 
-export default function LandingPage() {
-  const router = useRouter();
-  const t = useTranslations("landing");
+export const metadata: Metadata = {
+  title: "NEXIUM Storage — Object storage for developers",
+  description:
+    "Upload, manage and serve files via a clean REST API. S3-compatible object storage with projects, buckets, API keys and webhooks. Built for developers.",
+  keywords: ["nexium storage", "object storage", "s3 compatible", "file upload api", "cloud storage", "nexium"],
+  openGraph: {
+    title: "NEXIUM Storage — Object storage for developers",
+    description:
+      "Upload, manage and serve files via a clean REST API. S3-compatible object storage built for developers.",
+    url: "https://console.nexiumai.io",
+    siteName: "NEXIUM Storage",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "NEXIUM Storage — Object storage for developers",
+    description:
+      "Upload, manage and serve files via a clean REST API. S3-compatible object storage built for developers.",
+  },
+  alternates: {
+    canonical: "https://console.nexiumai.io",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
-  useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
+export default async function LandingPage() {
+  const t = await getTranslations("landing");
 
   return (
     <main className="min-h-screen flex flex-col bg-[#08080f] text-white">
+      <AuthRedirect />
+
       <nav className="flex items-center justify-between px-8 py-4 border-b border-white/[0.06]">
         <span className="font-bold tracking-tight whitespace-nowrap shrink-0">
           <span className="text-[#007BFF]">NEXIUM</span>
@@ -72,8 +93,6 @@ export default function LandingPage() {
           </Link>
           <Link
             href="/docs"
-            target="_blank"
-            rel="noopener noreferrer"
             className="px-6 py-3 border border-white/[0.1] hover:border-white/20 rounded-lg font-semibold text-gray-300 hover:text-white transition"
           >
             {t("readDocs")}
@@ -100,7 +119,7 @@ export default function LandingPage() {
             <span className="text-orange-300">&quot;file=@photo.jpg&quot;</span> \
           </p>
           <p className="text-gray-300 pl-4">
-            <span className="text-gray-500">https://api.nexium.ai/v1/ext/buckets/&lt;id&gt;/files</span>
+            <span className="text-gray-500">https://api.nexiumai.io/v1/ext/buckets/&lt;id&gt;/files</span>
           </p>
         </div>
       </section>
