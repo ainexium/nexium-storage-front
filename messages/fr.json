@@ -132,7 +132,12 @@
     "newPasswordMin": "Nouveau mot de passe (8 car. min.)",
     "updatePassword": "Mettre à jour le mot de passe",
     "change": "Modifier",
-    "language": "Langue"
+    "language": "Langue",
+    "emailPending": "Code envoyé à {email}",
+    "emailCode": "Entrez le code à 6 chiffres",
+    "confirmChange": "Confirmer",
+    "cancelChange": "Annuler",
+    "resendCode": "Renvoyer le code"
   },
   "apiKeys": {
     "title": "Clés API",
@@ -279,19 +284,42 @@
     "plans": {
       "free": {
         "tagline": "Pour tester et démarrer",
-        "features": ["10 GB stockage", "Fichiers ≤ 100 MB", "Accès API", "Support communauté"]
+        "features": [
+          "10 GB stockage",
+          "Fichiers ≤ 100 MB",
+          "Accès API",
+          "Support communauté"
+        ]
       },
       "starter": {
         "tagline": "Pour les projets sérieux",
-        "features": ["50 GB stockage", "Fichiers ≤ 1 GB", "Accès API", "Support email"]
+        "features": [
+          "50 GB stockage",
+          "Fichiers ≤ 1 GB",
+          "Accès API",
+          "Support email"
+        ]
       },
       "pro": {
         "tagline": "Pour les équipes qui scalent",
-        "features": ["300 GB stockage", "Fichiers ≤ 5 GB", "Accès API", "Support prioritaire", "Add-ons disponibles"]
+        "features": [
+          "300 GB stockage",
+          "Fichiers ≤ 5 GB",
+          "Accès API",
+          "Support prioritaire",
+          "Add-ons disponibles"
+        ]
       },
       "business": {
         "tagline": "Pour les entreprises",
-        "features": ["1 TB stockage", "Fichiers ≤ 20 GB", "Accès API", "Support dédié", "SLA garanti", "Add-ons disponibles"]
+        "features": [
+          "1 TB stockage",
+          "Fichiers ≤ 20 GB",
+          "Accès API",
+          "Support dédié",
+          "SLA garanti",
+          "Add-ons disponibles"
+        ]
       }
     }
   },

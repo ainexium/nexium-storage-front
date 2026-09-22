@@ -18,24 +18,70 @@ export default function SettingsPage() {
   const errMsg = useErrorMessage();
   const { data: user } = useMe();
   const qc = useQueryClient();
+
   const [editName, setEditName] = useState(false);
   const [editEmail, setEditEmail] = useState(false);
   const [editPassword, setEditPassword] = useState(false);
+
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
+  const [emailCode, setEmailCode] = useState("");
   const [currentPw, setCurrentPw] = useState("");
   const [newPw, setNewPw] = useState("");
+
   const [saved, setSaved] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  function flash(msg: string) {
+    setSaved(msg);
+    setTimeout(() => setSaved(null), 2500);
+  }
+
+  // Mise à jour nom / mot de passe
   const update = useMutation({
     mutationFn: (body: object) => api.patch<User>("/api/v1/auth/me", body),
     onSuccess: (u) => {
       qc.setQueryData(["me"], u);
-      setSaved(t("saved"));
-      setEditName(false); setEditEmail(false); setEditPassword(false);
+      flash(t("saved"));
+      setEditName(false); setEditPassword(false);
       setCurrentPw(""); setNewPw("");
-      setTimeout(() => setSaved(null), 2000);
+    },
+    onError: (e) => setError(errMsg(e)),
+  });
+
+  // Demande de changement d'email (envoie le code)
+  const requestEmail = useMutation({
+    mutationFn: () => api.post("/api/v1/auth/me/email/request", { email }),
+    onSuccess: () => {
+      qc.setQueryData(["me"], (prev: User | undefined) =>
+        prev ? { ...prev, pending_email: email } : prev
+      );
+      setEditEmail(false);
+      setEmailCode("");
+    },
+    onError: (e) => setError(errMsg(e)),
+  });
+
+  // Confirmation du code
+  const confirmEmail = useMutation({
+    mutationFn: () => api.post<User>("/api/v1/auth/me/email/confirm", { code: emailCode }),
+    onSuccess: (u) => {
+      qc.setQueryData(["me"], u);
+      flash(t("saved"));
+      setEmailCode("");
+    },
+    onError: (e) => setError(errMsg(e)),
+  });
+
+  // Annulation
+  const cancelEmail = useMutation({
+    mutationFn: () => api.delete("/api/v1/auth/me/email/pending"),
+    onSuccess: () => {
+      qc.setQueryData(["me"], (prev: User | undefined) =>
+        prev ? { ...prev, pending_email: undefined } : prev
+      );
+      setEmailCode("");
+      setEditEmail(false);
     },
     onError: (e) => setError(errMsg(e)),
   });
@@ -46,6 +92,8 @@ export default function SettingsPage() {
     if (field === "email") { setEmail(user?.email ?? ""); setEditEmail(true); setEditName(false); setEditPassword(false); }
     if (field === "password") { setEditPassword(true); setEditName(false); setEditEmail(false); }
   }
+
+  const hasPending = !!user?.pending_email;
 
   return (
     <div className="px-8 py-8 max-w-2xl">
@@ -60,7 +108,10 @@ export default function SettingsPage() {
         </div>
       )}
       {error && (
-        <div className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2 mb-6">
+        <div
+          className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2 mb-6 cursor-pointer"
+          onClick={() => setError(null)}
+        >
           {error}
         </div>
       )}
@@ -69,6 +120,7 @@ export default function SettingsPage() {
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("account")}</h2>
         <div className="rounded-xl border border-white/[0.07] overflow-hidden divide-y divide-white/[0.07]">
 
+          {/* Nom */}
           <div className="px-5 py-3.5">
             <div className="flex items-center justify-between">
               <span className="text-xs text-gray-500 w-28">{t("name")}</span>
@@ -89,26 +141,72 @@ export default function SettingsPage() {
             </div>
           </div>
 
+          {/* Email */}
           <div className="px-5 py-3.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs text-gray-500 w-28">{t("email")}</span>
-              {editEmail ? (
-                <div className="flex items-center gap-2 flex-1 justify-end">
-                  <input autoFocus type="email" value={email} onChange={(e) => setEmail(e.target.value)}
-                    className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
-                  <button onClick={() => update.mutate({ email })} disabled={update.isPending}
-                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">{tc("save")}</button>
-                  <button onClick={() => setEditEmail(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-200">{user?.email ?? "—"}</span>
-                  <button onClick={() => startEdit("email")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
-                </div>
-              )}
+            <div className="flex items-start justify-between gap-4">
+              <span className="text-xs text-gray-500 w-28 mt-0.5">{t("email")}</span>
+              <div className="flex-1">
+                {hasPending ? (
+                  /* État : code envoyé, en attente de vérification */
+                  <div className="space-y-2">
+                    <p className="text-xs text-amber-400">
+                      {t("emailPending", { email: user!.pending_email ?? "" })}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <input
+                        value={emailCode}
+                        onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                        placeholder={t("emailCode")}
+                        maxLength={6}
+                        className="w-36 px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-[#007BFF] outline-none text-sm font-mono tracking-widest transition-colors"
+                      />
+                      <button
+                        onClick={() => confirmEmail.mutate()}
+                        disabled={emailCode.length !== 6 || confirmEmail.isPending}
+                        className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors"
+                      >
+                        {t("confirmChange")}
+                      </button>
+                      <button
+                        onClick={() => cancelEmail.mutate()}
+                        className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
+                      >
+                        {t("cancelChange")}
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => { setEditEmail(true); setEmail(user!.pending_email ?? ""); }}
+                      className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
+                    >
+                      {t("resendCode")}
+                    </button>
+                  </div>
+                ) : editEmail ? (
+                  /* État : saisie d'un nouvel email */
+                  <div className="flex items-center gap-2">
+                    <input autoFocus type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+                      className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
+                    <button
+                      onClick={() => requestEmail.mutate()}
+                      disabled={requestEmail.isPending || !email}
+                      className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors"
+                    >
+                      {tc("save")}
+                    </button>
+                    <button onClick={() => setEditEmail(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
+                  </div>
+                ) : (
+                  /* État normal */
+                  <div className="flex items-center gap-3 justify-end">
+                    <span className="text-sm text-gray-200">{user?.email ?? "—"}</span>
+                    <button onClick={() => startEdit("email")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
+          {/* Membre depuis */}
           <div className="flex items-center justify-between px-5 py-3.5">
             <span className="text-xs text-gray-500 w-28">{t("memberSince")}</span>
             <span className="text-sm text-gray-200">{user ? new Date(user.created_at).toLocaleDateString(locale) : "—"}</span>
@@ -116,6 +214,7 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Mot de passe */}
       <div className="mb-8">
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("password")}</h2>
         <div className="rounded-xl border border-white/[0.07] overflow-hidden">
@@ -142,11 +241,10 @@ export default function SettingsPage() {
         </div>
       </div>
 
+      {/* Langue */}
       <div className="mb-8">
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("language")}</h2>
-        <p className="text-xs text-gray-600 mb-3">
-          {tl("description")}
-        </p>
+        <p className="text-xs text-gray-600 mb-3">{tl("description")}</p>
         <LanguageSwitcher variant="settings" />
       </div>
     </div>

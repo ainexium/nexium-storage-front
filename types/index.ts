@@ -2,6 +2,7 @@ export interface User {
   id: string;
   name: string;
   email: string;
+  pending_email?: string;
   is_admin: boolean;
   is_super_admin: boolean;
   is_verified: boolean;

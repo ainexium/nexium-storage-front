@@ -132,7 +132,12 @@
     "newPasswordMin": "New password (min. 8 chars)",
     "updatePassword": "Update password",
     "change": "Change",
-    "language": "Language"
+    "language": "Language",
+    "emailPending": "Verification sent to {email}",
+    "emailCode": "Enter the 6-digit code",
+    "confirmChange": "Confirm",
+    "cancelChange": "Cancel",
+    "resendCode": "Resend code"
   },
   "apiKeys": {
     "title": "API Keys",
@@ -279,19 +284,42 @@
     "plans": {
       "free": {
         "tagline": "Try it and get started",
-        "features": ["10 GB storage", "Files ≤ 100 MB", "API access", "Community support"]
+        "features": [
+          "10 GB storage",
+          "Files ≤ 100 MB",
+          "API access",
+          "Community support"
+        ]
       },
       "starter": {
         "tagline": "For serious projects",
-        "features": ["50 GB storage", "Files ≤ 1 GB", "API access", "Email support"]
+        "features": [
+          "50 GB storage",
+          "Files ≤ 1 GB",
+          "API access",
+          "Email support"
+        ]
       },
       "pro": {
         "tagline": "For teams that scale",
-        "features": ["300 GB storage", "Files ≤ 5 GB", "API access", "Priority support", "Add-ons available"]
+        "features": [
+          "300 GB storage",
+          "Files ≤ 5 GB",
+          "API access",
+          "Priority support",
+          "Add-ons available"
+        ]
       },
       "business": {
         "tagline": "For companies",
-        "features": ["1 TB storage", "Files ≤ 20 GB", "API access", "Dedicated support", "Guaranteed SLA", "Add-ons available"]
+        "features": [
+          "1 TB storage",
+          "Files ≤ 20 GB",
+          "API access",
+          "Dedicated support",
+          "Guaranteed SLA",
+          "Add-ons available"
+        ]
       }
     }
   },
