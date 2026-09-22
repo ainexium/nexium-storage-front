@@ -727,7 +727,7 @@ export default function DocsPage() {
               {t.rich("uploadIntro", { mp: code, file: code, id: grayCode })}
             </p>
             <LanguageTabs examples={upload} />
-            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">201 Created</code> })}</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: (chunks) => <code className="text-green-400">{chunks}</code> })}</p>
             <Block lang="javascript" code={`{
   "id":         "87e60d98-6cde-4e8a-bc65-7ff0b448091b",
   "bucket_id":  "71438929-d96a-4424-a425-552ca5b7a464",

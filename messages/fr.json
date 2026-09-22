@@ -463,7 +463,7 @@
     "authWarn": "Votre clé API est limitée à un seul projet. Ne la commitez jamais dans git et ne l'incluez pas dans un bundle frontend.",
     "upload": "Uploader un fichier",
     "uploadIntro": "Envoyez un POST <mp>multipart/form-data</mp> avec un champ <file>file</file>. Remplacez <id>&lt;bucket_id&gt;</id> par l'ID de votre bucket depuis le dashboard.",
-    "response": "Réponse {code} :",
+    "response": "Réponse <code>201 Created</code> :",
     "list": "Lister et chercher des fichiers",
     "listIntro": "Retourne tous les fichiers d'un bucket, du plus récent au plus ancien. Passez un paramètre optionnel <search>?search=</search> pour filtrer par nom de fichier.",
     "download": "Télécharger un fichier",
