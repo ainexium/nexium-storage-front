@@ -9,23 +9,23 @@ const CONTACT_EMAIL = "ai.nexium@gmail.com";
 const CONTACT_WHATSAPP = "+2250503020385";
 
 export const metadata: Metadata = {
-  title: "NEXIUM Storage — Object storage for developers",
+  title: "NEXIUM Storage — Cloud storage for your projects & teams",
   description:
-    "Upload, manage and serve files via a clean REST API. S3-compatible object storage with projects, buckets, API keys and webhooks. Built for developers.",
-  keywords: ["nexium storage", "object storage", "s3 compatible", "file upload api", "cloud storage", "nexium"],
+    "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them. Projects, buckets, API keys and webhooks.",
+  keywords: ["nexium storage", "object storage", "s3 compatible", "file upload api", "cloud storage", "nexium", "team storage"],
   openGraph: {
-    title: "NEXIUM Storage — Object storage for developers",
+    title: "NEXIUM Storage — Cloud storage for your projects & teams",
     description:
-      "Upload, manage and serve files via a clean REST API. S3-compatible object storage built for developers.",
+      "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them.",
     url: "https://console.nexiumai.io",
     siteName: "NEXIUM Storage",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "NEXIUM Storage — Object storage for developers",
+    title: "NEXIUM Storage — Cloud storage for your projects & teams",
     description:
-      "Upload, manage and serve files via a clean REST API. S3-compatible object storage built for developers.",
+      "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them.",
   },
   alternates: {
     canonical: "https://console.nexiumai.io",

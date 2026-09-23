@@ -6,11 +6,11 @@ import { Providers } from "./providers";
 
 export const metadata: Metadata = {
   title: {
-    default: "NEXIUM Storage — Object storage for developers",
+    default: "NEXIUM Storage — Cloud storage for your projects & teams",
     template: "%s — NEXIUM Storage",
   },
   description:
-    "S3-compatible object storage for developers. Upload, manage and serve files via a clean REST API. Projects, buckets, API keys, webhooks.",
+    "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them. Projects, buckets, API keys, webhooks.",
   metadataBase: new URL("https://console.nexiumai.io"),
   openGraph: {
     siteName: "NEXIUM Storage",
