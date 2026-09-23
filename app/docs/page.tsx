@@ -734,7 +734,7 @@ export default function DocsPage() {
   "filename":   "photo.jpg",
   "mime_type":  "image/jpeg",
   "size_bytes": 245120,
-  "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
+  "url":        "https://cdn.nexiumai.io/71438929-d96a-4424-a425-552ca5b7a464/87e60d98-6cde-4e8a-bc65-7ff0b448091b/87e60d98-6cde-4e8a-bc65-7ff0b448091b_photo.jpg",
   "created_at": "2026-08-16T00:53:23Z"
 }`} />
           </Section>
@@ -753,7 +753,7 @@ export default function DocsPage() {
       "filename":   "photo.jpg",
       "mime_type":  "image/jpeg",
       "size_bytes": 245120,
-      "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
+      "url":        "https://cdn.nexiumai.io/71438929-d96a-4424-a425-552ca5b7a464/87e60d98-6cde-4e8a-bc65-7ff0b448091b/87e60d98-6cde-4e8a-bc65-7ff0b448091b_photo.jpg",
       "created_at": "2026-08-16T00:53:23Z"
     }
   ],
@@ -769,7 +769,7 @@ export default function DocsPage() {
             </p>
             <LanguageTabs examples={download} />
             <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: () => <code className="text-green-400">200 OK</code> })}</p>
-            <Block lang="javascript" code={`{ "url": "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg" }`} />
+            <Block lang="javascript" code={`{ "url": "https://cdn.nexiumai.io/71438929-d96a-4424-a425-552ca5b7a464/87e60d98-6cde-4e8a-bc65-7ff0b448091b/87e60d98-6cde-4e8a-bc65-7ff0b448091b_photo.jpg" }`} />
           </Section>
 
           <Section id="rename" icon={Pencil} title={t("rename")}>
@@ -815,7 +815,7 @@ export default function DocsPage() {
   "filename":   "photo.jpg",
   "mime_type":  "image/jpeg",
   "size_bytes": 204800,
-  "url":        "https://pub-xxxx.r2.dev/bucket_id/file_id/file_id_photo.jpg",
+  "url":        "https://cdn.nexiumai.io/71438929-d96a-4424-a425-552ca5b7a464/87e60d98-6cde-4e8a-bc65-7ff0b448091b/87e60d98-6cde-4e8a-bc65-7ff0b448091b_photo.jpg",
   "created_at": "2026-08-16T01:20:00Z"
 }`} />
           </Section>
