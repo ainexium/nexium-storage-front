@@ -94,3 +94,4 @@ Format: `[version] — date — description`
 - Pas de CI/CD configuré
 - Renouvellement automatique non implémenté (dépend du backend)
 - Page de statut des webhooks non implémentée (historique des livraisons)
+- **Sécurité (plus tard)** — `access_token` et `refresh_token` stockés dans `localStorage` : lisibles par tout script JS en cas de XSS. Migration vers `HttpOnly` cookies à prévoir (refactoring coordonné avec le backend)
