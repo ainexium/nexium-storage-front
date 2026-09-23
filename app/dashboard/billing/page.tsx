@@ -288,7 +288,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                 <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("number")}</p>
                 <PhoneInput
                   defaultCountry="CI"
-                  countries={["CI","SN","BJ","ML","BF","TG","GN","NE","CM","GH","NG"]}
+                  countries={["CI"]}
                   value={phone}
                   onChange={setPhone}
                   international
