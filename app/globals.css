@@ -298,11 +298,26 @@ html[data-theme="light"] .lp-header {
 }
 
 /* Auth inputs & docs sidebar — gray Tailwind classes */
-[data-theme="light"] .themed-page .bg-gray-900  { background-color: #f0f2f7 !important; }
-[data-theme="light"] .themed-page .bg-gray-800  { background-color: #e4e7ef !important; }
-[data-theme="light"] .themed-page .border-gray-700 { border-color: rgba(0,0,0,0.14) !important; }
-[data-theme="light"] .themed-page .border-gray-800 { border-color: rgba(0,0,0,0.09) !important; }
+[data-theme="light"] .themed-page .bg-gray-900  { background-color: #ffffff !important; }
+[data-theme="light"] .themed-page .bg-gray-800  { background-color: #f0f2f7 !important; }
+[data-theme="light"] .themed-page .border-gray-700 { border-color: #d0d4de !important; }
+[data-theme="light"] .themed-page .border-gray-800 { border-color: rgba(0,0,0,0.10) !important; }
 [data-theme="light"] .themed-page .text-gray-800 { color: #222233 !important; }
+
+/* Input placeholder — gris clair adapté au fond blanc */
+[data-theme="light"] .themed-page input::placeholder,
+[data-theme="light"] .themed-page textarea::placeholder { color: #b0b4c0 !important; }
+
+/* Input text + focus */
+[data-theme="light"] .themed-page input:focus,
+[data-theme="light"] .themed-page textarea:focus {
+  background-color: #ffffff !important;
+  border-color: #06B6D4 !important;
+}
+
+/* Labels */
+[data-theme="light"] .themed-page form label { color: #374151 !important; }
+
 
 /* lp-header border in light mode */
 html[data-theme="light"] .lp-header {
@@ -394,7 +409,7 @@ html[data-theme="light"] .lp-header {
 }
 
 /* Section icon boxes — slightly more visible on light bg */
-[data-theme="light"] .themed-page [class*="bg-"][class*="06B6D4"] {
+[data-theme="light"] .themed-page [class*="bg-[#06B6D4]/"] {
   background-color: rgba(6, 182, 212, 0.18) !important;
 }
 
