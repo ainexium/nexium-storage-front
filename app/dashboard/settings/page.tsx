@@ -5,16 +5,18 @@ import { api } from "@/lib/api-client";
 import type { User } from "@/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { Check } from "lucide-react";
+import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { useErrorMessage } from "@/hooks/use-error-message";
+import { useTheme, type ThemePreference } from "@/contexts/theme-context";
 
 export default function SettingsPage() {
   const t = useTranslations("settings");
   const tc = useTranslations("common");
   const tl = useTranslations("language");
   const locale = useLocale();
+  const { preference, setPreference } = useTheme();
   const errMsg = useErrorMessage();
   const { data: user } = useMe();
   const qc = useQueryClient();
@@ -129,7 +131,7 @@ export default function SettingsPage() {
                   <input autoFocus value={name} onChange={(e) => setName(e.target.value)}
                     className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
                   <button onClick={() => update.mutate({ name })} disabled={update.isPending}
-                    className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors">{tc("save")}</button>
+                    className="px-2.5 py-1 rounded bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-xs font-medium transition-colors">{tc("save")}</button>
                   <button onClick={() => setEditName(false)} className="text-xs text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>
               ) : (
@@ -158,12 +160,12 @@ export default function SettingsPage() {
                         onChange={(e) => setEmailCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
                         placeholder={t("emailCode")}
                         maxLength={6}
-                        className="w-36 px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-[#007BFF] outline-none text-sm font-mono tracking-widest transition-colors"
+                        className="w-36 px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-[#06B6D4] outline-none text-sm font-mono tracking-widest transition-colors"
                       />
                       <button
                         onClick={() => confirmEmail.mutate()}
                         disabled={emailCode.length !== 6 || confirmEmail.isPending}
-                        className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors"
+                        className="px-2.5 py-1 rounded bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-xs font-medium transition-colors"
                       >
                         {t("confirmChange")}
                       </button>
@@ -189,7 +191,7 @@ export default function SettingsPage() {
                     <button
                       onClick={() => requestEmail.mutate()}
                       disabled={requestEmail.isPending || !email}
-                      className="px-2.5 py-1 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-xs font-medium transition-colors"
+                      className="px-2.5 py-1 rounded bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-xs font-medium transition-colors"
                     >
                       {tc("save")}
                     </button>
@@ -227,7 +229,7 @@ export default function SettingsPage() {
                   className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
                 <div className="flex gap-2">
                   <button onClick={() => update.mutate({ current_password: currentPw, new_password: newPw })} disabled={update.isPending || !currentPw || !newPw}
-                    className="px-3 py-1.5 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-sm font-medium transition-colors">{t("updatePassword")}</button>
+                    className="px-3 py-1.5 rounded bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-sm font-medium transition-colors">{t("updatePassword")}</button>
                   <button onClick={() => { setEditPassword(false); setCurrentPw(""); setNewPw(""); }} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>
               </div>
@@ -246,6 +248,38 @@ export default function SettingsPage() {
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("language")}</h2>
         <p className="text-xs text-gray-600 mb-3">{tl("description")}</p>
         <LanguageSwitcher variant="settings" />
+      </div>
+
+      {/* Apparence */}
+      <div className="mb-8">
+        <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("appearance")}</h2>
+        <p className="text-xs text-gray-600 mb-3">{t("appearanceDesc")}</p>
+        <div className="flex gap-2">
+          {(
+            [
+              { value: "system", label: t("themeSystem"), Icon: Monitor },
+              { value: "dark",   label: t("themeDark"),   Icon: Moon },
+              { value: "light",  label: t("themeLight"),  Icon: Sun },
+            ] as { value: ThemePreference; label: string; Icon: React.ElementType }[]
+          ).map(({ value, label, Icon }) => {
+            const active = preference === value;
+            return (
+              <button
+                key={value}
+                onClick={() => setPreference(value)}
+                className={`flex items-center gap-2 px-3.5 py-2 rounded-lg border text-[13px] font-medium transition-all ${
+                  active
+                    ? "border-[#06B6D4] bg-[#06B6D4]/10 text-[#06B6D4]"
+                    : "border-white/[0.08] bg-white/[0.03] text-gray-400 hover:border-white/20 hover:text-gray-200"
+                }`}
+              >
+                <Icon size={14} />
+                {label}
+                {active && <Check size={11} strokeWidth={3} />}
+              </button>
+            );
+          })}
+        </div>
       </div>
     </div>
   );

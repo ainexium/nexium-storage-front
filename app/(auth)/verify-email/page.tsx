@@ -125,7 +125,7 @@ export default function VerifyEmailPage() {
             inputMode="numeric"
             maxLength={1}
             disabled={isVerifying}
-            className="w-11 h-14 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-xl font-mono text-center transition disabled:opacity-40"
+            className="w-11 h-14 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-xl font-mono text-center transition disabled:opacity-40"
           />
         ))}
       </div>
@@ -152,7 +152,7 @@ export default function VerifyEmailPage() {
           <button
             onClick={handleResend}
             disabled={resending}
-            className="text-[#007BFF] hover:underline disabled:opacity-50"
+            className="text-[#06B6D4] hover:underline disabled:opacity-50"
           >
             {resending ? t("sending") : t("resendCode")}
           </button>

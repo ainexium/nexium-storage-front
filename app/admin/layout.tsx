@@ -35,7 +35,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="flex min-h-screen">
       <aside className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[#08080f] px-3 py-6">
         <div className="flex items-center gap-1.5 px-2 mb-8">
-          <span className="text-[#007BFF] font-bold text-sm tracking-tight">NEXIUM</span>
+          <span className="text-[#06B6D4] font-bold text-sm tracking-tight">NEXIUM</span>
           <span className="text-gray-600 text-xs font-medium">/ admin</span>
         </div>
 
@@ -77,7 +77,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               {user?.is_super_admin
                 ? <Crown size={11} className="text-yellow-400 shrink-0" />
                 : user?.is_admin
-                ? <ShieldCheck size={11} className="text-[#007BFF] shrink-0" />
+                ? <ShieldCheck size={11} className="text-[#06B6D4] shrink-0" />
                 : null}
             </div>
             <p className="text-xs text-gray-600 truncate">{user?.email}</p>

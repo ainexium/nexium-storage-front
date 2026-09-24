@@ -58,7 +58,7 @@ export function LanguageSwitcher({ variant = "header" }: { variant?: Variant }) 
               <span className={`text-sm ${active ? "text-white" : "text-gray-300"}`}>
                 {localeLabels[code]}
               </span>
-              {active && <Check size={14} className="text-[#007BFF]" />}
+              {active && <Check size={14} className="text-[#06B6D4]" />}
             </button>
           );
         })}
@@ -114,7 +114,7 @@ export function LanguageSwitcher({ variant = "header" }: { variant?: Variant }) 
                 }`}
               >
                 {localeLabels[code]}
-                {active && <Check size={12} className="text-[#007BFF]" />}
+                {active && <Check size={12} className="text-[#06B6D4]" />}
               </button>
             );
           })}

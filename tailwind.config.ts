@@ -10,14 +10,15 @@ const config: Config = {
     extend: {
       colors: {
         brand: {
-          blue: "#007BFF",
+          blue: "#06B6D4",
           silver: "#C0C0C0",
           purple: "#6A0DAD",
         },
       },
       fontFamily: {
-        sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ["JetBrains Mono", "monospace"],
+        sans: ["var(--font-pangram)", "var(--font-roobert)", "system-ui", "sans-serif"],
+        heading: ["var(--font-roobert)", "var(--font-pangram)", "sans-serif"],
+        mono: ["var(--font-roobert-mono)", "monospace"],
       },
     },
   },

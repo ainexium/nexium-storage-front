@@ -15,12 +15,12 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
   }, [router]);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-[#0a0a0f] relative">
+    <div className="themed-page min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--lp-bg)] relative">
       <div className="absolute top-5 right-6">
         <LanguageSwitcher />
       </div>
       <Link href="/" className="mb-10 text-2xl font-bold tracking-tight">
-        <span className="text-[#007BFF]">NEXIUM</span>{" "}
+        <span className="text-[#06B6D4]">NEXIUM</span>{" "}
         <span className="text-gray-300">Storage</span>
       </Link>
       {children}

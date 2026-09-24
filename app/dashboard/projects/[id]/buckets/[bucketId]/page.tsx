@@ -294,9 +294,9 @@ export default function BucketPage({ params }: { params: Promise<{ id: string; b
     >
       {/* Drag overlay */}
       {isDragging && (
-        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0f]/90 border-2 border-dashed border-[#007BFF]/60 pointer-events-none">
-          <CloudUpload size={48} className="text-[#007BFF] mb-3 animate-bounce" />
-          <p className="text-lg font-semibold text-[#007BFF]">{t("dropToUpload")}</p>
+        <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#0a0a0f]/90 border-2 border-dashed border-[#06B6D4]/60 pointer-events-none">
+          <CloudUpload size={48} className="text-[#06B6D4] mb-3 animate-bounce" />
+          <p className="text-lg font-semibold text-[#06B6D4]">{t("dropToUpload")}</p>
         </div>
       )}
 
@@ -361,7 +361,7 @@ export default function BucketPage({ params }: { params: Promise<{ id: string; b
           <button
             onClick={() => fileInput.current?.click()}
             disabled={isUploading}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 rounded text-sm font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 rounded text-sm font-medium transition-colors"
           >
             <Upload size={13} />
             {uploadPhase === "saving" ? t("saving") : uploadPhase === "uploading" ? t("uploading") : t("upload")}
@@ -385,7 +385,7 @@ export default function BucketPage({ params }: { params: Promise<{ id: string; b
               <div className="animate-slide-bar" />
             ) : (
               <div
-                className="h-full bg-[#007BFF] rounded-full transition-all duration-150 ease-out"
+                className="h-full bg-[#06B6D4] rounded-full transition-all duration-150 ease-out"
                 style={{ width: `${uploadProgress}%` }}
               />
             )}
@@ -594,7 +594,7 @@ function GridCard({ f, actions, renamingId, renameValue, setRenameValue, submitR
               if (e.key === "Escape") cancelRename();
             }}
             onBlur={() => submitRename(f.id)}
-            className="w-full text-xs bg-[#0a0a0f] border border-[#007BFF] rounded px-1.5 py-0.5 focus:outline-none text-white"
+            className="w-full text-xs bg-[#0a0a0f] border border-[#06B6D4] rounded px-1.5 py-0.5 focus:outline-none text-white"
           />
         ) : (
           <p
@@ -666,7 +666,7 @@ function ListView({ files, actions, renamingId, renameValue, setRenameValue, sub
                   if (e.key === "Escape") cancelRename();
                 }}
                 onBlur={() => submitRename(f.id)}
-                className="text-sm bg-[#111118] border border-[#007BFF] rounded px-2 py-0.5 focus:outline-none w-full"
+                className="text-sm bg-[#111118] border border-[#06B6D4] rounded px-2 py-0.5 focus:outline-none w-full"
               />
             ) : (
               <span className="text-sm truncate cursor-default" title={f.filename} onDoubleClick={() => actions.startRename(f)}>
@@ -747,7 +747,7 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
         <div className="flex-1 overflow-auto min-h-0">
           {isLoading || !url ? (
             <div className="flex items-center justify-center h-64">
-              <div className="w-8 h-8 border-2 border-gray-700 border-t-[#007BFF] rounded-full animate-spin" />
+              <div className="w-8 h-8 border-2 border-gray-700 border-t-[#06B6D4] rounded-full animate-spin" />
             </div>
           ) : isImg ? (
             <div className="flex items-center justify-center p-4 bg-[#0a0a0f]" style={{ minHeight: 300 }}>
@@ -826,7 +826,7 @@ function TextPreview({ file, mime }: { file: StoredFile; mime: string }) {
   );
   if (!content) return (
     <div className="flex items-center justify-center h-48">
-      <div className="w-8 h-8 border-2 border-gray-700 border-t-[#007BFF] rounded-full animate-spin" />
+      <div className="w-8 h-8 border-2 border-gray-700 border-t-[#06B6D4] rounded-full animate-spin" />
     </div>
   );
 
@@ -861,7 +861,7 @@ function Pagination({ page, totalPages, onPageChange }: { page: number; totalPag
           <button
             key={p}
             onClick={() => onPageChange(p as number)}
-            className={`${btn} font-mono ${p === page ? "bg-[#007BFF] text-white" : "text-gray-400 hover:text-white hover:bg-gray-800"}`}
+            className={`${btn} font-mono ${p === page ? "bg-[#06B6D4] text-white" : "text-gray-400 hover:text-white hover:bg-gray-800"}`}
           >
             {p}
           </button>

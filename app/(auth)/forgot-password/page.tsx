@@ -47,7 +47,7 @@ export default function ForgotPasswordPage() {
             type="email"
             placeholder="hgs@gmail.com"
             autoFocus
-            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-sm transition"
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
           />
         </div>
 
@@ -60,14 +60,14 @@ export default function ForgotPasswordPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-2.5 bg-[#007BFF] hover:bg-blue-600 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
+          className="w-full py-2.5 bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
         >
           {isPending ? t("sending") : t("sendResetCode")}
         </button>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">
-        <Link href="/login" className="text-[#007BFF] hover:underline">{t("backToLogin")}</Link>
+        <Link href="/login" className="text-[#06B6D4] hover:underline">{t("backToLogin")}</Link>
       </p>
     </div>
   );

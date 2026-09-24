@@ -104,7 +104,7 @@ function Section({ id, icon: Icon, title, children }: {
   return (
     <section id={id} className="scroll-mt-8">
       <div className="flex items-center gap-3 mb-5">
-        <div className="p-2 rounded-lg bg-[#007BFF]/10 text-[#007BFF]"><Icon size={16} /></div>
+        <div className="p-2 rounded-lg bg-[#06B6D4]/10 text-[#06B6D4]"><Icon size={16} /></div>
         <h2 className="text-xl font-bold">{title}</h2>
       </div>
       <div className="space-y-5">{children}</div>
@@ -591,7 +591,7 @@ export default function DocsPage() {
   }, []);
 
   const code = (chunks: React.ReactNode) => (
-    <code className="text-[#007BFF]">{chunks}</code>
+    <code className="text-[#06B6D4]">{chunks}</code>
   );
   const grayCode = (chunks: React.ReactNode) => (
     <code className="text-gray-300">{chunks}</code>
@@ -616,10 +616,10 @@ export default function DocsPage() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
-      <nav className="flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 bg-[#0a0a0f]/95 backdrop-blur z-10">
+    <div className="themed-page min-h-screen bg-[var(--lp-bg)]">
+      <nav className="lp-header flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 backdrop-blur z-10">
         <Link href="/" className="text-xl font-bold tracking-tight">
-          <span className="text-[#007BFF]">NEXIUM</span>{" "}
+          <span className="text-[#06B6D4]">NEXIUM</span>{" "}
           <span className="text-gray-300 text-base font-medium">{t("brand")}</span>
         </Link>
         <div className="flex items-center gap-4">
@@ -635,7 +635,7 @@ export default function DocsPage() {
               </Link>
               <Link
                 href="/register"
-                className="px-3.5 py-1.5 text-sm bg-[#007BFF] hover:bg-blue-500 rounded-md font-medium transition"
+                className="px-3.5 py-1.5 text-sm bg-[#06B6D4] hover:bg-cyan-400 rounded-md font-medium transition"
               >
                 {t("getStarted")}
               </Link>
@@ -656,7 +656,7 @@ export default function DocsPage() {
                       ? "text-white bg-gray-800 font-medium"
                       : "text-gray-500 hover:text-white hover:bg-gray-800"
                   }`}>
-                  {isActive && <span className="inline-block w-1 h-1 rounded-full bg-[#007BFF] mr-2 mb-0.5" />}
+                  {isActive && <span className="inline-block w-1 h-1 rounded-full bg-[#06B6D4] mr-2 mb-0.5" />}
                   {t(`nav.${l.key}`)}
                 </a>
               );
@@ -666,7 +666,7 @@ export default function DocsPage() {
 
         <div className="flex-1 space-y-16 min-w-0">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#007BFF]/30 bg-[#007BFF]/10 text-[#007BFF] text-xs font-medium mb-5">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/10 text-[#06B6D4] text-xs font-medium mb-5">
               {t("badge")}
             </div>
             <h1 className="text-4xl font-bold mb-4">{t("title")}</h1>
@@ -683,7 +683,7 @@ export default function DocsPage() {
                 { n: "3", title: t("step3Title"), body: t("step3Body") },
               ].map((s) => (
                 <div key={s.n} className="rounded-xl border border-gray-800 bg-gray-900/40 p-5">
-                  <div className="w-7 h-7 rounded-full bg-[#007BFF]/20 text-[#007BFF] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
+                  <div className="w-7 h-7 rounded-full bg-[#06B6D4]/20 text-[#06B6D4] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
                   <p className="font-semibold mb-1">{s.title}</p>
                   <p className="text-sm text-gray-400">{s.body}</p>
                 </div>
@@ -707,7 +707,7 @@ export default function DocsPage() {
               <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("webhookVerification")}</p>
               <LanguageTabs examples={sdkWebhook} />
             </div>
-            <div className="rounded-xl border border-[#007BFF]/20 bg-[#007BFF]/5 p-4 text-sm text-blue-300">
+            <div className="rounded-xl border border-[#06B6D4]/20 bg-[#06B6D4]/5 p-4 text-sm text-blue-300">
               {t("sdksNote")}
             </div>
           </Section>
@@ -791,7 +791,7 @@ export default function DocsPage() {
                 { n: "3", title: t("presign3Title"), body: t("presign3Body") },
               ].map((s) => (
                 <div key={s.n} className="rounded-xl border border-gray-800 bg-gray-900/40 p-5">
-                  <div className="w-7 h-7 rounded-full bg-[#007BFF]/20 text-[#007BFF] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
+                  <div className="w-7 h-7 rounded-full bg-[#06B6D4]/20 text-[#06B6D4] text-xs font-bold flex items-center justify-center mb-3">{s.n}</div>
                   <p className="font-semibold mb-1 text-sm font-mono">{s.title}</p>
                   <p className="text-sm text-gray-400">{s.body}</p>
                 </div>
@@ -809,7 +809,7 @@ export default function DocsPage() {
               <p className="text-xs font-mono text-gray-500 uppercase tracking-widest">{t("step3Confirm")}</p>
               <LanguageTabs examples={presignStep3} />
             </div>
-            <p className="text-sm text-gray-500 mt-1">{t.rich("confirmResponse", { code: () => <code className="text-green-400">201 Created</code> })}</p>
+            <p className="text-sm text-gray-500 mt-1">{t.rich("confirmResponse", { code: (chunks) => <code className="text-green-400">{chunks}</code> })}</p>
             <Block lang="javascript" code={`{
   "id":         "87e60d98-...",
   "filename":   "photo.jpg",

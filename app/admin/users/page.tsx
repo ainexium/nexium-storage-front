@@ -73,7 +73,7 @@ export default function AdminUsersPage() {
         </div>
         {isSuperAdmin && (
           <button onClick={() => setCreating(v => !v)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#007BFF] hover:bg-blue-500 text-sm font-medium transition-colors">
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#06B6D4] hover:bg-cyan-400 text-sm font-medium transition-colors">
             <Plus size={13} /> {t("newAdmin")}
           </button>
         )}
@@ -95,7 +95,7 @@ export default function AdminUsersPage() {
           <div className="flex gap-2">
             <button onClick={() => createAdmin.mutate({ name: newName, email: newEmail, password: newPassword })}
               disabled={!newName.trim() || !newEmail.trim() || newPassword.length < 8 || createAdmin.isPending}
-              className="px-3 py-1.5 rounded bg-[#007BFF] hover:bg-blue-500 disabled:opacity-40 text-sm font-medium transition-colors">
+              className="px-3 py-1.5 rounded bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-sm font-medium transition-colors">
               {createAdmin.isPending ? t("creating") : t("createAdminBtn")}
             </button>
             <button onClick={() => { setCreating(false); setCreateError(null); }}
@@ -139,7 +139,7 @@ export default function AdminUsersPage() {
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-medium truncate">{u.name}</span>
                       {u.is_super_admin && <Crown size={11} className="text-yellow-400 shrink-0" />}
-                      {u.is_admin && !u.is_super_admin && <ShieldCheck size={11} className="text-[#007BFF] shrink-0" />}
+                      {u.is_admin && !u.is_super_admin && <ShieldCheck size={11} className="text-[#06B6D4] shrink-0" />}
                       {isMe && <span className="text-[10px] text-gray-600">{t("you")}</span>}
                     </div>
                     <span className="text-xs text-gray-500 truncate block">{u.email}</span>
@@ -158,7 +158,7 @@ export default function AdminUsersPage() {
                         className="h-full rounded-full"
                         style={{
                           width: `${usedPct}%`,
-                          background: usedPct > 90 ? "#ef4444" : usedPct > 70 ? "#f97316" : "#007BFF",
+                          background: usedPct > 90 ? "#ef4444" : usedPct > 70 ? "#f97316" : "#06B6D4",
                         }}
                       />
                     </div>
@@ -196,7 +196,7 @@ export default function AdminUsersPage() {
                       >
                         <HardDrive size={10} />
                         {u.storage_quota_bytes == null ? `${DEFAULT_QUOTA_GB}GB` : quotaGB === 0 ? "∞" : `${quotaGB}GB`}
-                        {u.storage_quota_bytes != null && <span className="text-[#007BFF]">*</span>}
+                        {u.storage_quota_bytes != null && <span className="text-[#06B6D4]">*</span>}
                       </button>
                     )}
                   </div>
@@ -205,7 +205,7 @@ export default function AdminUsersPage() {
                     {isSuperAdmin && !isMe && !u.is_super_admin ? (
                       u.is_admin ? (
                         <button onClick={() => setConfirmRole({ user: u, promote: false })}
-                          className="flex items-center gap-1 text-[11px] text-[#007BFF] border border-[#007BFF]/30 bg-[#007BFF]/10 px-1.5 py-0.5 rounded hover:bg-[#007BFF]/20 transition-colors">
+                          className="flex items-center gap-1 text-[11px] text-[#06B6D4] border border-[#06B6D4]/30 bg-[#06B6D4]/10 px-1.5 py-0.5 rounded hover:bg-[#06B6D4]/20 transition-colors">
                           <ShieldCheck size={10} /> {tn("admin")}
                         </button>
                       ) : (

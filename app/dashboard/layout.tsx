@@ -16,9 +16,9 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 
 const PLAN_BADGE: Record<string, { label: string; cls: string }> = {
   free:     { label: "Free",     cls: "text-gray-500 bg-white/[0.04] border-white/[0.08]" },
-  starter:  { label: "Starter",  cls: "text-blue-400 bg-blue-500/[0.08] border-blue-500/20" },
-  pro:      { label: "Pro",      cls: "text-purple-400 bg-purple-500/[0.08] border-purple-500/20" },
-  business: { label: "Business", cls: "text-amber-400 bg-amber-500/[0.08] border-amber-500/20" },
+  starter:  { label: "Starter",  cls: "text-[#06B6D4] bg-[#06B6D4]/[0.08] border-[#06B6D4]/20" },
+  pro:      { label: "Pro",      cls: "text-[#06B6D4] bg-[#06B6D4]/[0.08] border-[#06B6D4]/20" },
+  business: { label: "Business", cls: "text-[#06B6D4] bg-[#06B6D4]/[0.08] border-[#06B6D4]/20" },
 };
 
 const nav = [
@@ -54,10 +54,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[#08080f] px-3 py-6">
+    <div className="dash-page flex min-h-screen">
+      <aside className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[var(--dash-sidebar)] px-3 py-6">
         <Link href="/" className="flex items-center gap-1.5 px-2 mb-8">
-          <span className="text-[#007BFF] font-bold text-sm tracking-tight">NEXIUM</span>
+          <span className="text-[#06B6D4] font-bold text-sm tracking-tight">NEXIUM</span>
           <span className="text-gray-600 text-xs font-medium">/ storage</span>
         </Link>
 
@@ -95,7 +95,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             <Link
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               href={"/admin" as any}
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-[#007BFF] hover:bg-[#007BFF]/[0.06] transition-all mb-1"
+              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-[#06B6D4] hover:bg-[#06B6D4]/[0.06] transition-all mb-1"
             >
               <ShieldCheck size={15} />
               {t("adminPanel")}
@@ -120,7 +120,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         </div>
       </aside>
 
-      <main className="flex-1 overflow-auto bg-[#0a0a0f]">
+      <main className="flex-1 overflow-auto bg-[var(--dash-bg)]">
         {children}
       </main>
     </div>

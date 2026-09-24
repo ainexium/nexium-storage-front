@@ -135,7 +135,7 @@ export default function ResetPasswordPage() {
               inputMode="numeric"
               maxLength={1}
               disabled={isVerifying}
-              className="w-11 h-14 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-xl font-mono text-center transition disabled:opacity-40"
+              className="w-11 h-14 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-xl font-mono text-center transition disabled:opacity-40"
             />
           ))}
         </div>
@@ -152,7 +152,7 @@ export default function ResetPasswordPage() {
 
         <p className="text-center text-sm text-gray-600">
           {t("didntReceive")}{" "}
-          <Link href="/forgot-password" className="text-[#007BFF] hover:underline">
+          <Link href="/forgot-password" className="text-[#06B6D4] hover:underline">
             {t("resendCode")}
           </Link>
         </p>
@@ -183,7 +183,7 @@ export default function ResetPasswordPage() {
             onChange={(e) => setPassword(e.target.value)}
             type="password"
             placeholder={t("min8")}
-            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-sm transition"
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
           />
         </div>
 
@@ -196,7 +196,7 @@ export default function ResetPasswordPage() {
             onChange={(e) => setConfirm(e.target.value)}
             type="password"
             placeholder={t("repeatPassword")}
-            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#007BFF] focus:ring-1 focus:ring-[#007BFF] outline-none text-sm transition"
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
           />
         </div>
 
@@ -209,7 +209,7 @@ export default function ResetPasswordPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-2.5 bg-[#007BFF] hover:bg-blue-600 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
+          className="w-full py-2.5 bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
         >
           {isPending ? t("updating") : t("resetPassword")}
         </button>

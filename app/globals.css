@@ -10,7 +10,7 @@
 .animate-slide-bar {
   position: absolute;
   height: 100%;
-  background: #007BFF;
+  background: #06B6D4;
   border-radius: 9999px;
   animation: slide-bar 1.2s ease-in-out infinite;
 }
@@ -71,9 +71,471 @@
   border-color: rgba(255,255,255,0.2);
 }
 
+/* ── Grid overlay ───────────────────────────────── */
+.grid-dark {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 80px 80px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Blue glow variants ─────────────────────────── */
+.glow-blue-hero {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 45% at 5% 95%, rgba(155,61,255,0.07) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 85% 8%,  rgba(155,61,255,0.07) 0%, transparent 55%);
+}
+
+.glow-blue-bottom {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 45% 40% at 5% 5%,  rgba(155,61,255,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 95%, rgba(155,61,255,0.07) 0%, transparent 65%);
+}
+
+.glow-blue-center {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(ellipse 75% 75% at 50% 50%, rgba(155,61,255,0.11) 0%, transparent 65%);
+}
+
+/* ── Noise overlay ──────────────────────────────── */
+.noise-overlay {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.038;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='256' height='256'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E");
+  background-size: 256px 256px;
+}
+
+/* ── Scroll animations ──────────────────────────── */
+[data-anim="fade-up"] {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-anim="fade-left"] {
+  opacity: 0;
+  transform: translateX(-18px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-anim="fade-right"] {
+  opacity: 0;
+  transform: translateX(18px);
+  transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+              transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+[data-anim][data-visible="true"] {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+/* ── Marquee ────────────────────────────────────── */
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-25%); }
+}
+@keyframes marquee-reverse {
+  from { transform: translateX(-25%); }
+  to   { transform: translateX(0); }
+}
+.animate-marquee {
+  animation: marquee 40s linear infinite;
+  will-change: transform;
+}
+.animate-marquee-reverse {
+  animation: marquee-reverse 32s linear infinite;
+  will-change: transform;
+}
+.marquee-track:hover .animate-marquee,
+.marquee-track:hover .animate-marquee-reverse {
+  animation-play-state: paused;
+}
+
+/* ── Floating badge (CTA) ───────────────────────── */
+@keyframes float-badge {
+  0%, 100% { transform: translateY(0px);   }
+  50%       { transform: translateY(-12px); }
+}
+
+/* ── Blue glow (right side, marquee) ────────────── */
+.glow-blue-right {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 55% 120% at 100% 50%, rgba(155,61,255,0.05) 0%, transparent 65%),
+    linear-gradient(to left, rgba(155,61,255,0.04) 0%, rgba(155,61,255,0.008) 100%);
+}
+
+/* ── Theme variables ─────────────────────────────── */
+:root {
+  --lp-bg:       #08080f;
+  --lp-bg-deep:  #0a0a0f;
+  --dash-bg:     #0a0a0f;
+  --dash-sidebar: #08080f;
+}
+
+html[data-theme="light"] {
+  --lp-bg:       #f5f7fa;
+  --lp-bg-deep:  #edf0f5;
+  --dash-bg:     #f5f7fa;
+  --dash-sidebar: #edf0f5;
+}
+
+/* Header bg (backdrop-blur needs explicit bg on the class) */
+.lp-header {
+  background-color: rgba(8, 8, 15, 0.8);
+}
+html[data-theme="light"] .lp-header {
+  background-color: rgba(245, 247, 250, 0.88);
+}
+
+/* ── Landing page light mode overrides ──────────── */
+[data-theme="light"] .themed-page {
+  background-color: var(--lp-bg);
+  color: #0f0f14;
+}
+
+/* Grid — invert opacity for light bg */
+[data-theme="light"] .themed-page .grid-dark {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,0,0,0.04) 1px, transparent 1px);
+}
+
+/* Glows — intensify for light background */
+[data-theme="light"] .themed-page .glow-blue-hero {
+  background:
+    radial-gradient(ellipse 55% 45% at 5% 95%,  rgba(155,61,255,0.18) 0%, transparent 65%),
+    radial-gradient(ellipse 45% 40% at 85% 8%,   rgba(155,61,255,0.18) 0%, transparent 55%);
+}
+[data-theme="light"] .themed-page .glow-blue-bottom {
+  background:
+    radial-gradient(ellipse 45% 40% at 5% 5%,   rgba(155,61,255,0.18) 0%, transparent 55%),
+    radial-gradient(ellipse 55% 45% at 95% 95%,  rgba(155,61,255,0.18) 0%, transparent 65%);
+}
+[data-theme="light"] .themed-page .glow-blue-center {
+  background: radial-gradient(ellipse 75% 75% at 50% 50%, rgba(155,61,255,0.15) 0%, transparent 65%);
+}
+[data-theme="light"] .themed-page .glow-blue-right {
+  background:
+    radial-gradient(ellipse 55% 120% at 100% 50%, rgba(155,61,255,0.13) 0%, transparent 65%),
+    linear-gradient(to left, rgba(155,61,255,0.10) 0%, rgba(155,61,255,0.02) 100%);
+}
+
+/* Section borders */
+[data-theme="light"] .themed-page section {
+  border-top-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* Text */
+[data-theme="light"] .themed-page .text-white   { color: #0f0f14 !important; }
+[data-theme="light"] .themed-page .text-gray-100 { color: #1a1a24 !important; }
+[data-theme="light"] .themed-page .text-gray-200 { color: #2e2e40 !important; }
+[data-theme="light"] .themed-page .text-gray-300 { color: #444455 !important; }
+[data-theme="light"] .themed-page .text-gray-400 { color: #666677 !important; }
+[data-theme="light"] .themed-page .text-gray-500 { color: #888899 !important; }
+[data-theme="light"] .themed-page .text-gray-600 { color: #aaaabc !important; }
+[data-theme="light"] .themed-page .text-gray-700 { color: #bbbbcc !important; }
+
+/* All white/transparent borders → dark/transparent */
+[data-theme="light"] .themed-page [class*="border-white/"] {
+  border-color: rgba(0, 0, 0, 0.09) !important;
+}
+
+/* All white/transparent backgrounds → clean light */
+[data-theme="light"] .themed-page [class*="bg-white/"] {
+  background-color: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Footer */
+[data-theme="light"] .themed-page footer {
+  border-top-color: rgba(0, 0, 0, 0.07) !important;
+}
+
+/* white/opacity text variants: text-white/25, text-white/30, text-white/35 … */
+[data-theme="light"] .themed-page [class*="text-white/"] {
+  color: rgba(0, 0, 0, 0.45) !important;
+}
+
+/* hover:text-white links become dark on hover in light mode */
+[data-theme="light"] .themed-page a:hover {
+  color: #0f0f14 !important;
+}
+
+/* bg-[#0e0e18] — CTA rectangle */
+[data-theme="light"] .themed-page [class*="bg-[#0e0e18]"] {
+  background-color: #eef0f7 !important;
+}
+
+/* bg-black/20 — terminal header bar */
+[data-theme="light"] .themed-page [class*="bg-black/"] {
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Noise overlay — invisible in light */
+[data-theme="light"] .themed-page .noise-overlay {
+  opacity: 0;
+}
+
+/* Auth inputs & docs sidebar — gray Tailwind classes */
+[data-theme="light"] .themed-page .bg-gray-900  { background-color: #f0f2f7 !important; }
+[data-theme="light"] .themed-page .bg-gray-800  { background-color: #e4e7ef !important; }
+[data-theme="light"] .themed-page .border-gray-700 { border-color: rgba(0,0,0,0.14) !important; }
+[data-theme="light"] .themed-page .border-gray-800 { border-color: rgba(0,0,0,0.09) !important; }
+[data-theme="light"] .themed-page .text-gray-800 { color: #222233 !important; }
+
+/* lp-header border in light mode */
+html[data-theme="light"] .lp-header {
+  border-bottom-color: rgba(0,0,0,0.08) !important;
+}
+
+/* Inputs / textarea — text color invisible without this */
+[data-theme="light"] .themed-page input,
+[data-theme="light"] .themed-page textarea,
+[data-theme="light"] .themed-page select {
+  color: #0f0f14 !important;
+}
+
+/* Language switcher dropdown */
+[data-theme="light"] .themed-page [role="listbox"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+}
+[data-theme="light"] .themed-page [role="listbox"] button {
+  color: #333344 !important;
+}
+[data-theme="light"] .themed-page [role="listbox"] button:hover {
+  background-color: rgba(0,0,0,0.05) !important;
+  color: #0f0f14 !important;
+}
+[data-theme="light"] .themed-page [role="listbox"] button[aria-selected="true"] {
+  background-color: rgba(6,182,212,0.08) !important;
+  color: #0f0f14 !important;
+}
+
+/* bg-[#0f0f18] used in language switcher dropdown */
+[data-theme="light"] .themed-page [class*="bg-[#0f0f"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+
+/* ── Docs page — specific light mode fixes ──────── */
+
+/* Active language tab: dark bg (matches code block) + keep text white */
+[data-theme="light"] .themed-page button[class*="0d1117"] {
+  background-color: #1e2433 !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+}
+
+/* Code block pre: lighten from pitch-black to softer dark */
+[data-theme="light"] .themed-page pre {
+  background-color: #1e2433 !important;
+}
+
+/* Language tabs — inactive bg (bg-gray-900/40) */
+[data-theme="light"] .themed-page [class*="bg-gray-900/"] {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+/* Language tabs — inactive text on light */
+[data-theme="light"] .themed-page button.rounded-t-lg:not([class*="0d1117"]) {
+  color: #444455 !important;
+}
+[data-theme="light"] .themed-page button.rounded-t-lg:not([class*="0d1117"]):hover {
+  color: #0f0f14 !important;
+  background-color: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Sidebar nav hover — hover:bg-gray-800 becomes black otherwise */
+[data-theme="light"] .themed-page aside a:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  color: #0f0f14 !important;
+}
+
+/* Copy button inside code blocks */
+[data-theme="light"] .themed-page [class*="bg-gray-800/"] {
+  background-color: rgba(0, 0, 0, 0.12) !important;
+}
+[data-theme="light"] .themed-page button:hover .text-white,
+[data-theme="light"] .themed-page button.hover\:bg-gray-700:hover {
+  background-color: rgba(0, 0, 0, 0.18) !important;
+}
+
+/* Warning/note box text (text-blue-300 invisible on light) */
+[data-theme="light"] .themed-page .text-blue-300 {
+  color: #0e7490 !important;
+}
+
+/* Yellow warning text (too light on white bg) */
+[data-theme="light"] .themed-page .text-yellow-400,
+[data-theme="light"] .themed-page .text-yellow-300 {
+  color: #a16207 !important;
+}
+
+/* Section icon boxes — slightly more visible on light bg */
+[data-theme="light"] .themed-page [class*="bg-"][class*="06B6D4"] {
+  background-color: rgba(6, 182, 212, 0.18) !important;
+}
+
+/* ── Dashboard light mode ────────────────────────── */
+[data-theme="light"] .dash-page {
+  color: #0f0f14;
+}
+[data-theme="light"] .dash-page .text-white   { color: #0f0f14 !important; }
+[data-theme="light"] .dash-page .text-gray-100 { color: #1a1a24 !important; }
+[data-theme="light"] .dash-page .text-gray-200 { color: #2e2e40 !important; }
+[data-theme="light"] .dash-page .text-gray-300 { color: #444455 !important; }
+[data-theme="light"] .dash-page .text-gray-400 { color: #5a5a6e !important; }
+[data-theme="light"] .dash-page .text-gray-500 { color: #7a7a8c !important; }
+[data-theme="light"] .dash-page .text-gray-600 { color: #9898aa !important; }
+[data-theme="light"] .dash-page .text-gray-700 { color: #aaaabc !important; }
+
+/* Borders */
+[data-theme="light"] .dash-page [class*="border-white/"] { border-color: rgba(0,0,0,0.08) !important; }
+[data-theme="light"] .dash-page .border-t                { border-top-color: rgba(0,0,0,0.08) !important; }
+[data-theme="light"] .dash-page [class*="divide-white/"] > * + * { border-color: rgba(0,0,0,0.07) !important; }
+
+/* Card/panel backgrounds */
+[data-theme="light"] .dash-page [class*="bg-white/"]  { background-color: rgba(0,0,0,0.03) !important; }
+[data-theme="light"] .dash-page [class*="bg-black/"]  { background-color: rgba(0,0,0,0.04) !important; }
+[data-theme="light"] .dash-page .bg-gray-900 { background-color: #eef0f7 !important; }
+[data-theme="light"] .dash-page .bg-gray-800 { background-color: #e4e7ef !important; }
+[data-theme="light"] .dash-page .border-gray-700 { border-color: rgba(0,0,0,0.12) !important; }
+[data-theme="light"] .dash-page .border-gray-800 { border-color: rgba(0,0,0,0.07) !important; }
+
+/* Inputs */
+[data-theme="light"] .dash-page input,
+[data-theme="light"] .dash-page textarea,
+[data-theme="light"] .dash-page select { color: #0f0f14 !important; background-color: rgba(0,0,0,0.04) !important; border-color: rgba(0,0,0,0.12) !important; }
+[data-theme="light"] .dash-page input::placeholder,
+[data-theme="light"] .dash-page textarea::placeholder { color: rgba(0,0,0,0.3) !important; }
+
+/* Sidebar nav active state */
+[data-theme="light"] .dash-page aside { border-right-color: rgba(0,0,0,0.08) !important; }
+
+/* Status badges — keep colored */
+[data-theme="light"] .dash-page .text-emerald-400 { color: #059669 !important; }
+[data-theme="light"] .dash-page .text-red-400     { color: #dc2626 !important; }
+[data-theme="light"] .dash-page .text-amber-400   { color: #d97706 !important; }
+[data-theme="light"] .dash-page .text-blue-400    { color: #2563eb !important; }
+[data-theme="light"] .dash-page .text-purple-400  { color: #7c3aed !important; }
+
+/* Hover states */
+[data-theme="light"] .dash-page a:hover { color: #0f0f14 !important; }
+
+/* Language switcher dropdown */
+[data-theme="light"] .dash-page [class*="bg-[#0f0f"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+}
+[data-theme="light"] .dash-page [role="listbox"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+[data-theme="light"] .dash-page [role="listbox"] button {
+  color: #333344 !important;
+}
+[data-theme="light"] .dash-page [role="listbox"] button:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #0f0f14 !important;
+}
+[data-theme="light"] .dash-page [role="listbox"] button[aria-selected="true"] {
+  background-color: rgba(6, 182, 212, 0.08) !important;
+  color: #0f0f14 !important;
+}
+
+/* Plan cards: restore cyan border on hover (defeats the border-white/ !important override) */
+[data-theme="light"] .dash-page [class*="hover:border-[#06B6D4]"]:hover {
+  border-color: rgba(6, 182, 212, 0.5) !important;
+}
+
+/* text-[#06B6D4] on light bg: darken slightly for contrast */
+[data-theme="light"] .dash-page [class*="text-[#06B6D4]"] {
+  color: #0891b2 !important;
+}
+
+/* Pro button (always filled): keep text white — identified by hover:bg-cyan-400 which is unique to it */
+[data-theme="light"] .dash-page button[class*="hover:bg-cyan-400"] {
+  color: #ffffff !important;
+}
+
+/* Outlined buttons (Starter/Business): fill cyan + white text on hover */
+[data-theme="light"] .dash-page button[class*="hover:bg-[#06B6D4]"]:hover {
+  background-color: #06B6D4 !important;
+  color: #ffffff !important;
+  border-color: #06B6D4 !important;
+}
+
+/* ── Plan cards & status badges ─────────────────────── */
+/* Status badge tints */
+[data-theme="light"] .dash-page [class*="bg-emerald-500/"],
+[data-theme="light"] .dash-page [class*="bg-emerald-400/"] { background-color: rgba(16,185,129,0.08) !important; }
+[data-theme="light"] .dash-page [class*="bg-red-500/"],
+[data-theme="light"] .dash-page [class*="bg-red-400/"]     { background-color: rgba(239,68,68,0.08) !important; }
+[data-theme="light"] .dash-page [class*="bg-yellow-400/"]  { background-color: rgba(250,204,21,0.12) !important; }
+[data-theme="light"] .dash-page [class*="bg-blue-400/"]    { background-color: rgba(96,165,250,0.1) !important; }
+/* Status badge borders */
+[data-theme="light"] .dash-page [class*="border-emerald-400/"],
+[data-theme="light"] .dash-page [class*="border-emerald-500/"] { border-color: rgba(16,185,129,0.3) !important; }
+[data-theme="light"] .dash-page [class*="border-red-400/"],
+[data-theme="light"] .dash-page [class*="border-red-500/"]    { border-color: rgba(239,68,68,0.25) !important; }
+[data-theme="light"] .dash-page [class*="border-yellow-400/"] { border-color: rgba(250,204,21,0.3) !important; }
+[data-theme="light"] .dash-page [class*="border-blue-400/"]   { border-color: rgba(96,165,250,0.3) !important; }
+/* Pro plan cyan ring — softer in light mode */
+[data-theme="light"] .dash-page [class*="ring-[#06B6D4]"] {
+  box-shadow: 0 0 28px -8px rgba(6,182,212,0.15) !important;
+}
+/* Payment modal bg */
+[data-theme="light"] .dash-page [class*="bg-[#0c0c"] {
+  background-color: #ffffff !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+/* text-white/xx on dash */
+[data-theme="light"] .dash-page [class*="text-white/"] {
+  color: rgba(0,0,0,0.4) !important;
+}
+
+/* ── Font size increases ─────────────────────────── */
+/* Auth forms */
+.themed-page form label                   { font-size: 0.9375rem; }
+.themed-page form input,
+.themed-page form textarea                { font-size: 0.9375rem; }
+.themed-page form button[type="submit"]   { font-size: 1rem;      }
+/* Auth page headings */
+.themed-page h1 { font-size: clamp(1.6rem, 3vw, 2.25rem); }
+/* Docs body text */
+.themed-page .prose p,
+.themed-page .space-y-16 p               { font-size: 1rem; }
+/* General paragraph size boost */
+.themed-page p:not([class*="text-["]):not([class*="text-xs"]):not([class*="text-[1"]) {
+  font-size: 1rem;
+}
+
 @layer base {
   :root {
-    --brand-blue: #007BFF;
+    --brand-blue: #06B6D4;
     --brand-silver: #C0C0C0;
     --brand-purple: #6A0DAD;
   }
@@ -84,6 +546,16 @@
 
   body {
     @apply bg-[#0a0a0f] text-gray-100;
+    font-family: var(--font-pangram), var(--font-roobert), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-roobert), var(--font-pangram), sans-serif;
+  }
+
+  code, pre, .font-mono {
+    font-family: var(--font-roobert-mono), monospace;
   }
 
   ::-webkit-scrollbar {
