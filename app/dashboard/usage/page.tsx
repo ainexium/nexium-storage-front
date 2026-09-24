@@ -50,7 +50,7 @@ function ProjectCard({ project, quotaBytes }: { project: Project; quotaBytes: nu
                 className="h-full rounded-full transition-all"
                 style={{
                   width: `${pct}%`,
-                  background: pct > 90 ? "#ef4444" : pct > 70 ? "#f97316" : "#06B6D4",
+                  background: pct > 90 ? "#ef4444" : pct > 70 ? "#f97316" : "#9b3dff",
                 }}
               />
             </div>

@@ -39,7 +39,7 @@ export default function AdminPage() {
   const statCards = [
     { key: "users",    value: stats?.user_count,    icon: Users,      color: "text-blue-400" },
     { key: "projects", value: stats?.project_count, icon: FolderOpen, color: "text-purple-400" },
-    { key: "buckets",  value: stats?.bucket_count,  icon: Database,   color: "text-cyan-400" },
+    { key: "buckets",  value: stats?.bucket_count,  icon: Database,   color: "text-[#aa55ff]" },
     { key: "files",    value: stats?.file_count,    icon: File,       color: "text-green-400" },
   ] as const;
 

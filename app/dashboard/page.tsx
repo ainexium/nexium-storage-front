@@ -25,14 +25,14 @@ function Stat({ value, label }: { value: string; label: string }) {
 
 const PLAN_ACCENT: Record<string, string> = {
   free:     "text-gray-500",
-  starter:  "text-[#06B6D4]",
-  pro:      "text-[#06B6D4]",
-  business: "text-[#06B6D4]",
+  starter:  "text-[#9b3dff]",
+  pro:      "text-[#9b3dff]",
+  business: "text-[#9b3dff]",
 };
 const PLAN_BG: Record<string, string> = {
   free:     "bg-white/[0.02] border-white/[0.07]",
   starter:  "bg-white/[0.02] border-white/[0.07]",
-  pro:      "bg-white/[0.03] border-[#06B6D4]/15",
+  pro:      "bg-white/[0.03] border-[#9b3dff]/15",
   business: "bg-white/[0.02] border-white/[0.07]",
 };
 
@@ -120,7 +120,7 @@ export default function DashboardPage() {
           <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
             <div
               className={`h-full rounded-full transition-all ${
-                usedPct > 85 ? "bg-red-400" : usedPct > 60 ? "bg-amber-400" : "bg-[#06B6D4]"
+                usedPct > 85 ? "bg-red-400" : usedPct > 60 ? "bg-amber-400" : "bg-[#9b3dff]"
               }`}
               style={{ width: `${usedPct}%` }}
             />
@@ -141,7 +141,7 @@ export default function DashboardPage() {
         {projects.length === 0 ? (
           <div className="rounded-xl border border-dashed border-white/[0.07] py-14 text-center">
             <p className="text-sm text-gray-600">{t("noProjects")}</p>
-            <Link href="/dashboard/projects" className="text-xs text-[#06B6D4] hover:underline mt-2 inline-block">
+            <Link href="/dashboard/projects" className="text-xs text-[#9b3dff] hover:underline mt-2 inline-block">
               {t("createFirstProject")}
             </Link>
           </div>

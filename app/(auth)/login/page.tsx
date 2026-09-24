@@ -59,8 +59,8 @@ export default function LoginPage() {
           <input
             {...register("email")}
             type="email"
-            placeholder="hgs@gmail.com"
-            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
+            placeholder="kader@gmail.com"
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
           />
           {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email.message}</p>}
         </div>
@@ -68,7 +68,7 @@ export default function LoginPage() {
         <div>
           <div className="flex items-center justify-between mb-1.5">
             <label className="block text-sm font-medium text-gray-300">{t("password")}</label>
-            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-[#06B6D4] transition">
+            <Link href="/forgot-password" className="text-xs text-gray-500 hover:text-[#9b3dff] transition">
               {t("forgotPassword")}
             </Link>
           </div>
@@ -76,7 +76,7 @@ export default function LoginPage() {
             {...register("password")}
             type="password"
             placeholder="••••••••"
-            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
           />
           {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
         </div>
@@ -90,7 +90,7 @@ export default function LoginPage() {
         <button
           type="submit"
           disabled={isPending}
-          className="w-full py-2.5 bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-60 rounded-lg font-semibold text-sm transition"
+          className="w-full py-2.5 bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-60 rounded-lg font-semibold text-sm transition"
         >
           {isPending ? t("signingIn") : t("signIn")}
         </button>
@@ -98,7 +98,7 @@ export default function LoginPage() {
 
       <p className="text-center text-sm text-gray-500 mt-6">
         {t("noAccount")}{" "}
-        <Link href="/register" className="text-[#06B6D4] hover:underline">
+        <Link href="/register" className="text-[#9b3dff] hover:underline">
           {t("createOne")}
         </Link>
       </p>

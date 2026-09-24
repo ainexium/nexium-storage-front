@@ -21,8 +21,8 @@ export async function login(email: string, password: string): Promise<TokenPair>
   return pair;
 }
 
-export async function register(name: string, email: string, password: string): Promise<{ email: string; message: string }> {
-  return api.post("/api/v1/auth/register", { name, email, password });
+export async function register(name: string, email: string, password: string, termsAccepted: boolean): Promise<{ email: string; message: string }> {
+  return api.post("/api/v1/auth/register", { name, email, password, terms_accepted: termsAccepted });
 }
 
 export async function verifyEmail(email: string, code: string): Promise<TokenPair> {

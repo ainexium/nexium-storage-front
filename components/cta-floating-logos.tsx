@@ -151,7 +151,7 @@ export function CtaFloatingLogos({ title, body, primary, secondary }: Props) {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/register"
-                className="flex items-center justify-center gap-2 px-8 py-4 bg-[#06B6D4] hover:bg-cyan-400 rounded-lg text-[14px] font-semibold transition"
+                className="flex items-center justify-center gap-2 px-8 py-4 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
               >
                 {primary} <ArrowRight size={16} />
               </Link>

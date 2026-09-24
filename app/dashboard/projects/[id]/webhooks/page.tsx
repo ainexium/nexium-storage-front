@@ -210,7 +210,7 @@ export default function WebhooksPage({ params }: { params: Promise<{ id: string 
         </div>
         <button
           onClick={() => { setCreating(true); setNewSecret(null); }}
-          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[#06B6D4] hover:bg-blue-600 rounded-lg font-medium transition"
+          className="flex items-center gap-1.5 text-xs px-3 py-2 bg-[#9b3dff] hover:bg-blue-600 rounded-lg font-medium transition"
         >
           <Plus size={13} /> {t("add")}
         </button>
@@ -246,7 +246,7 @@ export default function WebhooksPage({ params }: { params: Promise<{ id: string 
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="https://your-app.com/webhook"
                 autoFocus
-                className="w-full px-3 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#06B6D4] focus:ring-1 focus:ring-[#06B6D4] outline-none text-sm transition"
+                className="w-full px-3 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
               />
             </div>
             <div>
@@ -258,7 +258,7 @@ export default function WebhooksPage({ params }: { params: Promise<{ id: string 
                     onClick={() => toggleEvent(e)}
                     className={`text-xs px-3 py-1.5 rounded-lg border font-mono transition ${
                       selectedEvents.includes(e)
-                        ? "border-[#06B6D4] bg-[#06B6D4]/10 text-[#06B6D4]"
+                        ? "border-[#9b3dff] bg-[#9b3dff]/10 text-[#9b3dff]"
                         : "border-white/[0.1] text-gray-500 hover:border-white/[0.2]"
                     }`}
                   >
@@ -276,7 +276,7 @@ export default function WebhooksPage({ params }: { params: Promise<{ id: string 
               <button
                 onClick={() => create.mutate()}
                 disabled={create.isPending || !url || selectedEvents.length === 0}
-                className="px-4 py-2 bg-[#06B6D4] hover:bg-blue-600 disabled:opacity-50 rounded-lg text-sm font-medium transition"
+                className="px-4 py-2 bg-[#9b3dff] hover:bg-blue-600 disabled:opacity-50 rounded-lg text-sm font-medium transition"
               >
                 {create.isPending ? t("creating") : tc("create")}
               </button>

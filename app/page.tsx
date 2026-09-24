@@ -87,7 +87,7 @@ export default async function LandingPage() {
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <span className="font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
-            <span className="text-[#06B6D4]">NEXIUM</span>
+            <span className="text-[#9b3dff]">NEXIUM</span>
             <span className="text-gray-500 font-normal ml-1">/ storage</span>
           </span>
           <div className="flex items-center gap-3 sm:gap-5">
@@ -106,7 +106,7 @@ export default async function LandingPage() {
             </Link>
             <Link
               href="/register"
-              className="hidden min-[490px]:block px-3.5 py-1.5 text-[14px] bg-[#06B6D4] hover:bg-cyan-400 rounded-md font-semibold transition"
+              className="hidden min-[490px]:block px-3.5 py-1.5 text-[14px] bg-[#9b3dff] hover:bg-[#aa55ff] rounded-md font-semibold transition"
             >
               {t("getStarted")}
             </Link>
@@ -125,7 +125,7 @@ export default async function LandingPage() {
         <div className="relative z-10 flex flex-col items-center max-w-4xl w-full">
 
           <AnimInView>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#06B6D4]/30 bg-[#06B6D4]/10 text-[#06B6D4] text-[12px] font-medium mb-8">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#9b3dff]/30 bg-[#9b3dff]/10 text-[#9b3dff] text-[12px] font-medium mb-8">
               {t("badge")}
             </div>
           </AnimInView>
@@ -136,7 +136,7 @@ export default async function LandingPage() {
               style={{ fontSize: "clamp(2.2rem, 5vw, 3.6rem)" }}
             >
               {t("heroTitle")}{" "}
-              <span className="text-[#06B6D4]">{t("heroAccent")}</span>
+              <span className="text-[#9b3dff]">{t("heroAccent")}</span>
             </h1>
           </AnimInView>
 
@@ -150,7 +150,7 @@ export default async function LandingPage() {
             <div className="flex flex-col sm:flex-row gap-3 mb-16">
               <Link
                 href="/register"
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-[#06B6D4] hover:bg-cyan-400 rounded-lg text-[14px] font-semibold transition"
+                className="flex items-center justify-center gap-2 px-6 py-3 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
               >
                 {t("createAccount")} <ArrowRight size={16} />
               </Link>
@@ -186,7 +186,7 @@ export default async function LandingPage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6">
 
           <AnimInView className="mb-14 text-center">
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-4">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-4">
               {t("personasEyebrow")}
             </p>
             <h2
@@ -202,15 +202,15 @@ export default async function LandingPage() {
             {/* Persona 1 — Teams & Creatives */}
             <AnimInView delay={0}>
               <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-7 h-full">
-                <div className="w-10 h-10 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
-                  <Users size={18} className="text-[#06B6D4]" />
+                <div className="w-10 h-10 rounded-lg bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center mb-5">
+                  <Users size={18} className="text-[#9b3dff]" />
                 </div>
                 <h3 className="text-[17px] font-semibold mb-2">{t("persona1Title")}</h3>
                 <p className="text-[14px] text-gray-500 leading-[1.65] mb-6">{t("persona1Desc")}</p>
                 <ul className="space-y-2.5">
                   {[t("persona1F1"), t("persona1F2"), t("persona1F3")].map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-[13px] text-gray-400">
-                      <Check size={14} className="text-[#06B6D4] mt-0.5 flex-shrink-0" />
+                      <Check size={14} className="text-[#9b3dff] mt-0.5 flex-shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -220,16 +220,16 @@ export default async function LandingPage() {
 
             {/* Persona 2 — Developers */}
             <AnimInView delay={100}>
-              <div className="rounded-xl border border-[#06B6D4]/20 bg-[#06B6D4]/[0.03] p-7 h-full">
-                <div className="w-10 h-10 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
-                  <Code2 size={18} className="text-[#06B6D4]" />
+              <div className="rounded-xl border border-[#9b3dff]/20 bg-[#9b3dff]/[0.03] p-7 h-full">
+                <div className="w-10 h-10 rounded-lg bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center mb-5">
+                  <Code2 size={18} className="text-[#9b3dff]" />
                 </div>
                 <h3 className="text-[17px] font-semibold mb-2">{t("persona2Title")}</h3>
                 <p className="text-[14px] text-gray-500 leading-[1.65] mb-6">{t("persona2Desc")}</p>
                 <ul className="space-y-2.5">
                   {[t("persona2F1"), t("persona2F2"), t("persona2F3")].map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-[13px] text-gray-400">
-                      <Check size={14} className="text-[#06B6D4] mt-0.5 flex-shrink-0" />
+                      <Check size={14} className="text-[#9b3dff] mt-0.5 flex-shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -240,15 +240,15 @@ export default async function LandingPage() {
             {/* Persona 3 — Startups & SMBs */}
             <AnimInView delay={200}>
               <div className="rounded-xl border border-white/[0.07] bg-white/[0.02] p-7 h-full">
-                <div className="w-10 h-10 rounded-lg bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-5">
-                  <Zap size={18} className="text-[#06B6D4]" />
+                <div className="w-10 h-10 rounded-lg bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center mb-5">
+                  <Zap size={18} className="text-[#9b3dff]" />
                 </div>
                 <h3 className="text-[17px] font-semibold mb-2">{t("persona3Title")}</h3>
                 <p className="text-[14px] text-gray-500 leading-[1.65] mb-6">{t("persona3Desc")}</p>
                 <ul className="space-y-2.5">
                   {[t("persona3F1"), t("persona3F2"), t("persona3F3")].map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-[13px] text-gray-400">
-                      <Check size={14} className="text-[#06B6D4] mt-0.5 flex-shrink-0" />
+                      <Check size={14} className="text-[#9b3dff] mt-0.5 flex-shrink-0" />
                       {f}
                     </li>
                   ))}
@@ -271,7 +271,7 @@ export default async function LandingPage() {
           style={{ paddingLeft: "max(1.5rem, calc(50vw - 36rem + 1.5rem))" }}
         >
           <AnimInView animation="fade-right" className="shrink-0 md:w-[260px]">
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-3">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-3">
               {t("stackEyebrow")}
             </p>
             <h2
@@ -331,7 +331,7 @@ export default async function LandingPage() {
 
           {/* Left */}
           <AnimInView animation="fade-right">
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-4">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-4">
               {t("manageEyebrow")}
             </p>
             <h2
@@ -346,7 +346,7 @@ export default async function LandingPage() {
             <div className="space-y-4">
               {manageFeatures.map(({ label, desc }) => (
                 <div key={label} className="space-y-0.5">
-                  <p className="text-[#06B6D4] font-semibold text-[14px]">
+                  <p className="text-[#9b3dff] font-semibold text-[14px]">
                     {label}
                   </p>
                   <p className="text-[14px] text-gray-500 leading-[1.65]">
@@ -376,7 +376,7 @@ export default async function LandingPage() {
                 {/* Sidebar — cachée sur mobile */}
                 <div className="hidden min-[490px]:flex flex-col w-[140px] shrink-0 border-r border-white/[0.06] bg-[var(--lp-bg)] px-2 py-3">
                   <div className="flex items-center gap-1.5 px-1.5 mb-4">
-                    <span className="text-[#06B6D4] font-bold text-[10px] tracking-tight">NEXIUM</span>
+                    <span className="text-[#9b3dff] font-bold text-[10px] tracking-tight">NEXIUM</span>
                     <span className="text-gray-600 text-[9px]">/ storage</span>
                   </div>
                   {[
@@ -403,7 +403,7 @@ export default async function LandingPage() {
                       <p className="text-[12px] font-semibold text-white">Projects</p>
                       <p className="text-[10px] text-gray-600 mt-0.5">3 projects</p>
                     </div>
-                    <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#06B6D4] text-white font-medium shrink-0">
+                    <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#9b3dff] text-white font-medium shrink-0">
                       <Plus size={9} /> New
                     </span>
                   </div>
@@ -439,7 +439,7 @@ export default async function LandingPage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6">
 
           <AnimInView>
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-4">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-4">
               {t("howEyebrow")}
             </p>
             <h2
@@ -455,7 +455,7 @@ export default async function LandingPage() {
             {/* Step 1 — Create project */}
             <AnimInView delay={0}>
               <div className="flex items-center gap-2 mb-4">
-                <span className="w-5 h-5 rounded bg-[#06B6D4] flex items-center justify-center text-[10px] font-bold text-white font-mono">
+                <span className="w-5 h-5 rounded bg-[#9b3dff] flex items-center justify-center text-[10px] font-bold text-white font-mono">
                   1
                 </span>
                 <span className="text-[12px] text-gray-600 font-mono">Step 01</span>
@@ -473,7 +473,7 @@ export default async function LandingPage() {
                       my-workspace
                     </div>
                   </div>
-                  <div className="px-4 py-2 rounded-md bg-[#06B6D4] text-[12px] text-white text-center font-medium">
+                  <div className="px-4 py-2 rounded-md bg-[#9b3dff] text-[12px] text-white text-center font-medium">
                     Create workspace
                   </div>
                   <div className="pt-1 border-t border-white/[0.05]">
@@ -492,7 +492,7 @@ export default async function LandingPage() {
             {/* Step 2 — API Key */}
             <AnimInView delay={110}>
               <div className="flex items-center gap-2 mb-4">
-                <span className="w-5 h-5 rounded bg-[#06B6D4] flex items-center justify-center text-[10px] font-bold text-white font-mono">
+                <span className="w-5 h-5 rounded bg-[#9b3dff] flex items-center justify-center text-[10px] font-bold text-white font-mono">
                   2
                 </span>
                 <span className="text-[12px] text-gray-600 font-mono">Step 02</span>
@@ -515,9 +515,9 @@ export default async function LandingPage() {
                   <div>
                     <p className="text-[10px] text-gray-500 mb-1.5">Visibility</p>
                     <div className="flex gap-2">
-                      <div className="flex-1 flex items-center gap-1.5 px-3 py-2 rounded-md border border-[#06B6D4]/40 bg-[#06B6D4]/10">
-                        <Globe size={10} className="text-[#06B6D4]" />
-                        <span className="text-[11px] text-[#06B6D4]">Public</span>
+                      <div className="flex-1 flex items-center gap-1.5 px-3 py-2 rounded-md border border-[#9b3dff]/40 bg-[#9b3dff]/10">
+                        <Globe size={10} className="text-[#9b3dff]" />
+                        <span className="text-[11px] text-[#9b3dff]">Public</span>
                       </div>
                       <div className="flex-1 flex items-center gap-1.5 px-3 py-2 rounded-md border border-white/[0.07] bg-white/[0.02]">
                         <Lock size={10} className="text-gray-600" />
@@ -525,7 +525,7 @@ export default async function LandingPage() {
                       </div>
                     </div>
                   </div>
-                  <div className="px-4 py-2 rounded-md bg-[#06B6D4] text-[12px] text-white text-center font-medium">
+                  <div className="px-4 py-2 rounded-md bg-[#9b3dff] text-[12px] text-white text-center font-medium">
                     Create folder
                   </div>
                 </div>
@@ -535,7 +535,7 @@ export default async function LandingPage() {
             {/* Step 3 — Upload */}
             <AnimInView delay={220}>
               <div className="flex items-center gap-2 mb-4">
-                <span className="w-5 h-5 rounded bg-[#06B6D4] flex items-center justify-center text-[10px] font-bold text-white font-mono">
+                <span className="w-5 h-5 rounded bg-[#9b3dff] flex items-center justify-center text-[10px] font-bold text-white font-mono">
                   3
                 </span>
                 <span className="text-[12px] text-gray-600 font-mono">Step 03</span>
@@ -551,7 +551,7 @@ export default async function LandingPage() {
                 </div>
                 <div className="p-5 font-mono text-[12px] space-y-1.5">
                   <p>
-                    <span className="text-[#06B6D4]">curl</span>{" "}
+                    <span className="text-[#9b3dff]">curl</span>{" "}
                     <span className="text-green-400">-X POST</span> \
                   </p>
                   <p className="pl-3 text-[11px] text-orange-300">
@@ -578,7 +578,7 @@ export default async function LandingPage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6">
 
           <AnimInView className="mb-14">
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-4">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-4">
               {t("featEyebrow")}
             </p>
             <h2
@@ -595,8 +595,8 @@ export default async function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 lg:gap-y-12">
             {builders.map(({ Icon, title, body }, i) => (
               <AnimInView key={title} delay={i * 45}>
-                <div className="w-8 h-8 rounded-md bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-4">
-                  <Icon size={16} className="text-[#06B6D4]" />
+                <div className="w-8 h-8 rounded-md bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center mb-4">
+                  <Icon size={16} className="text-[#9b3dff]" />
                 </div>
                 <h3 className="text-[15px] font-semibold text-white mb-2">{title}</h3>
                 <p className="text-[14px] text-gray-500 leading-[1.65]">{body}</p>
@@ -614,7 +614,7 @@ export default async function LandingPage() {
         <div className="relative z-10 max-w-6xl mx-auto px-6">
 
           <AnimInView className="mb-14">
-            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-4">
+            <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#9b3dff] mb-4">
               {t("secureEyebrow")}
             </p>
             <h2
@@ -631,8 +631,8 @@ export default async function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-10 md:gap-y-12">
             {security.map(({ Icon, title, body }, i) => (
               <AnimInView key={title} delay={i * 60}>
-                <div className="w-8 h-8 rounded-md bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-4">
-                  <Icon size={16} className="text-[#06B6D4]" />
+                <div className="w-8 h-8 rounded-md bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center mb-4">
+                  <Icon size={16} className="text-[#9b3dff]" />
                 </div>
                 <h3 className="text-[15px] font-semibold text-white mb-2">{title}</h3>
                 <p className="text-[14px] text-gray-500 leading-[1.65]">{body}</p>
@@ -661,7 +661,7 @@ export default async function LandingPage() {
             <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-white/[0.09]">
               <div className="flex items-center gap-2 mb-3">
                 <span className="font-bold text-[18px] tracking-tight">
-                  <span className="text-[#06B6D4]">NEXIUM</span>
+                  <span className="text-[#9b3dff]">NEXIUM</span>
                   <span className="text-white/25 font-normal ml-1.5">/ storage</span>
                 </span>
               </div>
@@ -724,7 +724,7 @@ export default async function LandingPage() {
                 href="https://nexiumai.io"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[#06B6D4] hover:text-cyan-400 transition"
+                className="text-[#9b3dff] hover:text-[#aa55ff] transition"
               >
                 NEXIUM.AI
               </a>

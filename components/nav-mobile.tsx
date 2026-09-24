@@ -34,7 +34,7 @@ export function NavMobile() {
           <Link
             href="/register"
             onClick={() => setOpen(false)}
-            className="flex items-center justify-center py-2.5 bg-[#06B6D4] hover:bg-cyan-400 rounded-lg text-[14px] font-semibold text-white transition"
+            className="flex items-center justify-center py-2.5 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold text-white transition"
           >
             {t("getStarted")}
           </Link>

@@ -35,8 +35,8 @@ export function useLogin() {
 export function useRegister() {
   const router = useRouter();
   return useMutation({
-    mutationFn: ({ name, email, password }: { name: string; email: string; password: string }) =>
-      register(name, email, password),
+    mutationFn: ({ name, email, password, termsAccepted }: { name: string; email: string; password: string; termsAccepted: boolean }) =>
+      register(name, email, password, termsAccepted),
     onSuccess: (data) => {
       if (typeof window !== "undefined") {
         sessionStorage.setItem("verify_email", data.email);

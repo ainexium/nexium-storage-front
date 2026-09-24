@@ -61,28 +61,28 @@ const PLAN_CONFIG: Record<string, {
     bg:       "bg-transparent",
     border:   "border-white/[0.08] hover:border-white/25",
     ring:     "",
-    btnClass: "border border-white/[0.18] text-gray-400 hover:border-[#06B6D4]/60 hover:text-[#06B6D4]",
+    btnClass: "border border-white/[0.18] text-gray-400 hover:border-[#9b3dff]/60 hover:text-[#9b3dff]",
   },
   starter: {
-    accent:   "text-[#06B6D4]",
+    accent:   "text-[#9b3dff]",
     bg:       "bg-transparent",
-    border:   "border-white/[0.08] hover:border-[#06B6D4]/50",
+    border:   "border-white/[0.08] hover:border-[#9b3dff]/50",
     ring:     "",
-    btnClass: "border border-[#06B6D4]/40 text-[#06B6D4] hover:bg-[#06B6D4] hover:text-white hover:border-[#06B6D4]",
+    btnClass: "border border-[#9b3dff]/40 text-[#9b3dff] hover:bg-[#9b3dff] hover:text-white hover:border-[#9b3dff]",
   },
   pro: {
-    accent:   "text-[#06B6D4]",
+    accent:   "text-[#9b3dff]",
     bg:       "bg-transparent",
-    border:   "border-[#06B6D4]/35",
+    border:   "border-[#9b3dff]/35",
     ring:     "",
-    btnClass: "bg-[#06B6D4] hover:bg-cyan-400 text-white border border-[#06B6D4]",
+    btnClass: "bg-[#9b3dff] hover:bg-[#aa55ff] text-white border border-[#9b3dff]",
   },
   business: {
-    accent:   "text-[#06B6D4]",
+    accent:   "text-[#9b3dff]",
     bg:       "bg-transparent",
-    border:   "border-white/[0.08] hover:border-[#06B6D4]/50",
+    border:   "border-white/[0.08] hover:border-[#9b3dff]/50",
     ring:     "",
-    btnClass: "border border-[#06B6D4]/40 text-[#06B6D4] hover:bg-[#06B6D4] hover:text-white hover:border-[#06B6D4]",
+    btnClass: "border border-[#9b3dff]/40 text-[#9b3dff] hover:bg-[#9b3dff] hover:text-white hover:border-[#9b3dff]",
   },
 };
 
@@ -197,8 +197,8 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
           {step === "pending" && (
             <div className="flex flex-col items-center py-10 gap-4">
               <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center">
-                  <Loader2 size={24} className="text-[#06B6D4] animate-spin" />
+                <div className="w-14 h-14 rounded-2xl bg-[#9b3dff]/10 border border-[#9b3dff]/20 flex items-center justify-center">
+                  <Loader2 size={24} className="text-[#9b3dff] animate-spin" />
                 </div>
               </div>
               <div className="text-center">
@@ -219,7 +219,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                   href={redirectURL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-cyan-400 text-sm font-semibold text-white transition-all"
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-[#aa55ff] text-sm font-semibold text-white transition-all"
                 >
                   {t("openWave")}
                 </a>
@@ -312,7 +312,7 @@ function PaymentModal({ title, priceXOF, badge, channels, onClose, onPay, onPoll
                 <button
                   onClick={submit}
                   disabled={loading || !channel || !phone || !isValidPhoneNumber(phone ?? "")}
-                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#06B6D4] hover:bg-cyan-400 active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed text-sm font-semibold text-white transition-all"
+                  className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#9b3dff] hover:bg-[#aa55ff] active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed text-sm font-semibold text-white transition-all"
                 >
                   {loading ? <Loader2 size={15} className="animate-spin" /> : <CreditCard size={15} />}
                   {loading ? t("connecting") : t("confirmPayment")}
@@ -344,7 +344,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
     <div className={`relative flex flex-col rounded-2xl border p-6 transition-colors ${cfg.bg} ${cfg.border} ${cfg.ring}`}>
       {isPro && (
         <div className="absolute -top-3.5 inset-x-0 flex justify-center">
-          <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#06B6D4] text-white shadow-lg">
+          <span className="inline-flex items-center gap-1 text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-full bg-[#9b3dff] text-white shadow-lg">
             <Sparkles size={9} />
             {t("recommended")}
           </span>
@@ -383,7 +383,7 @@ function PlanCard({ plan, isCurrent, onUpgrade }: { plan: Plan; isCurrent: boole
       <ul className="space-y-2.5 mb-7 flex-1">
         {features.map((f) => (
           <li key={f} className="flex items-center gap-2.5 text-[13px] text-gray-400">
-            <Check size={13} strokeWidth={2.5} className="text-[#06B6D4] shrink-0" />
+            <Check size={13} strokeWidth={2.5} className="text-[#9b3dff] shrink-0" />
             {f}
           </li>
         ))}
@@ -443,13 +443,13 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
           </div>
           <div className="h-2 rounded-full bg-white/[0.06] overflow-hidden">
             <div
-              className="h-full rounded-full bg-gradient-to-r from-[#06B6D4] to-purple-500"
+              className="h-full rounded-full bg-gradient-to-r from-[#9b3dff] to-purple-500"
               style={{ width: `${Math.min(100, (planGB / totalGB) * 100)}%` }}
             />
           </div>
           <div className="flex items-center gap-4 mt-2">
             <span className="flex items-center gap-1.5 text-[11px] text-gray-600">
-              <span className="w-2 h-2 rounded-sm bg-[#06B6D4]" /> {t("basePlan")}
+              <span className="w-2 h-2 rounded-sm bg-[#9b3dff]" /> {t("basePlan")}
             </span>
             <span className="flex items-center gap-1.5 text-[11px] text-gray-600">
               <span className="w-2 h-2 rounded-sm bg-purple-500" /> {t("addons")}
@@ -464,9 +464,9 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
           <button
             key={pkg.id}
             onClick={() => onBuy(pkg)}
-            className="group flex flex-col items-center gap-2 py-5 px-3 rounded-xl border border-white/[0.07] bg-white/[0.02] hover:border-[#06B6D4]/30 hover:bg-[#06B6D4]/[0.04] transition-all active:scale-[0.97]"
+            className="group flex flex-col items-center gap-2 py-5 px-3 rounded-xl border border-white/[0.07] bg-white/[0.02] hover:border-[#9b3dff]/30 hover:bg-[#9b3dff]/[0.04] transition-all active:scale-[0.97]"
           >
-            <HardDrive size={18} className="text-gray-600 group-hover:text-[#06B6D4] transition-colors" />
+            <HardDrive size={18} className="text-gray-600 group-hover:text-[#9b3dff] transition-colors" />
             <span className="text-[15px] font-bold text-white">{pkg.label}</span>
             <span className="text-[11px] text-gray-500">{fmt.xof(pkg.price_xof, locale)} XOF</span>
           </button>
@@ -482,7 +482,7 @@ function AddonSection({ planBytes, onBuy }: { planBytes: number; onBuy: (p: Addo
           {done.map((a) => (
             <div key={a.id} className="flex items-center justify-between px-4 py-3 border-b border-white/[0.04] last:border-0">
               <div className="flex items-center gap-3">
-                <HardDrive size={13} className="text-[#06B6D4]" />
+                <HardDrive size={13} className="text-[#9b3dff]" />
                 <span className="text-[13px] text-gray-300">{fmt.bytes(a.bytes)}</span>
               </div>
               <Chip status="completed" />

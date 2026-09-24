@@ -199,7 +199,10 @@
     "checkInbox": "Check your inbox",
     "weSentCode": "We sent a 6-digit code to",
     "yourEmailAddress": "your email address",
-    "newCodeSent": "New code sent — check your inbox."
+    "newCodeSent": "New code sent — check your inbox.",
+    "termsAccept": "I agree to the",
+    "termsLink": "terms of service",
+    "termsRequired": "You must accept the terms of service"
   },
   "nav": {
     "overview": "Overview",

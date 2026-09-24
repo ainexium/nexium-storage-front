@@ -10,7 +10,7 @@
 .animate-slide-bar {
   position: absolute;
   height: 100%;
-  background: #06B6D4;
+  background: #9b3dff;
   border-radius: 9999px;
   animation: slide-bar 1.2s ease-in-out infinite;
 }
@@ -338,7 +338,7 @@ html[data-theme="light"] .lp-header {
 [data-theme="light"] .themed-page input:focus,
 [data-theme="light"] .themed-page textarea:focus {
   background-color: #ffffff !important;
-  border-color: #06B6D4 !important;
+  border-color: #9b3dff !important;
 }
 
 /* Labels */
@@ -371,7 +371,7 @@ html[data-theme="light"] .lp-header {
   color: #0f0f14 !important;
 }
 [data-theme="light"] .themed-page [role="listbox"] button[aria-selected="true"] {
-  background-color: rgba(6,182,212,0.08) !important;
+  background-color: rgba(155,61,255,0.08) !important;
   color: #0f0f14 !important;
 }
 
@@ -435,8 +435,8 @@ html[data-theme="light"] .lp-header {
 }
 
 /* Section icon boxes — slightly more visible on light bg */
-[data-theme="light"] .themed-page [class*="bg-[#06B6D4]/"] {
-  background-color: rgba(6, 182, 212, 0.18) !important;
+[data-theme="light"] .themed-page [class*="bg-[#9b3dff]/"] {
+  background-color: rgba(155, 61, 255, 0.18) !important;
 }
 
 /* ── Dashboard light mode ────────────────────────── */
@@ -503,30 +503,35 @@ html[data-theme="light"] .lp-header {
   color: #0f0f14 !important;
 }
 [data-theme="light"] .dash-page [role="listbox"] button[aria-selected="true"] {
-  background-color: rgba(6, 182, 212, 0.08) !important;
+  background-color: rgba(155, 61, 255, 0.08) !important;
   color: #0f0f14 !important;
 }
 
-/* Plan cards: restore cyan border on hover (defeats the border-white/ !important override) */
-[data-theme="light"] .dash-page [class*="hover:border-[#06B6D4]"]:hover {
-  border-color: rgba(6, 182, 212, 0.5) !important;
+/* Plan cards: restore violet border on hover (defeats the border-white/ !important override) */
+[data-theme="light"] .dash-page [class*="hover:border-[#9b3dff]"]:hover {
+  border-color: rgba(155, 61, 255, 0.5) !important;
 }
 
-/* text-[#06B6D4] on light bg: darken slightly for contrast */
-[data-theme="light"] .dash-page [class*="text-[#06B6D4]"] {
-  color: #0891b2 !important;
+/* text-[#9b3dff] on light bg: darken slightly for contrast */
+[data-theme="light"] .dash-page [class*="text-[#9b3dff]"] {
+  color: #6A0DAD !important;
 }
 
-/* Pro button (always filled): keep text white — identified by hover:bg-cyan-400 which is unique to it */
-[data-theme="light"] .dash-page button[class*="hover:bg-cyan-400"] {
+/* Pro button (always filled): keep text white — identified by hover:bg-[#aa55ff] which is unique to it */
+[data-theme="light"] .dash-page button[class*="hover:bg-[#aa55ff]"] {
   color: #ffffff !important;
 }
 
-/* Outlined buttons (Starter/Business): fill cyan + white text on hover */
-[data-theme="light"] .dash-page button[class*="hover:bg-[#06B6D4]"]:hover {
-  background-color: #06B6D4 !important;
+/* Recommended badge on violet bg: always white text */
+[data-theme="light"] .dash-page span[class*="bg-[#9b3dff]"] {
   color: #ffffff !important;
-  border-color: #06B6D4 !important;
+}
+
+/* Outlined buttons (Starter/Business): fill violet + white text on hover */
+[data-theme="light"] .dash-page button[class*="hover:bg-[#9b3dff]"]:hover {
+  background-color: #9b3dff !important;
+  color: #ffffff !important;
+  border-color: #9b3dff !important;
 }
 
 /* ── Plan cards & status badges ─────────────────────── */
@@ -544,9 +549,9 @@ html[data-theme="light"] .lp-header {
 [data-theme="light"] .dash-page [class*="border-red-500/"]    { border-color: rgba(239,68,68,0.25) !important; }
 [data-theme="light"] .dash-page [class*="border-yellow-400/"] { border-color: rgba(250,204,21,0.3) !important; }
 [data-theme="light"] .dash-page [class*="border-blue-400/"]   { border-color: rgba(96,165,250,0.3) !important; }
-/* Pro plan cyan ring — softer in light mode */
-[data-theme="light"] .dash-page [class*="ring-[#06B6D4]"] {
-  box-shadow: 0 0 28px -8px rgba(6,182,212,0.15) !important;
+/* Pro plan violet ring — softer in light mode */
+[data-theme="light"] .dash-page [class*="ring-[#9b3dff]"] {
+  box-shadow: 0 0 28px -8px rgba(155,61,255,0.15) !important;
 }
 /* Payment modal bg */
 [data-theme="light"] .dash-page [class*="bg-[#0c0c"] {
@@ -576,7 +581,7 @@ html[data-theme="light"] .lp-header {
 
 @layer base {
   :root {
-    --brand-blue: #06B6D4;
+    --brand-blue: #9b3dff;
     --brand-silver: #C0C0C0;
     --brand-purple: #6A0DAD;
   }

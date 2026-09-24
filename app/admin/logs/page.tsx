@@ -66,7 +66,7 @@ export default function AdminLogsPage() {
           <button onClick={() => setAutoRefresh(v => !v)}
             className={`text-xs px-2.5 py-1.5 rounded border transition-colors ${
               autoRefresh
-                ? "border-[#06B6D4]/40 bg-[#06B6D4]/10 text-[#06B6D4]"
+                ? "border-[#9b3dff]/40 bg-[#9b3dff]/10 text-[#9b3dff]"
                 : "border-white/[0.08] text-gray-500 hover:text-gray-300 hover:border-white/20"
             }`}
           >
@@ -120,7 +120,7 @@ export default function AdminLogsPage() {
                   {l.is_super_admin
                     ? <Crown size={10} className="text-yellow-400 shrink-0" />
                     : l.is_admin
-                    ? <ShieldCheck size={10} className="text-[#06B6D4] shrink-0" />
+                    ? <ShieldCheck size={10} className="text-[#9b3dff] shrink-0" />
                     : <span className="w-2.5 h-2.5 rounded-full bg-gray-700 shrink-0" />
                   }
                   <span className="text-xs text-gray-300 truncate">{l.user_name}</span>

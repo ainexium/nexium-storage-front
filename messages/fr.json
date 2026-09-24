@@ -199,7 +199,10 @@
     "checkInbox": "Vérifiez votre boîte mail",
     "weSentCode": "Nous avons envoyé un code à 6 chiffres à",
     "yourEmailAddress": "votre adresse e-mail",
-    "newCodeSent": "Nouveau code envoyé — vérifiez votre boîte mail."
+    "newCodeSent": "Nouveau code envoyé — vérifiez votre boîte mail.",
+    "termsAccept": "J'accepte les",
+    "termsLink": "conditions d'utilisation",
+    "termsRequired": "Vous devez accepter les conditions d'utilisation"
   },
   "nav": {
     "overview": "Aperçu",

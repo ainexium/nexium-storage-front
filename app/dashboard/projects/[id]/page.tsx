@@ -101,7 +101,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
           </Link>
           <button
             onClick={() => setCreating(v => !v)}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#06B6D4] hover:bg-cyan-400 text-sm font-medium transition-colors"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-[#9b3dff] hover:bg-[#aa55ff] text-sm font-medium transition-colors"
           >
             <Plus size={13} />
             {t("newFolder")}
@@ -123,7 +123,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
               className="flex-1 px-3 py-1.5 rounded-md bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm font-mono transition-colors placeholder:text-gray-600"
             />
             <button type="submit" disabled={!newName.trim() || create.isPending}
-              className="px-3 py-1.5 rounded-md bg-[#06B6D4] hover:bg-cyan-400 disabled:opacity-40 text-sm font-medium transition-colors">
+              className="px-3 py-1.5 rounded-md bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">
               {tc("create")}
             </button>
             <button type="button" onClick={() => { setCreating(false); setNewName(""); setNewIsPublic(true); }}

@@ -18,7 +18,7 @@ export default function AuthLayout({ children }: { children: React.ReactNode }) 
     <div className="themed-page min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--lp-bg)] relative">
       <div className="absolute top-5 left-6">
         <Link href="/" className="text-[17px] font-bold tracking-tight">
-          <span className="text-[#06B6D4]">NEXIUM</span>{" "}
+          <span className="text-[#9b3dff]">NEXIUM</span>{" "}
           <span className="text-gray-400 font-normal">/ storage</span>
         </Link>
       </div>

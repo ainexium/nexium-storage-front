@@ -494,7 +494,7 @@ export default function AdminBillingPage() {
             key={tabKey}
             onClick={() => setTab(tabKey)}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-all -mb-px ${
-              tab === tabKey ? "border-[#06B6D4] text-white" : "border-transparent text-gray-500 hover:text-gray-300"
+              tab === tabKey ? "border-[#9b3dff] text-white" : "border-transparent text-gray-500 hover:text-gray-300"
             }`}
           >
             {tabKey === "plans" ? t("tabPlans") : t("tabChannels")}
