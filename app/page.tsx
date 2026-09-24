@@ -99,9 +99,12 @@ export default async function LandingPage() {
       {/* ── NAVBAR ────────────────────────────────────────────── */}
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <span className="font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
+          <span className="flex items-center gap-2 font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
             <span className="text-[#9b3dff]">NEXIUM</span>
-            <span className="text-gray-500 font-normal ml-1">/ storage</span>
+            <span className="text-gray-500 font-normal">/ storage</span>
           </span>
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
@@ -673,6 +676,9 @@ export default async function LandingPage() {
             {/* Brand column */}
             <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-white/[0.09]">
               <div className="flex items-center gap-2 mb-3">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+                </svg>
                 <span className="font-bold text-[18px] tracking-tight">
                   <span className="text-[#9b3dff]">NEXIUM</span>
                   <span className="text-white/25 font-normal ml-1.5">/ storage</span>

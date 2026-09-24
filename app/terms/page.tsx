@@ -578,8 +578,11 @@ export default async function TermsPage() {
       <header className="lp-header sticky top-0 z-30 border-b border-white/[0.06] backdrop-blur-md">
         <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
             <span className="text-[15px] font-bold text-[#9b3dff] tracking-tight">NEXIUM</span>
-            <span className="text-[11px] text-gray-500 font-medium">Storage</span>
+            <span className="text-[11px] text-gray-500 font-medium">/ storage</span>
           </Link>
           <Link href="/register" className="text-sm text-gray-400 hover:text-white transition">
             {isFR ? "← Retour à l'inscription" : "← Back to sign up"}

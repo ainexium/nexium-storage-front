@@ -35,6 +35,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="flex min-h-screen">
       <aside className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[#08080f] px-3 py-6">
         <div className="flex items-center gap-1.5 px-2 mb-8">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
           <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
           <span className="text-gray-600 text-xs font-medium">/ admin</span>
         </div>

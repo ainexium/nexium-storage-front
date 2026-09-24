@@ -618,7 +618,10 @@ export default function DocsPage() {
   return (
     <div className="themed-page min-h-screen bg-[var(--lp-bg)]">
       <nav className="lp-header flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 backdrop-blur z-10">
-        <Link href="/" className="text-xl font-bold tracking-tight">
+        <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
           <span className="text-[#9b3dff]">NEXIUM</span>{" "}
           <span className="text-gray-300 text-base font-medium">{t("brand")}</span>
         </Link>
