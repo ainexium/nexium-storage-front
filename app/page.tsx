@@ -35,8 +35,21 @@ export const metadata: Metadata = {
     url: "https://console.nexiumai.io",
     siteName: "NEXIUM Storage",
     type: "website",
+    images: [
+      {
+        url: "https://console.nexiumai.io/icon.svg",
+        width: 512,
+        height: 512,
+        alt: "NEXIUM Storage",
+      },
+    ],
   },
-  twitter: { card: "summary_large_image" },
+  twitter: {
+    card: "summary",
+    title: "NEXIUM Storage — Cloud storage for your projects & teams",
+    description: "S3-compatible cloud object storage. Intuitive dashboard, REST API, projects, buckets, API keys.",
+    images: ["https://console.nexiumai.io/icon.svg"],
+  },
   alternates: { canonical: "https://console.nexiumai.io" },
   robots: { index: true, follow: true },
 };
