@@ -70,7 +70,7 @@ export default function DashboardPage() {
   const isPro       = planSlug === "pro";
 
   return (
-    <div className="px-8 py-8 max-w-4xl">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-4xl">
 
       {/* Page header */}
       <div className="mb-8">
@@ -78,11 +78,11 @@ export default function DashboardPage() {
       </div>
 
       {/* Stats */}
-      <div className="rounded-xl border border-white/[0.07] divide-x divide-white/[0.07] flex mb-8">
-        <Stat value={projects.length.toString()} label={t("projects")} />
-        <Stat value={totalBuckets.toString()} label={t("buckets")} />
-        <Stat value={totalFiles.toString()} label={t("files")} />
-        <Stat value={formatBytes(totalStorage)} label={t("storageUsed")} />
+      <div className="rounded-xl border border-white/[0.07] grid grid-cols-2 sm:grid-cols-4 mb-8 overflow-hidden">
+        <div className="border-r border-b sm:border-b-0 border-white/[0.07]"><Stat value={projects.length.toString()} label={t("projects")} /></div>
+        <div className="border-b sm:border-b-0 sm:border-r border-white/[0.07]"><Stat value={totalBuckets.toString()} label={t("buckets")} /></div>
+        <div className="border-r sm:border-r border-white/[0.07]"><Stat value={totalFiles.toString()} label={t("files")} /></div>
+        <div><Stat value={formatBytes(totalStorage)} label={t("storageUsed")} /></div>
       </div>
 
       {/* Plan card */}

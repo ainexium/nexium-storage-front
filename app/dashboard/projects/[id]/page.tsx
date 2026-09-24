@@ -80,7 +80,7 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const confirmBucket = buckets.find((b) => b.id === confirmDeleteId);
 
   return (
-    <div className="px-8 py-8 max-w-3xl">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-3xl">
       <Link href="/dashboard/projects"
         className="inline-flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-8 transition-colors">
         <ArrowLeft size={12} /> {t("back")}

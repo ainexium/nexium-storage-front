@@ -569,7 +569,7 @@ export default function BillingPage() {
         />
       )}
 
-      <div className="min-h-screen px-8 py-10 max-w-5xl">
+      <div className="min-h-screen px-4 sm:px-8 py-6 sm:py-10 max-w-5xl">
 
         {/* ── page header ── */}
         <div className="mb-10">

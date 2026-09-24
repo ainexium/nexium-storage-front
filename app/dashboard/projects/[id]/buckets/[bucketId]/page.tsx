@@ -286,7 +286,7 @@ export default function BucketPage({ params }: { params: Promise<{ id: string; b
 
   return (
     <div
-      className="px-10 py-8 max-w-6xl min-h-screen"
+      className="px-4 sm:px-8 lg:px-10 py-6 sm:py-8 max-w-6xl min-h-screen"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={(e) => e.preventDefault()}

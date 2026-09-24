@@ -98,7 +98,7 @@ export default function SettingsPage() {
   const hasPending = !!user?.pending_email;
 
   return (
-    <div className="px-8 py-8 max-w-2xl">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-2xl">
       <div className="mb-8">
         <h1 className="text-base font-semibold">{t("title")}</h1>
         <p className="text-xs text-gray-500 mt-1">{t("subtitle")}</p>

@@ -193,7 +193,7 @@ export default function WebhooksPage({ params }: { params: Promise<{ id: string 
   }
 
   return (
-    <div className="px-8 py-8 max-w-3xl">
+    <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-3xl">
       <Link
         href={`/dashboard/projects/${projectId}`}
         className="flex items-center gap-1.5 text-xs text-gray-500 hover:text-gray-300 mb-6 transition"

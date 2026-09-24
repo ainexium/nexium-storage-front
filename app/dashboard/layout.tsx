@@ -3,10 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, FolderOpen, Key, BarChart2, BookOpen, Settings, LogOut, CreditCard,
+  LayoutDashboard, FolderOpen, Key, BarChart2, BookOpen, Settings, LogOut, CreditCard, Menu, X,
 } from "lucide-react";
 import { useLogout, useMe } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { ShieldCheck } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -31,12 +31,94 @@ const nav = [
   { href: "/dashboard/settings", key: "settings",    icon: Settings },
 ] as const;
 
+function SidebarContent({
+  t, pathname, user, badge, logoutFn, onNav,
+}: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  t: any; pathname: string; user: any; badge: { label: string; cls: string };
+  logoutFn: () => void; onNav?: () => void;
+}) {
+  return (
+    <>
+      <Link href="/" className="flex items-center gap-1.5 px-2 mb-8" onClick={onNav}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+        </svg>
+        <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
+        <span className="text-gray-600 text-xs font-medium">/ storage</span>
+      </Link>
+
+      <nav className="flex-1 space-y-0.5">
+        {nav.map((item) => {
+          const { href, key, icon: Icon } = item;
+          const external = "external" in item && item.external;
+          const active = !external && (
+            pathname === href || (href !== "/dashboard" && pathname.startsWith(href))
+          );
+          return (
+            <Link
+              key={href}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              href={href as any}
+              {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+              onClick={!external ? onNav : undefined}
+              className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-all ${
+                active
+                  ? "bg-white/[0.07] text-white font-medium"
+                  : "text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
+              }`}
+            >
+              <Icon size={15} className={active ? "text-white" : "text-gray-500"} />
+              {t(key)}
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="mt-4 pt-4 border-t border-white/[0.06]">
+        <div className="mb-1">
+          <LanguageSwitcher variant="sidebar" />
+        </div>
+        {(user?.is_admin || user?.is_super_admin) && (
+          <Link
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            href={"/admin" as any}
+            onClick={onNav}
+            className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-[#9b3dff] hover:bg-[#9b3dff]/[0.06] transition-all mb-1"
+          >
+            <ShieldCheck size={15} />
+            {t("adminPanel")}
+          </Link>
+        )}
+        <div className="px-2.5 py-2 mb-1">
+          <div className="flex items-center justify-between gap-2 mb-0.5">
+            <p className="text-[13px] font-medium text-gray-200 truncate">{user?.name}</p>
+            <span className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${badge.cls}`}>
+              {badge.label}
+            </span>
+          </div>
+          <p className="text-xs text-gray-600 truncate">{user?.email}</p>
+        </div>
+        <button
+          onClick={() => logoutFn()}
+          className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
+        >
+          <LogOut size={15} />
+          {t("signOut")}
+        </button>
+      </div>
+    </>
+  );
+}
+
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const { data: user, isError, isLoading } = useMe();
   const { mutate: logoutFn } = useLogout();
   const router = useRouter();
+  const [drawerOpen, setDrawerOpen] = useState(false);
+
   const { data: subData } = useQuery<{ plan: { slug: string } | null }>({
     queryKey: ["billing-subscription"],
     queryFn: () => api.get("/api/v1/billing/subscription"),
@@ -49,83 +131,87 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     if (isError) router.push("/login");
   }, [isError, router]);
 
+  // Close drawer on route change
+  useEffect(() => {
+    setDrawerOpen(false);
+  }, [pathname]);
+
+  // Prevent body scroll when drawer is open
+  useEffect(() => {
+    document.body.style.overflow = drawerOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [drawerOpen]);
+
   if (isLoading || isError) {
     return <div className="min-h-screen bg-[#0a0a0f]" />;
   }
 
+  const sidebarProps = { t, pathname, user, badge, logoutFn };
+
   return (
     <div className="dash-page flex min-h-screen">
-      <aside className="w-[220px] flex-shrink-0 flex flex-col border-r border-white/[0.06] bg-[var(--dash-sidebar)] px-3 py-6">
-        <Link href="/" className="flex items-center gap-1.5 px-2 mb-8">
+
+      {/* ── Desktop sidebar (lg+) ─────────────────────── */}
+      <aside className="hidden lg:flex w-[220px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[var(--dash-sidebar)] px-3 py-6">
+        <SidebarContent {...sidebarProps} />
+      </aside>
+
+      {/* ── Mobile top bar (< lg) ─────────────────────── */}
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[var(--dash-sidebar)] border-b border-white/[0.06]">
+        <Link href="/" className="flex items-center gap-1.5">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
             <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
           </svg>
           <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
           <span className="text-gray-600 text-xs font-medium">/ storage</span>
         </Link>
+        <button
+          onClick={() => setDrawerOpen(true)}
+          className="p-2 rounded-md text-gray-400 hover:text-white hover:bg-white/[0.06] transition-all"
+          aria-label="Open menu"
+        >
+          <Menu size={20} />
+        </button>
+      </header>
 
-        <nav className="flex-1 space-y-0.5">
-          {nav.map((item) => {
-            const { href, key, icon: Icon } = item;
-            const external = "external" in item && item.external;
-            const active = !external && (
-              pathname === href || (href !== "/dashboard" && pathname.startsWith(href))
-            );
-            return (
-              <Link
-                key={href}
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                href={href as any}
-                {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-all ${
-                  active
-                    ? "bg-white/[0.07] text-white font-medium"
-                    : "text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
-                }`}
-              >
-                <Icon size={15} className={active ? "text-white" : "text-gray-500"} />
-                {t(key)}
-              </Link>
-            );
-          })}
-        </nav>
+      {/* ── Mobile drawer backdrop ────────────────────── */}
+      {drawerOpen && (
+        <div
+          className="lg:hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm"
+          onClick={() => setDrawerOpen(false)}
+        />
+      )}
 
-        <div className="mt-4 pt-4 border-t border-white/[0.06]">
-          <div className="mb-1">
-            <LanguageSwitcher variant="sidebar" />
-          </div>
-          {(user?.is_admin || user?.is_super_admin) && (
-            <Link
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              href={"/admin" as any}
-              className="flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-[#9b3dff] hover:bg-[#9b3dff]/[0.06] transition-all mb-1"
-            >
-              <ShieldCheck size={15} />
-              {t("adminPanel")}
-            </Link>
-          )}
-          <div className="px-2.5 py-2 mb-1">
-            <div className="flex items-center justify-between gap-2 mb-0.5">
-              <p className="text-[13px] font-medium text-gray-200 truncate">{user?.name}</p>
-              <span className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${badge.cls}`}>
-                {badge.label}
-              </span>
-            </div>
-            <p className="text-xs text-gray-600 truncate">{user?.email}</p>
-          </div>
+      {/* ── Mobile drawer ─────────────────────────────── */}
+      <aside
+        className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 w-[260px] flex flex-col bg-[var(--dash-sidebar)] border-r border-white/[0.06] px-3 py-6 transition-transform duration-300 ${
+          drawerOpen ? "translate-x-0" : "-translate-x-full"
+        }`}
+      >
+        <div className="flex items-center justify-between px-2 mb-8">
+          <Link href="/" className="flex items-center gap-1.5" onClick={() => setDrawerOpen(false)}>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+            </svg>
+            <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
+            <span className="text-gray-600 text-xs font-medium">/ storage</span>
+          </Link>
           <button
-            onClick={() => logoutFn()}
-            className="flex items-center gap-2.5 w-full px-2.5 py-2 rounded-md text-[13px] text-gray-500 hover:text-red-400 hover:bg-red-400/[0.06] transition-all"
+            onClick={() => setDrawerOpen(false)}
+            className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-white/[0.06] transition-all"
           >
-            <LogOut size={15} />
-            {t("signOut")}
+            <X size={16} />
           </button>
         </div>
+
+        <SidebarContent {...sidebarProps} onNav={() => setDrawerOpen(false)} />
       </aside>
 
-      <main className="flex-1 overflow-auto bg-[var(--dash-bg)]">
+      {/* ── Main content ──────────────────────────────── */}
+      <main className="flex-1 overflow-auto bg-[var(--dash-bg)] lg:pt-0 pt-14">
         {children}
       </main>
+
     </div>
   );
 }
