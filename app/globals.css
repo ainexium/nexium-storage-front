@@ -273,6 +273,14 @@ html[data-theme="light"] .lp-header {
   border-top-color: rgba(0, 0, 0, 0.07) !important;
 }
 
+/* Solid violet bg: always white text regardless of theme */
+[data-theme="light"] .themed-page [class*="bg-[#9b3dff]"]:not([class*="bg-[#9b3dff]/"]) {
+  color: #ffffff !important;
+}
+[data-theme="light"] .themed-page [class*="bg-[#9b3dff]"]:not([class*="bg-[#9b3dff]/"]) * {
+  color: #ffffff !important;
+}
+
 /* Text */
 [data-theme="light"] .themed-page .text-white   { color: #0f0f14 !important; }
 [data-theme="light"] .themed-page .text-gray-100 { color: #1a1a24 !important; }
