@@ -186,6 +186,32 @@
     linear-gradient(to left, rgba(155,61,255,0.04) 0%, rgba(155,61,255,0.008) 100%);
 }
 
+/* ── Mobile nav dropdown — theme-aware ──────────── */
+.nav-mobile-dropdown {
+  background-color: rgba(8, 8, 15, 0.96);
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+.nav-mobile-link {
+  color: #d1d5db;
+  border-bottom-color: rgba(255, 255, 255, 0.06);
+}
+.nav-mobile-link:hover { color: #ffffff; }
+.nav-mobile-contact { color: #6b7280; }
+.nav-mobile-contact:hover { color: #d1d5db; }
+
+html[data-theme="light"] .nav-mobile-dropdown {
+  background-color: #eef0f6;
+  border-bottom-color: rgba(0, 0, 0, 0.10);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+html[data-theme="light"] .nav-mobile-link {
+  color: #1e1e2e;
+  border-bottom-color: rgba(0, 0, 0, 0.07);
+}
+html[data-theme="light"] .nav-mobile-link:hover { color: #0f0f14; }
+html[data-theme="light"] .nav-mobile-contact { color: #6e6e84; }
+html[data-theme="light"] .nav-mobile-contact:hover { color: #1e1e2e; }
+
 /* ── Theme variables ─────────────────────────────── */
 :root {
   --lp-bg:       #08080f;

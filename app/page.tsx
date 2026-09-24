@@ -12,6 +12,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { AuthRedirect } from "@/components/auth-redirect";
 import { AnimInView } from "@/components/anim-in-view";
 import { CtaFloatingLogos } from "@/components/cta-floating-logos";
+import { NavMobile } from "@/components/nav-mobile";
 import { techStyle } from "@/lib/tech-colors";
 import { TECH_PATHS } from "@/lib/tech-icons";
 import type { Metadata } from "next";
@@ -84,30 +85,33 @@ export default async function LandingPage() {
 
       {/* ── NAVBAR ────────────────────────────────────────────── */}
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
-        <nav className="max-w-6xl mx-auto px-6 h-14 flex items-center justify-between">
-          <span className="font-bold tracking-tight text-[17px] whitespace-nowrap shrink-0">
+        <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
+          <span className="font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
             <span className="text-[#06B6D4]">NEXIUM</span>
-            <span className="text-gray-500 font-normal ml-1.5">/ storage</span>
+            <span className="text-gray-500 font-normal ml-1">/ storage</span>
           </span>
-          <div className="flex items-center gap-5">
+          <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
+            {/* Desktop nav links — masqués sous 403px */}
             <a
               href={`mailto:${CONTACT_EMAIL}`}
-              className="hidden sm:flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-300 transition"
+              className="hidden min-[490px]:flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-300 transition"
               title={t("contactTitle")}
             >
               <Mail size={12} />
               {t("contact")}
             </a>
-            <Link href="/login" className="text-[14px] text-gray-400 hover:text-white transition">
+            <Link href="/login" className="hidden min-[490px]:block text-[14px] text-gray-400 hover:text-white transition">
               {t("logIn")}
             </Link>
             <Link
               href="/register"
-              className="px-3.5 py-1.5 text-[14px] bg-[#06B6D4] hover:bg-cyan-400 rounded-md font-semibold transition"
+              className="hidden min-[490px]:block px-3.5 py-1.5 text-[14px] bg-[#06B6D4] hover:bg-cyan-400 rounded-md font-semibold transition"
             >
               {t("getStarted")}
             </Link>
+            {/* Burger — visible uniquement sous 403px */}
+            <NavMobile />
           </div>
         </nav>
       </header>
@@ -193,7 +197,7 @@ export default async function LandingPage() {
             </h2>
           </AnimInView>
 
-          <div className="grid md:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
 
             {/* Persona 1 — Teams & Creatives */}
             <AnimInView delay={0}>
@@ -261,12 +265,12 @@ export default async function LandingPage() {
         <div className="glow-blue-right" />
         <div className="noise-overlay" />
 
-        {/* Flex layout: text column aligned to max-w-6xl, marquee extends to right edge */}
+        {/* Mobile: colonne (texte puis marquee). Desktop: ligne avec padding aligné sur max-w-6xl */}
         <div
-          className="relative z-10 flex items-center gap-10"
+          className="relative z-10 flex flex-col md:flex-row md:items-center gap-8 md:gap-10"
           style={{ paddingLeft: "max(1.5rem, calc(50vw - 36rem + 1.5rem))" }}
         >
-          <AnimInView animation="fade-right" className="shrink-0 w-[260px]">
+          <AnimInView animation="fade-right" className="shrink-0 md:w-[260px]">
             <p className="text-[12px] font-semibold tracking-[0.18em] uppercase text-[#06B6D4] mb-3">
               {t("stackEyebrow")}
             </p>
@@ -286,31 +290,31 @@ export default async function LandingPage() {
             </Link>
           </AnimInView>
 
-          {/* Marquee rows — flex-1 + min-w-0 fills all remaining width to right viewport edge */}
-          <div className="flex-1 min-w-0 overflow-hidden marquee-track space-y-3 py-1">
-            <div className="flex gap-3 w-max animate-marquee">
+          {/* Marquee rows — passe sous le texte sur mobile */}
+          <div className="flex-1 min-w-0 overflow-hidden marquee-track space-y-2.5 py-1">
+            <div className="flex gap-2 md:gap-3 w-max animate-marquee">
               {[...LANG_ROW, ...LANG_ROW, ...LANG_ROW, ...LANG_ROW].map((name, i) => (
                 <span
                   key={i}
-                  className="shrink-0 w-[72px] h-[72px] border flex items-center justify-center select-none"
+                  className="shrink-0 w-10 h-10 md:w-[72px] md:h-[72px] border flex items-center justify-center select-none"
                   style={techStyle(name)}
                   title={name}
                 >
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg className="w-5 h-5 md:w-10 md:h-10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d={TECH_PATHS[name] ?? ""} />
                   </svg>
                 </span>
               ))}
             </div>
-            <div className="flex gap-3 w-max animate-marquee-reverse">
+            <div className="flex gap-2 md:gap-3 w-max animate-marquee-reverse">
               {[...FW_ROW, ...FW_ROW, ...FW_ROW, ...FW_ROW].map((name, i) => (
                 <span
                   key={i}
-                  className="shrink-0 w-[72px] h-[72px] border flex items-center justify-center select-none"
+                  className="shrink-0 w-10 h-10 md:w-[72px] md:h-[72px] border flex items-center justify-center select-none"
                   style={techStyle(name)}
                   title={name}
                 >
-                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <svg className="w-5 h-5 md:w-10 md:h-10" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
                     <path d={TECH_PATHS[name] ?? ""} />
                   </svg>
                 </span>
@@ -323,7 +327,7 @@ export default async function LandingPage() {
       {/* ── MANAGE — 2 COLONNES ───────────────────────────────── */}
       <section className="relative border-t border-white/[0.06] py-28 overflow-hidden">
         <div className="grid-dark" />
-        <div className="relative z-10 max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
+        <div className="relative z-10 max-w-6xl mx-auto px-6 grid lg:grid-cols-2 gap-10 lg:gap-16 items-start lg:items-center">
 
           {/* Left */}
           <AnimInView animation="fade-right">
@@ -354,23 +358,23 @@ export default async function LandingPage() {
           </AnimInView>
 
           {/* Right — fake dashboard */}
-          <AnimInView animation="fade-left" delay={100}>
+          <AnimInView animation="fade-left" delay={100} className="min-w-0 w-full">
             <div className="rounded-xl border border-white/[0.07] bg-[var(--lp-bg-deep)] overflow-hidden shadow-2xl">
               {/* Browser chrome */}
-              <div className="flex items-center gap-2 px-4 py-2 border-b border-white/[0.05]">
-                <div className="flex gap-1.5">
+              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.05]">
+                <div className="flex gap-1.5 shrink-0">
                   <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
                   <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
                   <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
                 </div>
-                <div className="flex-1 mx-2 h-5 rounded bg-white/[0.04] flex items-center px-2.5">
-                  <span className="text-[10px] text-gray-600 font-mono">console.nexiumai.io/dashboard/projects</span>
+                <div className="flex-1 mx-2 h-5 rounded bg-white/[0.04] flex items-center px-2.5 overflow-hidden">
+                  <span className="text-[10px] text-gray-600 font-mono truncate">console.nexiumai.io/dashboard/projects</span>
                 </div>
               </div>
               {/* Layout */}
-              <div className="flex" style={{ height: "295px" }}>
-                {/* Sidebar — matching real dashboard */}
-                <div className="w-[148px] border-r border-white/[0.06] bg-[var(--lp-bg)] px-2 py-3 flex-shrink-0">
+              <div className="flex min-h-0">
+                {/* Sidebar — cachée sur mobile */}
+                <div className="hidden min-[490px]:flex flex-col w-[140px] shrink-0 border-r border-white/[0.06] bg-[var(--lp-bg)] px-2 py-3">
                   <div className="flex items-center gap-1.5 px-1.5 mb-4">
                     <span className="text-[#06B6D4] font-bold text-[10px] tracking-tight">NEXIUM</span>
                     <span className="text-gray-600 text-[9px]">/ storage</span>
@@ -393,13 +397,13 @@ export default async function LandingPage() {
                   ))}
                 </div>
                 {/* Content */}
-                <div className="flex-1 p-4 overflow-hidden">
+                <div className="flex-1 min-w-0 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-[12px] font-semibold text-white">Projects</p>
                       <p className="text-[10px] text-gray-600 mt-0.5">3 projects</p>
                     </div>
-                    <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#06B6D4] text-white font-medium">
+                    <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#06B6D4] text-white font-medium shrink-0">
                       <Plus size={9} /> New
                     </span>
                   </div>
@@ -412,14 +416,14 @@ export default async function LandingPage() {
                       key={name}
                       className={`flex items-center gap-2.5 py-2.5 ${i < 2 ? "border-b border-white/[0.04]" : ""}`}
                     >
-                      <div className="w-6 h-6 rounded bg-white/[0.05] border border-white/[0.07] flex items-center justify-center flex-shrink-0">
+                      <div className="w-6 h-6 rounded bg-white/[0.05] border border-white/[0.07] flex items-center justify-center shrink-0">
                         <FolderOpen size={11} className="text-gray-500" />
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-[11px] text-gray-200 font-mono truncate">{name}</p>
                         <p className="text-[9px] text-gray-600">{info}</p>
                       </div>
-                      <ChevronRight size={11} className="text-gray-700 flex-shrink-0" />
+                      <ChevronRight size={11} className="text-gray-700 shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -446,7 +450,7 @@ export default async function LandingPage() {
             </h2>
           </AnimInView>
 
-          <div className="grid md:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 lg:gap-12">
 
             {/* Step 1 — Create project */}
             <AnimInView delay={0}>
@@ -588,7 +592,7 @@ export default async function LandingPage() {
             </p>
           </AnimInView>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10 lg:gap-y-12">
             {builders.map(({ Icon, title, body }, i) => (
               <AnimInView key={title} delay={i * 45}>
                 <div className="w-8 h-8 rounded-md bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-4">
@@ -624,7 +628,7 @@ export default async function LandingPage() {
             </p>
           </AnimInView>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-12">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-x-10 gap-y-10 md:gap-y-12">
             {security.map(({ Icon, title, body }, i) => (
               <AnimInView key={title} delay={i * 60}>
                 <div className="w-8 h-8 rounded-md bg-[#06B6D4]/10 border border-[#06B6D4]/20 flex items-center justify-center mb-4">
