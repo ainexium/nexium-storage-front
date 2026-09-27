@@ -480,8 +480,46 @@ html[data-theme="light"] .lp-header {
 [data-theme="light"] .dash-page input::placeholder,
 [data-theme="light"] .dash-page textarea::placeholder { color: rgba(0,0,0,0.3) !important; }
 
-/* Sidebar nav active state */
+/* Sidebar border */
 [data-theme="light"] .dash-page aside { border-right-color: rgba(0,0,0,0.08) !important; }
+
+/* ── Sidebar nav links — light mode ─────────────────
+   Dark mode uses bg-white/* (white on dark = visible).
+   In light mode those become invisible — override them. */
+
+/* Active link: has class "text-white" as standalone token (not "hover:text-white") */
+[data-theme="light"] .dash-page aside nav a[class~="text-white"] {
+  background-color: rgba(155, 61, 255, 0.1) !important;
+  color: #6A0DAD !important;
+}
+[data-theme="light"] .dash-page aside nav a[class~="text-white"] svg {
+  color: #6A0DAD !important;
+}
+
+/* Hover on inactive links */
+[data-theme="light"] .dash-page aside nav a:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+  color: #1a1a2e !important;
+}
+[data-theme="light"] .dash-page aside nav a:hover svg {
+  color: #444455 !important;
+}
+
+/* Active link stays active color even on hover */
+[data-theme="light"] .dash-page aside nav a[class~="text-white"]:hover {
+  background-color: rgba(155, 61, 255, 0.14) !important;
+  color: #6A0DAD !important;
+}
+
+/* Admin + logout links in sidebar footer */
+[data-theme="light"] .dash-page aside a[class*="hover:text-[#9b3dff]"]:hover {
+  background-color: rgba(155, 61, 255, 0.06) !important;
+  color: #6A0DAD !important;
+}
+[data-theme="light"] .dash-page aside button[class*="hover:text-red"]:hover {
+  background-color: rgba(239, 68, 68, 0.06) !important;
+  color: #dc2626 !important;
+}
 
 /* Status badges — keep colored */
 [data-theme="light"] .dash-page .text-emerald-400 { color: #059669 !important; }
