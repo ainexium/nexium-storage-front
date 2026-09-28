@@ -2,9 +2,9 @@
 
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
-import type { APIKey, Project } from "@/types";
+import type { APIKey, Bucket, Project } from "@/types";
 import { useState, useEffect } from "react";
-import { Plus, Trash2, Copy, Check } from "lucide-react";
+import { Plus, Trash2, Copy, Check, FolderOpen } from "lucide-react";
 import { ConfirmModal } from "@/components/confirm-modal";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -21,6 +21,8 @@ export default function APIKeysPage() {
   const [revealed, setRevealed] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
   const [confirmRevokeId, setConfirmRevokeId] = useState<string | null>(null);
+  const [scopeMode, setScopeMode] = useState<"all" | "specific">("all");
+  const [selectedBucketIds, setSelectedBucketIds] = useState<string[]>([]);
 
   const { data: projects = [] } = useQuery({
     queryKey: ["projects"],
@@ -39,16 +41,24 @@ export default function APIKeysPage() {
     enabled: !!selectedProject,
   });
 
+  const { data: buckets = [] } = useQuery({
+    queryKey: ["buckets", selectedProject],
+    queryFn: () => api.get<Bucket[]>(`/api/v1/projects/${selectedProject}/buckets`),
+    enabled: !!selectedProject && creating,
+  });
+
   const keys = allKeys.filter((k) => !k.revoked_at);
 
   const create = useMutation({
-    mutationFn: (name: string) =>
-      api.post<CreateKeyResponse>(`/api/v1/projects/${selectedProject}/api-keys`, { name }),
+    mutationFn: (payload: { name: string; allowed_bucket_ids: string[] | null }) =>
+      api.post<CreateKeyResponse>(`/api/v1/projects/${selectedProject}/api-keys`, payload),
     onSuccess: (data) => {
       qc.invalidateQueries({ queryKey: ["api-keys", selectedProject] });
       setRevealed(data.key);
       setCreating(false);
       setNewKeyName("");
+      setScopeMode("all");
+      setSelectedBucketIds([]);
     },
   });
 
@@ -57,12 +67,34 @@ export default function APIKeysPage() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ["api-keys", selectedProject] }),
   });
 
+  function handleCreate(e: React.FormEvent) {
+    e.preventDefault();
+    if (!newKeyName.trim()) return;
+    const allowed_bucket_ids = scopeMode === "specific" && selectedBucketIds.length > 0
+      ? selectedBucketIds
+      : null;
+    create.mutate({ name: newKeyName.trim(), allowed_bucket_ids });
+  }
+
+  function toggleBucket(id: string) {
+    setSelectedBucketIds(prev =>
+      prev.includes(id) ? prev.filter(b => b !== id) : [...prev, id]
+    );
+  }
+
   const copyKey = async () => {
     if (!revealed) return;
     await navigator.clipboard.writeText(revealed);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  function cancelCreate() {
+    setCreating(false);
+    setNewKeyName("");
+    setScopeMode("all");
+    setSelectedBucketIds([]);
+  }
 
   return (
     <div className="px-4 sm:px-8 py-6 sm:py-8 max-w-3xl">
@@ -111,22 +143,64 @@ export default function APIKeysPage() {
       )}
 
       {creating && (
-        <form
-          onSubmit={(e) => { e.preventDefault(); create.mutate(newKeyName); }}
-          className="flex gap-2 mb-6"
-        >
-          <input autoFocus value={newKeyName} onChange={(e) => setNewKeyName(e.target.value)}
+        <form onSubmit={handleCreate} className="mb-6 p-4 rounded-lg border border-white/[0.08] bg-white/[0.02] space-y-4">
+          <input
+            autoFocus
+            value={newKeyName}
+            onChange={(e) => setNewKeyName(e.target.value)}
             placeholder={t("namePlaceholder")}
-            className="flex-1 px-3 py-1.5 rounded-md bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600"
+            className="w-full px-3 py-1.5 rounded-md bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600"
           />
-          <button type="submit" disabled={!newKeyName.trim() || create.isPending}
-            className="px-3 py-1.5 rounded-md bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">
-            {t("generate")}
-          </button>
-          <button type="button" onClick={() => setCreating(false)}
-            className="px-3 py-1.5 rounded-md border border-white/[0.08] text-sm text-gray-400 hover:text-white hover:border-white/20 transition-colors">
-            {tc("cancel")}
-          </button>
+
+          {/* Bucket scope */}
+          <div className="space-y-2">
+            <p className="text-xs text-gray-500">{t("bucketScope")}</p>
+            <div className="flex gap-2">
+              <button type="button" onClick={() => setScopeMode("all")}
+                className={`px-3 py-1 rounded-md text-xs transition-colors ${scopeMode === "all" ? "bg-white/10 text-white" : "text-gray-500 hover:text-gray-300"}`}>
+                {t("allBuckets")}
+              </button>
+              <button type="button" onClick={() => setScopeMode("specific")}
+                className={`px-3 py-1 rounded-md text-xs transition-colors ${scopeMode === "specific" ? "bg-white/10 text-white" : "text-gray-500 hover:text-gray-300"}`}>
+                {t("specificBuckets")}
+              </button>
+            </div>
+
+            {scopeMode === "specific" && (
+              <div className="space-y-1 pt-1">
+                {buckets.length === 0 ? (
+                  <p className="text-xs text-gray-600">{t("noBuckets")}</p>
+                ) : (
+                  buckets.map(b => (
+                    <label key={b.id} className="flex items-center gap-2.5 cursor-pointer group">
+                      <input
+                        type="checkbox"
+                        checked={selectedBucketIds.includes(b.id)}
+                        onChange={() => toggleBucket(b.id)}
+                        className="accent-[#9b3dff] w-3.5 h-3.5"
+                      />
+                      <span className="text-sm font-mono text-gray-300 group-hover:text-white transition-colors">{b.name}</span>
+                    </label>
+                  ))
+                )}
+                {scopeMode === "specific" && selectedBucketIds.length > 0 && (
+                  <p className="text-[10px] text-gray-600 pt-1">{t("scopeHint")}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          <div className="flex gap-2 pt-1">
+            <button type="submit"
+              disabled={!newKeyName.trim() || create.isPending || (scopeMode === "specific" && selectedBucketIds.length === 0)}
+              className="px-3 py-1.5 rounded-md bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">
+              {t("generate")}
+            </button>
+            <button type="button" onClick={cancelCreate}
+              className="px-3 py-1.5 rounded-md border border-white/[0.08] text-sm text-gray-400 hover:text-white hover:border-white/20 transition-colors">
+              {tc("cancel")}
+            </button>
+          </div>
         </form>
       )}
 
@@ -147,6 +221,14 @@ export default function APIKeysPage() {
                   )}
                 </div>
                 <code className="text-xs text-gray-600 font-mono mt-0.5 block">{k.prefix}••••••••</code>
+                {k.allowed_bucket_ids && k.allowed_bucket_ids.length > 0 && (
+                  <div className="flex items-center gap-1 mt-1">
+                    <FolderOpen size={10} className="text-violet-400" />
+                    <span className="text-[10px] text-violet-400">
+                      {k.allowed_bucket_ids.length} dossier{k.allowed_bucket_ids.length > 1 ? "s" : ""}
+                    </span>
+                  </div>
+                )}
               </div>
               <div className="flex items-center gap-3">
                 {k.last_used_at && (
@@ -163,6 +245,7 @@ export default function APIKeysPage() {
           ))}
         </div>
       )}
+
       {confirmRevokeId && (
         <ConfirmModal
           title={t("revokeTitle")}

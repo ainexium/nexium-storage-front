@@ -224,7 +224,7 @@ html[data-theme="light"] {
   --lp-bg:       #f5f7fa;
   --lp-bg-deep:  #edf0f5;
   --dash-bg:     #f5f7fa;
-  --dash-sidebar: #edf0f5;
+  --dash-sidebar: #f5f7fa;
 }
 
 /* Header bg (backdrop-blur needs explicit bg on the class) */
@@ -480,23 +480,24 @@ html[data-theme="light"] .lp-header {
 [data-theme="light"] .dash-page input::placeholder,
 [data-theme="light"] .dash-page textarea::placeholder { color: rgba(0,0,0,0.3) !important; }
 
-/* Sidebar border */
-[data-theme="light"] .dash-page aside { border-right-color: rgba(0,0,0,0.08) !important; }
+/* Sidebar border + background */
+[data-theme="light"] .dash-page aside {
+  border-right-color: rgba(0,0,0,0.08) !important;
+  background-color: var(--dash-bg) !important;
+}
 
 /* ── Sidebar nav links — light mode ─────────────────
-   Dark mode uses bg-white/* (white on dark = visible).
-   In light mode those become invisible — override them. */
+   The general [class*="bg-white/"] rule above catches hover:bg-white/[0.04]
+   (always present in the className string) and applies rgba(0,0,0,0.03)
+   permanently — even without hover. Reset to transparent, then re-add states. */
 
-/* Active link: has class "text-white" as standalone token (not "hover:text-white") */
-[data-theme="light"] .dash-page aside nav a[class~="text-white"] {
-  background-color: rgba(155, 61, 255, 0.1) !important;
-  color: #6A0DAD !important;
-}
-[data-theme="light"] .dash-page aside nav a[class~="text-white"] svg {
-  color: #6A0DAD !important;
+/* 1. Reset all nav links to transparent */
+[data-theme="light"] .dash-page aside nav a {
+  background-color: transparent !important;
+  color: #5a5a6e;
 }
 
-/* Hover on inactive links */
+/* 2. Hover on inactive links */
 [data-theme="light"] .dash-page aside nav a:hover {
   background-color: rgba(0, 0, 0, 0.05) !important;
   color: #1a1a2e !important;
@@ -505,13 +506,22 @@ html[data-theme="light"] .lp-header {
   color: #444455 !important;
 }
 
-/* Active link stays active color even on hover */
-[data-theme="light"] .dash-page aside nav a[class~="text-white"]:hover {
-  background-color: rgba(155, 61, 255, 0.14) !important;
+/* 3. Active link (has "text-white" as standalone token, not "hover:text-white") */
+[data-theme="light"] .dash-page aside nav a[class~="text-white"] {
+  background-color: rgba(155, 61, 255, 0.1) !important;
+  color: #6A0DAD !important;
+}
+[data-theme="light"] .dash-page aside nav a[class~="text-white"] svg {
   color: #6A0DAD !important;
 }
 
-/* Admin + logout links in sidebar footer */
+/* 4. Active link hover */
+[data-theme="light"] .dash-page aside nav a[class~="text-white"]:hover {
+  background-color: rgba(155, 61, 255, 0.15) !important;
+  color: #6A0DAD !important;
+}
+
+/* 5. Admin + logout links in sidebar footer */
 [data-theme="light"] .dash-page aside a[class*="hover:text-[#9b3dff]"]:hover {
   background-color: rgba(155, 61, 255, 0.06) !important;
   color: #6A0DAD !important;

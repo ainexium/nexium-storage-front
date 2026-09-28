@@ -114,7 +114,7 @@ function Section({ id, icon: Icon, title, children }: {
 
 // ─── Code examples (all on /api/v1/ext/* — API key auth) ─────────────────────
 
-const BASE = "https://api.nexium.ai";
+const BASE = "https://api.nexiumai.io";
 
 const upload: Record<Lang, string> = {
   curl: `curl -X POST \\
@@ -503,7 +503,33 @@ const url = await storage.download(file.id)
 const updated = await storage.rename(file.id, 'new-name.jpg')
 
 // Delete
-await storage.delete(file.id)`,
+await storage.delete(file.id)
+
+// ── Direct upload (mobile / browser) ──────────────────────────────────────
+// Use this flow to upload directly to R2 without routing through your server.
+
+// Step 1 — get a presigned upload URL (call from your backend)
+const { file_id, object_key, upload_url } = await storage.presign(bucketId, {
+  filename: 'photo.jpg',
+  mime_type: 'image/jpeg',
+})
+
+// Step 2 — PUT the file directly to R2 (no auth header needed)
+await fetch(upload_url, {
+  method: 'PUT',
+  headers: { 'Content-Type': 'image/jpeg' },
+  body: fileBlob,
+})
+
+// Step 3 — confirm the upload so NEXIUM records the file
+const saved = await storage.confirm(bucketId, {
+  file_id,
+  object_key,
+  filename: 'photo.jpg',
+  mime_type: 'image/jpeg',
+  size_bytes: fileBlob.size,
+})
+console.log(saved.url) // permanent CDN URL`,
 
   python: `import os
 from nexium_storage import NexiumStorage
@@ -527,7 +553,28 @@ url = storage.download(file.id)
 updated = storage.rename(file.id, 'new-name.jpg')
 
 # Delete
-storage.delete(file.id)`,
+storage.delete(file.id)
+
+# ── Direct upload (mobile / browser) ──────────────────────────────────────
+# Use this flow when a mobile or browser client uploads directly to R2.
+
+# Step 1 — get a presigned URL (backend only, never expose API key client-side)
+presign = storage.presign(bucket_id, 'photo.jpg', 'image/jpeg')
+# → send presign.upload_url to the mobile/browser client
+
+# Step 2 — client PUTs the file directly to R2 (no auth header needed)
+# (done by the mobile/browser — not by your Python backend)
+
+# Step 3 — confirm once the client reports the upload is done
+saved = storage.confirm(
+    bucket_id,
+    file_id=presign.file_id,
+    object_key=presign.object_key,
+    filename='photo.jpg',
+    mime_type='image/jpeg',
+    size_bytes=204800,
+)
+print(saved.url)  # permanent CDN URL`,
 };
 
 const sdkWebhook: Partial<Record<Lang, string>> = {
@@ -730,6 +777,9 @@ export default function DocsPage() {
               {t.rich("uploadIntro", { mp: code, file: code, id: grayCode })}
             </p>
             <LanguageTabs examples={upload} />
+            <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3 text-sm text-amber-300/80">
+              {t.rich("uploadNote", { link: (chunks) => <a href="#direct-upload" className="underline underline-offset-2">{chunks}</a> })}
+            </div>
             <p className="text-sm text-gray-500 mt-1">{t.rich("response", { code: (chunks) => <code className="text-green-400">{chunks}</code> })}</p>
             <Block lang="javascript" code={`{
   "id":         "87e60d98-6cde-4e8a-bc65-7ff0b448091b",

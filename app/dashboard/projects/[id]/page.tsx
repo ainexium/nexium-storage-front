@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Bucket, Project } from "@/types";
 import { useState, useRef, useEffect, use } from "react";
-import { Plus, Trash2, ChevronRight, ArrowLeft, Pencil, Globe, Lock } from "lucide-react";
+import { Plus, Trash2, ChevronRight, ArrowLeft, Pencil, Globe, Lock, Copy, Check } from "lucide-react";
 import Link from "next/link";
 import { ConfirmModal } from "@/components/confirm-modal";
 import { useLocale, useTranslations } from "next-intl";
@@ -52,6 +52,15 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
   const [newIsPublic, setNewIsPublic] = useState(true);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+
+  function copyBucketId(e: React.MouseEvent, bucketId: string) {
+    e.preventDefault();
+    e.stopPropagation();
+    navigator.clipboard.writeText(bucketId);
+    setCopiedId(bucketId);
+    setTimeout(() => setCopiedId(null), 2000);
+  }
 
   const { data: project } = useQuery({
     queryKey: ["project", id],
@@ -158,11 +167,25 @@ export default function ProjectDetailPage({ params }: { params: Promise<{ id: st
                 <InlineEdit bucket={b} projectId={id} onDone={() => setEditingId(null)} />
               ) : (
                 <Link href={`/dashboard/projects/${id}/buckets/${b.id}`} className="flex items-center gap-3 flex-1 min-w-0">
-                  <span className="text-sm font-mono font-medium">{b.name}</span>
-                  {b.is_public
-                    ? <span className="flex items-center gap-0.5 text-[10px] text-green-500"><Globe size={9} />{tc("public")}</span>
-                    : <span className="flex items-center gap-0.5 text-[10px] text-amber-500"><Lock size={9} />{tc("private")}</span>
-                  }
+                  <div className="flex flex-col min-w-0">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-mono font-medium">{b.name}</span>
+                      {b.is_public
+                        ? <span className="flex items-center gap-0.5 text-[10px] text-green-500"><Globe size={9} />{tc("public")}</span>
+                        : <span className="flex items-center gap-0.5 text-[10px] text-amber-500"><Lock size={9} />{tc("private")}</span>
+                      }
+                    </div>
+                    <div className="flex items-center gap-1 mt-0.5">
+                      <code className="text-[10px] text-gray-600">{b.id}</code>
+                      <button
+                        onClick={(e) => copyBucketId(e, b.id)}
+                        className="text-gray-700 hover:text-gray-400 opacity-0 group-hover:opacity-100 transition"
+                        title="Copier l'ID"
+                      >
+                        {copiedId === b.id ? <Check size={9} className="text-green-500" /> : <Copy size={9} />}
+                      </button>
+                    </div>
+                  </div>
                 </Link>
               )}
 

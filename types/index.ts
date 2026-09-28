@@ -51,6 +51,7 @@ export interface APIKey {
   project_id: string;
   name: string;
   prefix: string;
+  allowed_bucket_ids: string[] | null; // null = all buckets
   last_used_at: string | null;
   revoked_at: string | null;
   created_at: string;
