@@ -65,7 +65,7 @@ function SidebarContent({
               className={`flex items-center gap-2.5 px-2.5 py-2 rounded-md text-[13px] transition-all ${
                 active
                   ? "bg-[#9b3dff]/10 text-white font-medium"
-                  : "text-gray-400 hover:text-gray-200 hover:bg-white/[0.04]"
+                  : "text-gray-400 hover:text-gray-200"
               }`}
             >
               <Icon size={15} className={active ? "text-white" : "text-gray-500"} />

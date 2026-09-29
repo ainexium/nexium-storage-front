@@ -486,10 +486,7 @@ html[data-theme="light"] .lp-header {
   background-color: var(--dash-bg) !important;
 }
 
-/* ── Sidebar nav links — light mode ─────────────────
-   The general [class*="bg-white/"] rule above catches hover:bg-white/[0.04]
-   (always present in the className string) and applies rgba(0,0,0,0.03)
-   permanently — even without hover. Reset to transparent, then re-add states. */
+/* ── Sidebar nav links — light mode ─────────────────── */
 
 /* 1. Reset all nav links to transparent */
 [data-theme="light"] .dash-page aside nav a {
