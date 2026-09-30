@@ -64,7 +64,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={locale} className={`dark ${roobert.variable} ${pangram.variable} ${roobertMono.variable}`} suppressHydrationWarning>
       <head>
-        <script dangerouslySetInnerHTML={{ __html: `try{var t=localStorage.getItem("nx-storage-theme");var dark=t==="dark"||(t!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(dark){document.documentElement.classList.add("dark");document.documentElement.setAttribute("data-theme","dark");}else{document.documentElement.classList.remove("dark");document.documentElement.setAttribute("data-theme","light");}}catch(e){}` }} />
+        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
+        <script src="/theme-init.js" />
       </head>
       <body className="bg-[#0a0a0f] text-gray-100 antialiased">
         <ThemeProvider>

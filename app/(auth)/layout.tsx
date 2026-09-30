@@ -1,18 +1,24 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   const router = useRouter();
 
+  // Check synchronously so we never render the form if already logged in
+  const [ready] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return !localStorage.getItem("access_token");
+  });
+
   useEffect(() => {
-    if (localStorage.getItem("access_token")) {
-      router.replace("/dashboard");
-    }
-  }, [router]);
+    if (!ready) router.replace("/dashboard");
+  }, [ready, router]);
+
+  if (!ready) return <div className="min-h-screen bg-[#0a0a0f]" />;
 
   return (
     <div className="themed-page min-h-screen flex flex-col items-center justify-center px-4 bg-[var(--lp-bg)] relative">

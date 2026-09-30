@@ -38,6 +38,9 @@ function SidebarContent({
   t: any; pathname: string; user: any; badge: { label: string; cls: string };
   logoutFn: () => void; onNav?: () => void;
 }) {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
+
   return (
     <>
       <Link href="/" className="flex items-center gap-1.5 px-2 mb-8" onClick={onNav}>
@@ -79,7 +82,7 @@ function SidebarContent({
         <div className="mb-1">
           <LanguageSwitcher variant="sidebar" />
         </div>
-        {(user?.is_admin || user?.is_super_admin) && (
+        {mounted && (user?.is_admin || user?.is_super_admin) && (
           <Link
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             href={"/admin" as any}
@@ -92,12 +95,12 @@ function SidebarContent({
         )}
         <div className="px-2.5 py-2 mb-1">
           <div className="flex items-center justify-between gap-2 mb-0.5">
-            <p className="text-[13px] font-medium text-gray-200 truncate">{user?.name}</p>
-            <span className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${badge.cls}`}>
+            <p className="text-[13px] font-medium text-gray-200 truncate" suppressHydrationWarning>{user?.name}</p>
+            <span suppressHydrationWarning className={`shrink-0 text-[10px] font-semibold px-1.5 py-0.5 rounded-md border ${badge.cls}`}>
               {badge.label}
             </span>
           </div>
-          <p className="text-xs text-gray-600 truncate">{user?.email}</p>
+          <p className="text-xs text-gray-600 truncate" suppressHydrationWarning>{user?.email}</p>
         </div>
         <button
           onClick={() => logoutFn()}
@@ -141,10 +144,6 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     document.body.style.overflow = drawerOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
   }, [drawerOpen]);
-
-  if (isLoading || isError) {
-    return <div className="min-h-screen bg-[#0a0a0f]" />;
-  }
 
   const sidebarProps = { t, pathname, user, badge, logoutFn };
 

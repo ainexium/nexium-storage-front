@@ -140,6 +140,18 @@ export interface PaymentChannel {
   is_active: boolean;
   maintenance_note: string;
   display_order: number;
+  country_code: string;
+  provider: string;
+}
+
+export interface BillingCountry {
+  code: string;
+  name: string;
+  currency_code: string;
+  currency_symbol: string;
+  local_per_xof: number;
+  flag_emoji: string;
+  is_active: boolean;
 }
 
 export interface Subscription {
@@ -164,6 +176,7 @@ export interface BillingPayment {
   channel: string;
   phone: string;
   redirect_url?: string;
+  failure_reason?: string;
   created_at: string;
   updated_at: string;
   plan: Plan | null;
@@ -192,6 +205,7 @@ export interface StorageAddon {
   status: string;
   channel: string;
   phone: string;
+  failure_reason?: string;
   created_at: string;
   updated_at: string;
 }

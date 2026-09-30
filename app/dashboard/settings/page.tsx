@@ -136,7 +136,7 @@ export default function SettingsPage() {
                 </div>
               ) : (
                 <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-200">{user?.name ?? "—"}</span>
+                  <span className="text-sm text-gray-200" suppressHydrationWarning>{user?.name ?? "—"}</span>
                   <button onClick={() => startEdit("name")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
                 </div>
               )}
@@ -200,7 +200,7 @@ export default function SettingsPage() {
                 ) : (
                   /* État normal */
                   <div className="flex items-center gap-3 justify-end">
-                    <span className="text-sm text-gray-200">{user?.email ?? "—"}</span>
+                    <span className="text-sm text-gray-200" suppressHydrationWarning>{user?.email ?? "—"}</span>
                     <button onClick={() => startEdit("email")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{tc("edit")}</button>
                   </div>
                 )}
@@ -211,7 +211,7 @@ export default function SettingsPage() {
           {/* Membre depuis */}
           <div className="flex items-center justify-between px-5 py-3.5">
             <span className="text-xs text-gray-500 w-28">{t("memberSince")}</span>
-            <span className="text-sm text-gray-200">{user ? new Date(user.created_at).toLocaleDateString(locale) : "—"}</span>
+            <span className="text-sm text-gray-200" suppressHydrationWarning>{user ? new Date(user.created_at).toLocaleDateString(locale) : "—"}</span>
           </div>
         </div>
       </div>

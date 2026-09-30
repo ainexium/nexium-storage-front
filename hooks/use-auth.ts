@@ -8,8 +8,9 @@ import type { TokenPair } from "@/types";
 export function useMe() {
   return useQuery({
     queryKey: ["me"],
-    queryFn: getMe,
+    queryFn: () => getMe(),
     retry: false,
+    staleTime: 5 * 60 * 1000,
   });
 }
 

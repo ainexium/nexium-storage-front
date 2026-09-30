@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Users, Activity, LogOut, ArrowLeft, ShieldCheck, Crown, CreditCard } from "lucide-react";
 import { useMe, useLogout } from "@/hooks/use-auth";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
@@ -21,15 +21,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const { data: user, isError, isSuccess, isLoading } = useMe();
   const { mutate: logoutFn } = useLogout();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => { setMounted(true); }, []);
 
   useEffect(() => {
     if (isError) router.push("/login");
     if (isSuccess && !user?.is_admin && !user?.is_super_admin) router.push("/dashboard");
   }, [isError, isSuccess, user, router]);
-
-  if (isLoading || isError) {
-    return <div className="min-h-screen bg-[#0a0a0f]" />;
-  }
 
   return (
     <div className="flex min-h-screen">
@@ -44,7 +42,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         <nav className="flex-1 space-y-0.5">
           {nav.map(({ href, key, icon: Icon, superAdminOnly }) => {
-            if (superAdminOnly && !user?.is_super_admin) return null;
+            if (mounted && superAdminOnly && !user?.is_super_admin) return null;
             const active = pathname === href || (href !== "/admin" && pathname.startsWith(href));
             return (
               <Link
@@ -76,16 +74,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </Link>
           <div className="px-2.5 py-2">
             <div className="flex items-center gap-1.5 mb-0.5">
-              <p className="text-[13px] font-medium text-gray-200 truncate">{user?.name}</p>
-              {user?.is_super_admin
+              <p className="text-[13px] font-medium text-gray-200 truncate" suppressHydrationWarning>{user?.name}</p>
+              {mounted && (user?.is_super_admin
                 ? <Crown size={11} className="text-yellow-400 shrink-0" />
                 : user?.is_admin
                 ? <ShieldCheck size={11} className="text-[#9b3dff] shrink-0" />
-                : null}
+                : null)}
             </div>
-            <p className="text-xs text-gray-600 truncate">{user?.email}</p>
-            <p className="text-[10px] text-gray-700 mt-0.5">
-              {user?.is_super_admin ? t("superAdmin") : t("admin")}
+            <p className="text-xs text-gray-600 truncate" suppressHydrationWarning>{user?.email}</p>
+            <p className="text-[10px] text-gray-700 mt-0.5" suppressHydrationWarning>
+              {mounted ? (user?.is_super_admin ? t("superAdmin") : t("admin")) : ""}
             </p>
           </div>
           <button

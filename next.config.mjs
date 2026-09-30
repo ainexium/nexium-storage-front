@@ -15,6 +15,7 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
+  reactStrictMode: false,
   typedRoutes: true,
   async headers() {
     return [

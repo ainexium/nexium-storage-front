@@ -616,6 +616,58 @@ html[data-theme="light"] .lp-header {
   color: rgba(0,0,0,0.4) !important;
 }
 
+/* ── Billing page — plan cards & payment modal ────────────────── */
+/* Plan card borders: replace near-invisible rgba(0,0,0,0.08) with subtle purple */
+[data-theme="light"] .dash-page .bill-plan-card {
+  border-color: rgba(155,61,255,0.18) !important;
+}
+[data-theme="light"] .dash-page .bill-plan-card:hover {
+  border-color: rgba(155,61,255,0.45) !important;
+}
+/* Pro card: stronger purple to match prominence in dark mode */
+[data-theme="light"] .dash-page .bill-pro-card {
+  border-color: rgba(155,61,255,0.55) !important;
+}
+[data-theme="light"] .dash-page .bill-pro-card:hover {
+  border-color: rgba(155,61,255,0.75) !important;
+}
+/* Free plan action button — white border becomes purple tint */
+[data-theme="light"] .dash-page .bill-free-btn {
+  border-color: rgba(155,61,255,0.25) !important;
+}
+/* Channel buttons: état par défaut neutre (même logique qu'en dark) */
+[data-theme="light"] .dash-page .bill-channel-btn {
+  border-color: rgba(0, 0, 0, 0.09) !important;
+  background-color: rgba(0, 0, 0, 0.02) !important;
+  color: #5a5a6e !important;
+}
+[data-theme="light"] .dash-page .bill-channel-btn:hover:not([class*="text-[#9b3dff]"]) {
+  border-color: rgba(0, 0, 0, 0.14) !important;
+  background-color: rgba(0, 0, 0, 0.04) !important;
+}
+/* État actif (cliqué) : fond + bordure violets, identique au dark mode */
+[data-theme="light"] .dash-page .bill-channel-btn[class*="text-[#9b3dff]"] {
+  color: #9b3dff !important;
+  border-color: rgba(155, 61, 255, 0.6) !important;
+  background-color: rgba(155, 61, 255, 0.08) !important;
+}
+/* Operator/International section labels */
+[data-theme="light"] .dash-page .bill-channel-section p {
+  color: #7a7a8c !important;
+}
+
+/* Choose Starter/Business buttons: same bright purple styling as dark mode */
+[data-theme="light"] .dash-page .bill-choose-btn {
+  color: #9b3dff !important;
+  border-color: rgba(155, 61, 255, 0.45) !important;
+  background-color: transparent !important;
+}
+[data-theme="light"] .dash-page .bill-choose-btn:hover {
+  background-color: #9b3dff !important;
+  color: #ffffff !important;
+  border-color: #9b3dff !important;
+}
+
 /* ── Font size increases ─────────────────────────── */
 /* Auth forms */
 .themed-page form label                   { font-size: 0.9375rem; }
