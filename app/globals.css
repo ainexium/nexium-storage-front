@@ -227,6 +227,67 @@ html[data-theme="light"] {
   --dash-sidebar: #f5f7fa;
 }
 
+/* ── Design System Tokens ────────────────────────── */
+:root {
+  /* Surfaces */
+  --ds-bg-base:   #08080f;
+  --ds-bg-card:   #0c0c14;
+  --ds-bg-subtle: rgba(255,255,255,0.03);
+  --ds-bg-hover:  rgba(255,255,255,0.055);
+
+  /* Borders */
+  --ds-border:       rgba(255,255,255,0.08);
+  --ds-border-strong: rgba(255,255,255,0.18);
+  --ds-border-brand:  rgba(155,61,255,0.4);
+
+  /* Text */
+  --ds-text-primary:   #f9fafb;
+  --ds-text-secondary: #9ca3af;
+  --ds-text-tertiary:  #6b7280;
+  --ds-text-muted:     #4b5563;
+
+  /* Brand */
+  --ds-brand:       #9b3dff;
+  --ds-brand-hover: #aa55ff;
+  --ds-brand-muted: rgba(155,61,255,0.1);
+
+  /* States */
+  --ds-success: #10b981;
+  --ds-error:   #ef4444;
+  --ds-warning: #f59e0b;
+  --ds-info:    #3b82f6;
+}
+
+html[data-theme="light"] {
+  /* Surfaces */
+  --ds-bg-base:   #edf0f5;
+  --ds-bg-card:   #ffffff;
+  --ds-bg-subtle: rgba(0,0,0,0.03);
+  --ds-bg-hover:  rgba(0,0,0,0.045);
+
+  /* Borders */
+  --ds-border:        rgba(0,0,0,0.08);
+  --ds-border-strong: rgba(0,0,0,0.15);
+  --ds-border-brand:  rgba(155,61,255,0.4);
+
+  /* Text */
+  --ds-text-primary:   #0f0f14;
+  --ds-text-secondary: #5a5a6e;
+  --ds-text-tertiary:  #7a7a8c;
+  --ds-text-muted:     #9898aa;
+
+  /* Brand inchangé */
+  --ds-brand:       #9b3dff;
+  --ds-brand-hover: #aa55ff;
+  --ds-brand-muted: rgba(155,61,255,0.08);
+
+  /* States (versions contrastées pour fond clair) */
+  --ds-success: #059669;
+  --ds-error:   #dc2626;
+  --ds-warning: #d97706;
+  --ds-info:    #2563eb;
+}
+
 /* Header bg (backdrop-blur needs explicit bg on the class) */
 .lp-header {
   background-color: rgba(8, 8, 15, 0.8);

@@ -32,24 +32,27 @@ const nav = [
 ] as const;
 
 function SidebarContent({
-  t, pathname, user, badge, logoutFn, onNav,
+  t, pathname, user, badge, logoutFn, onNav, rightAction,
 }: {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   t: any; pathname: string; user: any; badge: { label: string; cls: string };
-  logoutFn: () => void; onNav?: () => void;
+  logoutFn: () => void; onNav?: () => void; rightAction?: React.ReactNode;
 }) {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true); }, []);
 
   return (
     <>
-      <Link href="/" className="flex items-center gap-1.5 px-2 mb-8" onClick={onNav}>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-          <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-        </svg>
-        <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
-        <span className="text-gray-600 text-xs font-medium">/ storage</span>
-      </Link>
+      <div className="flex items-center justify-between px-2 mb-8">
+        <Link href="/" className="flex items-center gap-1.5" onClick={onNav}>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
+            <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+          </svg>
+          <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
+          <span className="text-gray-600 text-xs font-medium">/ storage</span>
+        </Link>
+        {rightAction}
+      </div>
 
       <nav className="flex-1 space-y-0.5">
         {nav.map((item) => {
@@ -187,23 +190,18 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           drawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
-        <div className="flex items-center justify-between px-2 mb-8">
-          <Link href="/" className="flex items-center gap-1.5" onClick={() => setDrawerOpen(false)}>
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
-              <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-            </svg>
-            <span className="text-[#9b3dff] font-bold text-sm tracking-tight">NEXIUM</span>
-            <span className="text-gray-600 text-xs font-medium">/ storage</span>
-          </Link>
-          <button
-            onClick={() => setDrawerOpen(false)}
-            className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-white/[0.06] transition-all"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        <SidebarContent {...sidebarProps} onNav={() => setDrawerOpen(false)} />
+        <SidebarContent
+          {...sidebarProps}
+          onNav={() => setDrawerOpen(false)}
+          rightAction={
+            <button
+              onClick={() => setDrawerOpen(false)}
+              className="p-1.5 rounded-md text-gray-500 hover:text-white hover:bg-white/[0.06] transition-all"
+            >
+              <X size={16} />
+            </button>
+          }
+        />
       </aside>
 
       {/* ── Main content ──────────────────────────────── */}

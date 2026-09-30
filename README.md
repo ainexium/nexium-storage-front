@@ -2,7 +2,9 @@
 
 Next.js frontend for NEXIUM Storage. Includes the user dashboard, admin panel, billing, and developer documentation.
 
-**Stack:** Next.js 16 · Tailwind CSS · shadcn/ui · TanStack Query
+**Stack:** Next.js 16 · Tailwind CSS · Custom Design System UI · TanStack Query
+
+See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for the full token and component reference.
 
 ---
 

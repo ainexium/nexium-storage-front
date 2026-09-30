@@ -9,6 +9,7 @@ import { ShieldCheck, Crown, Plus, HardDrive } from "lucide-react";
 import { ConfirmModal } from "@/components/confirm-modal";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
+import { PasswordInput } from "@/components/ui";
 
 const DEFAULT_QUOTA_GB = 10;
 
@@ -89,8 +90,7 @@ export default function AdminUsersPage() {
               className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
             <input type="email" placeholder={t("email")} value={newEmail} onChange={e => setNewEmail(e.target.value)}
               className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
-            <input type="password" placeholder={t("passwordMin")} value={newPassword} onChange={e => setNewPassword(e.target.value)}
-              className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
+            <PasswordInput placeholder={t("passwordMin")} value={newPassword} onChange={e => setNewPassword(e.target.value)} className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
           </div>
           <div className="flex gap-2">
             <button onClick={() => createAdmin.mutate({ name: newName, email: newEmail, password: newPassword })}

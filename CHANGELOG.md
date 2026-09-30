@@ -5,6 +5,36 @@ Format: `[version] — date — description`
 
 ---
 
+## [0.7.0] — 2026-09 — Design System UI & polish
+
+### Added
+- **Design System UI** — `components/ui/` : composants primitifs réutilisables basés sur `ds-*` tokens
+  - `Button` — 5 variants (primary, outline, ghost, destructive, link), 5 tailles, prop `loading` et `fullWidth`
+  - `Input` — champ texte avec prop `error`
+  - `PasswordInput` — wrapper transparent (préserve le style existant) + toggle œil show/hide
+  - `Textarea` — zone de texte avec prop `error`
+  - `Label` — label accessible pour les formulaires
+  - `Badge` — 6 variants sémantiques (default, brand, success, error, warning, info)
+  - `Card` / `CardHeader` / `CardTitle` / `CardDescription` / `CardContent` / `CardFooter`
+  - `Spinner` — 3 tailles (sm, md, lg)
+  - `Separator` — horizontal et vertical
+  - `index.ts` — re-exports centralisés
+- **Design tokens CSS** — `globals.css` : `:root` (dark) + `html[data-theme="light"]` avec variables `--ds-*`
+- **Tailwind `ds-*` namespace** — `tailwind.config.ts` : tokens bg, border, text, brand, états sémantiques
+- **`lib/utils.ts`** — utilitaire `cn()` (clsx + tailwind-merge)
+- **`DESIGN_SYSTEM.md`** — documentation complète des tokens, composants, conventions et système de thème
+
+### Changed
+- Tous les champs `password` dans le projet utilisent désormais `PasswordInput` (toggle œil ajouté) : login, reset-password, settings, admin/users
+- `tailwind.config.ts` — ajout `borderRadius` (xs→3xl) et `boxShadow` (ds-sm/md/lg/brand) sémantiques
+
+### Fixed
+- Mode clair billing : boutons « Choose Starter » et « Choose Business » retrouvent le violet `#9b3dff` (classe `bill-choose-btn`)
+- Section opérateurs en mode clair : boutons de canal neutres par défaut, violet uniquement au clic (comme en mode sombre)
+- Drawer mobile responsive : suppression du logo NEXIUM/storage en double (le logo n'apparaissait qu'une fois en mode sombre mais deux fois en mode clair)
+
+---
+
 ## [0.6.0] — 2026-09 — Admin billing & canaux de paiement
 
 ### Added
@@ -79,7 +109,7 @@ Format: `[version] — date — description`
 
 ---
 
-## État actuel — v0.6.0
+## État actuel — v0.7.0
 
 ### Fonctionnel
 - Auth complète (login, register, verify email, reset password)

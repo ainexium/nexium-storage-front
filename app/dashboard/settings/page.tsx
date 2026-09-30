@@ -8,6 +8,7 @@ import { useState } from "react";
 import { Check, Monitor, Moon, Sun } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
+import { PasswordInput } from "@/components/ui";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { useTheme, type ThemePreference } from "@/contexts/theme-context";
 
@@ -223,10 +224,8 @@ export default function SettingsPage() {
           <div className="px-5 py-3.5">
             {editPassword ? (
               <div className="space-y-3">
-                <input type="password" placeholder={t("currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
-                <input type="password" placeholder={t("newPasswordMin")} value={newPw} onChange={(e) => setNewPw(e.target.value)}
-                  className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
+                <PasswordInput placeholder={t("currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
+                <PasswordInput placeholder={t("newPasswordMin")} value={newPw} onChange={(e) => setNewPw(e.target.value)} className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
                 <div className="flex gap-2">
                   <button onClick={() => update.mutate({ current_password: currentPw, new_password: newPw })} disabled={update.isPending || !currentPw || !newPw}
                     className="px-3 py-1.5 rounded bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">{t("updatePassword")}</button>

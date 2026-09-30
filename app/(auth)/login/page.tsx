@@ -8,6 +8,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useLogin } from "@/hooks/use-auth";
 import { useTranslations } from "next-intl";
+import { PasswordInput } from "@/components/ui";
 
 type FormData = { email: string; password: string };
 
@@ -72,9 +73,8 @@ export default function LoginPage() {
               {t("forgotPassword")}
             </Link>
           </div>
-          <input
+          <PasswordInput
             {...register("password")}
-            type="password"
             placeholder="••••••••"
             className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
           />

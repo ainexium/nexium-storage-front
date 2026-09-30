@@ -6,6 +6,7 @@ import Link from "next/link";
 import { verifyResetCode, resetPassword } from "@/lib/auth";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
+import { PasswordInput } from "@/components/ui";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("auth");
@@ -177,11 +178,10 @@ export default function ResetPasswordPage() {
           <label className="block text-sm font-medium text-gray-300 mb-1.5">
             {t("newPassword")}
           </label>
-          <input
+          <PasswordInput
             ref={passwordRef}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            type="password"
             placeholder={t("min8")}
             className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
           />
@@ -191,10 +191,9 @@ export default function ResetPasswordPage() {
           <label className="block text-sm font-medium text-gray-300 mb-1.5">
             {t("confirmPassword")}
           </label>
-          <input
+          <PasswordInput
             value={confirm}
             onChange={(e) => setConfirm(e.target.value)}
-            type="password"
             placeholder={t("repeatPassword")}
             className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
           />
