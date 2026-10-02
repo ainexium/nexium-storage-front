@@ -717,6 +717,16 @@ html[data-theme="light"] .lp-header {
   color: #7a7a8c !important;
 }
 
+/* Phone input country selector (flag + arrow): white border/bg invisible on light bg */
+[data-theme="light"] .dash-page .phone-input .PhoneInputCountry {
+  background-color: rgba(0,0,0,0.04) !important;
+  border-color: rgba(0,0,0,0.12) !important;
+}
+[data-theme="light"] .dash-page .phone-input {
+  --PhoneInputCountrySelectArrow-color: #5a5a6e;
+  --PhoneInputCountrySelectArrow-opacity: 1;
+}
+
 /* Choose Starter/Business buttons: same bright purple styling as dark mode */
 [data-theme="light"] .dash-page .bill-choose-btn {
   color: #9b3dff !important;

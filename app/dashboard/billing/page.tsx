@@ -5,12 +5,13 @@ import type {
   AddonPackage,
   BillingCountry,
   BillingPayment,
+  BillingPaymentsPage,
   PaymentChannel,
   Plan,
   StorageAddon,
   SubscriptionResponse,
 } from "@/types";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
 import PhoneInput, { isValidPhoneNumber } from "react-phone-number-input";
 import "react-phone-number-input/style.css";
@@ -583,6 +584,96 @@ function AddonSection({ planBytes, country, onBuy }: { planBytes: number; countr
   );
 }
 
+// ─── payment row (shared) ─────────────────────────────────────────────────────
+
+function PaymentRow({ p, last, locale, t }: { p: BillingPayment; last: boolean; locale: string; t: ReturnType<typeof useTranslations<"billing">> }) {
+  return (
+    <div className={`flex items-center justify-between px-5 py-4 ${!last ? "border-b border-white/[0.05]" : ""}`}>
+      <div className="flex items-center gap-3.5">
+        <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center shrink-0">
+          <CreditCard size={13} className="text-gray-500" />
+        </div>
+        <div>
+          <p className="text-[13px] font-medium text-gray-200">{t("planPrefix", { name: p.plan?.name ?? "" })}</p>
+          <p className="text-[11px] text-gray-600 mt-0.5">{fmt.date(p.created_at, locale)}</p>
+        </div>
+      </div>
+      <div className="flex items-center gap-4">
+        <span className="text-[13px] font-semibold text-gray-300">{p.amount_xof.toLocaleString()} XOF</span>
+        <Chip status={p.status} />
+      </div>
+    </div>
+  );
+}
+
+// ─── payment history modal ────────────────────────────────────────────────────
+
+function PaymentHistoryModal({ onClose }: { onClose: () => void }) {
+  const t = useTranslations("billing");
+  const locale = useLocale();
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage } = useInfiniteQuery<BillingPaymentsPage>({
+    queryKey: ["billing-payments-all"],
+    queryFn: ({ pageParam }) =>
+      api.get(`/api/v1/billing/payments?limit=10${pageParam ? `&cursor=${encodeURIComponent(pageParam as string)}` : ""}`),
+    initialPageParam: "",
+    getNextPageParam: (last) => last.has_more ? last.next_cursor : undefined,
+  });
+
+  const allPayments = data?.pages.flatMap(p => p.payments) ?? [];
+
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    function onScroll() {
+      if (!el) return;
+      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 80 && hasNextPage && !isFetchingNextPage) {
+        fetchNextPage();
+      }
+    }
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-md" onClick={onClose} />
+      <div className="relative z-10 w-full max-w-[520px] bg-[#0c0c14] border border-white/[0.09] rounded-2xl overflow-hidden shadow-2xl flex flex-col max-h-[80vh]">
+
+        <div className="flex items-center justify-between px-6 py-4 border-b border-white/[0.07] shrink-0">
+          <h2 className="text-[15px] font-semibold text-white">{t("allPayments")}</h2>
+          <button onClick={onClose} className="p-1 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-white/[0.06] transition-all">
+            <X size={15} />
+          </button>
+        </div>
+
+        <div ref={scrollRef} className="overflow-y-auto flex-1">
+          {allPayments.length === 0 && !isFetchingNextPage ? (
+            <div className="flex items-center justify-center py-16 text-sm text-gray-600">—</div>
+          ) : (
+            <div className="divide-y divide-white/[0.05]">
+              {allPayments.map((p) => (
+                <PaymentRow key={p.id} p={p} last={false} locale={locale} t={t} />
+              ))}
+            </div>
+          )}
+
+          {isFetchingNextPage && (
+            <div className="flex justify-center py-4">
+              <Loader2 size={16} className="text-gray-600 animate-spin" />
+            </div>
+          )}
+
+          {!hasNextPage && allPayments.length > 0 && (
+            <p className="text-center text-[11px] text-gray-700 py-4">{t("noMore")}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── page ─────────────────────────────────────────────────────────────────────
 
 type Modal =
@@ -595,18 +686,21 @@ export default function BillingPage() {
   const locale = useLocale();
   const qc    = useQueryClient();
   const [modal, setModal]               = useState<Modal>(null);
+  const [historyOpen, setHistoryOpen]   = useState(false);
   const [selectedCountry, setSelectedCountry] = useState<BillingCountry | null>(null);
 
   const { data: sub,      isLoading: subLoading   } = useQuery<SubscriptionResponse>({ queryKey: ["billing-subscription"], queryFn: () => api.get("/api/v1/billing/subscription") });
   const { data: plans,    isLoading: plansLoading } = useQuery<Plan[]>({ queryKey: ["billing-plans"], queryFn: () => api.get("/api/v1/billing/plans") });
-  const { data: payments } = useQuery<BillingPayment[]>({ queryKey: ["billing-payments"], queryFn: () => api.get("/api/v1/billing/payments") });
+  const { data: paymentsPage } = useQuery<BillingPaymentsPage>({ queryKey: ["billing-payments"], queryFn: () => api.get("/api/v1/billing/payments?limit=10") });
   const { data: countries = [] } = useQuery<BillingCountry[]>({ queryKey: ["billing-countries"], queryFn: () => api.get("/api/v1/billing/countries") });
+
+  const payments = paymentsPage?.payments ?? [];
 
   // Refresh stale non-terminal payments once on page load so the history
   // reflects the real gateway status (e.g. Adullam payments stuck in processing).
   const statusRefreshedRef = useRef(false);
   useEffect(() => {
-    if (!payments || statusRefreshedRef.current) return;
+    if (!payments.length || statusRefreshedRef.current) return;
     statusRefreshedRef.current = true;
     const stale = payments.filter(p => p.status === "pending" || p.status === "processing");
     if (stale.length === 0) return;
@@ -672,6 +766,7 @@ export default function BillingPage() {
 
   return (
     <>
+      {historyOpen && <PaymentHistoryModal onClose={() => setHistoryOpen(false)} />}
       {modal?.kind === "plan" && (
         <PaymentModal
           title={t("upgradeTitle", { name: modal.plan.name })}
@@ -762,26 +857,22 @@ export default function BillingPage() {
           </section>
         )}
 
-        {payments && payments.length > 0 && (
+        {payments.length > 0 && (
           <section>
-            <h2 className="text-sm font-semibold text-white mb-4">{t("history")}</h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-sm font-semibold text-white">{t("history")}</h2>
+              {paymentsPage?.has_more && (
+                <button
+                  onClick={() => setHistoryOpen(true)}
+                  className="flex items-center gap-1.5 text-[12px] text-[#9b3dff] hover:text-[#aa55ff] transition-colors"
+                >
+                  {t("seeAll")} <ArrowRight size={12} />
+                </button>
+              )}
+            </div>
             <div className="rounded-2xl border border-white/[0.07] overflow-hidden">
               {payments.map((p, i) => (
-                <div key={p.id} className={`flex items-center justify-between px-5 py-4 ${i < payments.length - 1 ? "border-b border-white/[0.05]" : ""}`}>
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-8 h-8 rounded-lg bg-white/[0.04] flex items-center justify-center shrink-0">
-                      <CreditCard size={13} className="text-gray-500" />
-                    </div>
-                    <div>
-                      <p className="text-[13px] font-medium text-gray-200">{t("planPrefix", { name: p.plan?.name ?? "" })}</p>
-                      <p className="text-[11px] text-gray-600 mt-0.5">{fmt.date(p.created_at, locale)}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-4">
-                    <span className="text-[13px] font-semibold text-gray-300">{p.amount_xof.toLocaleString()} XOF</span>
-                    <Chip status={p.status} />
-                  </div>
-                </div>
+                <PaymentRow key={p.id} p={p} last={i === payments.length - 1} locale={locale} t={t} />
               ))}
             </div>
           </section>

@@ -166,6 +166,12 @@ export interface Subscription {
   plan: Plan | null;
 }
 
+export interface BillingPaymentsPage {
+  payments: BillingPayment[];
+  has_more: boolean;
+  next_cursor: string;
+}
+
 export interface BillingPayment {
   id: string;
   user_id: string;

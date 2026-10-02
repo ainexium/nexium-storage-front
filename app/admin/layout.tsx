@@ -126,15 +126,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const sidebarProps = { t, pathname, user, mounted, logoutFn };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="dash-page flex min-h-screen">
 
       {/* ── Desktop sidebar (lg+) ─────────────────────── */}
-      <aside className="hidden lg:flex w-[220px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[#08080f] px-3 py-6">
+      <aside className="hidden lg:flex w-[220px] flex-shrink-0 flex-col border-r border-white/[0.06] bg-[var(--dash-sidebar)] px-3 py-6">
         <SidebarContent {...sidebarProps} />
       </aside>
 
       {/* ── Mobile top bar (< lg) ─────────────────────── */}
-      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#08080f] border-b border-white/[0.06]">
+      <header className="lg:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[var(--dash-sidebar)] border-b border-white/[0.06]">
         <Link href="/" className="flex items-center gap-1.5">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="16" height="16">
             <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
@@ -161,7 +161,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
       {/* ── Mobile drawer ─────────────────────────────── */}
       <aside
-        className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 w-[260px] flex flex-col bg-[#08080f] border-r border-white/[0.06] px-3 py-6 transition-transform duration-300 ${
+        className={`lg:hidden fixed top-0 left-0 bottom-0 z-50 w-[260px] flex flex-col bg-[var(--dash-sidebar)] border-r border-white/[0.06] px-3 py-6 transition-transform duration-300 ${
           drawerOpen ? "translate-x-0" : "-translate-x-full"
         }`}
       >
@@ -180,7 +180,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* ── Main content ──────────────────────────────── */}
-      <main className="flex-1 overflow-auto bg-[#0a0a0f] lg:pt-0 pt-14">
+      <main className="flex-1 overflow-auto bg-[var(--dash-bg)] lg:pt-0 pt-14">
         {children}
       </main>
 
