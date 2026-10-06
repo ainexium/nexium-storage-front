@@ -4,7 +4,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { BillingCountry, PaymentChannel, Plan } from "@/types";
 import { useState, useRef } from "react";
-import { Pencil, Trash2, Check, X, Plus, Upload, ToggleLeft, ToggleRight, AlertTriangle, Globe } from "lucide-react";
+import { Pencil, Trash2, Check, X, Plus, Upload, ToggleLeft, ToggleRight, AlertTriangle, Globe, RefreshCw } from "lucide-react";
 import { useTranslations } from "next-intl";
 
 // ─── utils ────────────────────────────────────────────────────────────────────
@@ -118,6 +118,9 @@ function CountriesTab() {
   const t = useTranslations("admin");
   const tc = useTranslations("common");
   const qc = useQueryClient();
+  const [refreshing, setRefreshing] = useState(false);
+  const [refreshMsg, setRefreshMsg] = useState<string | null>(null);
+
   const { data: countries = [], isLoading } = useQuery<BillingCountry[]>({
     queryKey: ["admin-billing-countries"],
     queryFn: () => api.get("/api/v1/admin/billing/countries"),
@@ -126,6 +129,20 @@ function CountriesTab() {
   function refresh() {
     qc.invalidateQueries({ queryKey: ["admin-billing-countries"] });
     qc.invalidateQueries({ queryKey: ["billing-countries"] });
+  }
+
+  async function refreshRates() {
+    setRefreshing(true);
+    setRefreshMsg(null);
+    try {
+      const res = await api.post<{ updated: number }>("/api/v1/admin/billing/refresh-rates", {});
+      setRefreshMsg(`✓ ${res.updated} taux mis à jour`);
+      refresh();
+    } catch {
+      setRefreshMsg("Erreur lors de la mise à jour des taux");
+    } finally {
+      setRefreshing(false);
+    }
   }
 
   async function toggleCountry(code: string, current: boolean) {
@@ -143,6 +160,21 @@ function CountriesTab() {
   if (isLoading) return <div className="py-10 text-center text-sm text-gray-600">{tc("loading")}</div>;
 
   return (
+    <div>
+      <div className="flex items-center justify-between mb-3">
+        <p className="text-xs text-gray-500">Taux : XOF pour 1 unité locale. XOF et XAF toujours à 1.</p>
+        <div className="flex items-center gap-2">
+          {refreshMsg && <span className="text-[11px] text-gray-400">{refreshMsg}</span>}
+          <button
+            onClick={refreshRates}
+            disabled={refreshing}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-white/[0.08] text-xs text-gray-400 hover:text-gray-200 hover:border-white/15 transition-all disabled:opacity-40"
+          >
+            <RefreshCw size={11} className={refreshing ? "animate-spin" : ""} />
+            {refreshing ? "Mise à jour…" : "Rafraîchir les taux"}
+          </button>
+        </div>
+      </div>
     <div className="rounded-xl border border-white/[0.07] overflow-hidden">
       <table className="w-full text-sm">
         <thead>
@@ -172,12 +204,15 @@ function CountriesTab() {
                 </span>
               </td>
               <td className="px-4 py-3">
-                <EditableField
-                  value={c.local_per_xof}
-                  type="number"
-                  suffix={` XOF → 1 ${c.currency_code}`}
-                  onSave={v => updateRate(c.code, v)}
-                />
+                {c.currency_code === "XOF" || c.currency_code === "XAF"
+                  ? <span className="text-sm text-gray-500">1 (fixe)</span>
+                  : <EditableField
+                      value={c.local_per_xof}
+                      type="number"
+                      suffix={` XOF → 1 ${c.currency_code}`}
+                      onSave={v => updateRate(c.code, v)}
+                    />
+                }
               </td>
               <td className="px-4 py-3">
                 <span className={`text-[11px] font-medium px-2 py-0.5 rounded border
@@ -201,6 +236,7 @@ function CountriesTab() {
           ))}
         </tbody>
       </table>
+    </div>
     </div>
   );
 }
