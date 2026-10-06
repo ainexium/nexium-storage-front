@@ -43,7 +43,7 @@ const fmt = {
     if (!country) {
       return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(xof) + " XOF";
     }
-    const local = Math.round(xof * country.local_per_xof);
+    const local = Math.round(xof / country.local_per_xof);
     return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(local) + " " + country.currency_code;
   },
   date(d: string | null, locale: string) {
@@ -426,7 +426,7 @@ function PlanCard({
   const features = tp.raw(`${slug}.features` as `${typeof slug}.features`) as string[];
   const tagline = tp(`${slug}.tagline` as `${typeof slug}.tagline`);
 
-  const localPrice = country ? Math.round(plan.price_xof * country.local_per_xof) : plan.price_xof;
+  const localPrice = country ? Math.round(plan.price_xof / country.local_per_xof) : plan.price_xof;
   const currency = country?.currency_code ?? "XOF";
 
   return (
@@ -548,7 +548,7 @@ function AddonSection({ planBytes, country, onBuy }: { planBytes: number; countr
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
         {(pkgs ?? []).map((pkg) => {
-          const localPrice = country ? Math.round(pkg.price_xof * country.local_per_xof) : pkg.price_xof;
+          const localPrice = country ? Math.round(pkg.price_xof / country.local_per_xof) : pkg.price_xof;
           const currency = country?.currency_code ?? "XOF";
           return (
             <button
