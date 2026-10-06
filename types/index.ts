@@ -128,6 +128,7 @@ export interface Plan {
   price_xof: number;
   max_projects: number;
   max_file_bytes: number;
+  max_monthly_api_requests: number | null;
   addons_enabled: boolean;
   is_active: boolean;
 }

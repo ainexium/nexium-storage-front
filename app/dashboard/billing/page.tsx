@@ -27,6 +27,7 @@ import {
   ArrowRight,
   Sparkles,
   ChevronDown,
+  Zap,
 } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
@@ -464,6 +465,13 @@ function PlanCard({
           </div>
         )}
         <p className={`text-[13px] font-semibold mt-1.5 ${cfg.accent}`}>{fmt.bytes(plan.storage_bytes)}</p>
+        <p className="flex items-center gap-1 text-[12px] text-gray-500 mt-1">
+          <Zap size={11} className="shrink-0" />
+          {plan.max_monthly_api_requests === null
+            ? (locale === "en" ? "Unlimited API req / mo" : "Requêtes API illimitées")
+            : `${new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(plan.max_monthly_api_requests)} req API / ${locale === "en" ? "mo" : "mois"}`
+          }
+        </p>
       </div>
 
       <ul className="space-y-2.5 mb-7 flex-1">

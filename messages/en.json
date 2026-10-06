@@ -411,27 +411,24 @@
       "free": {
         "tagline": "Try it and get started",
         "features": [
-          "10 GB storage",
           "Files ≤ 100 MB",
-          "API access",
+          "3 projects max",
           "Community support"
         ]
       },
       "starter": {
         "tagline": "For serious projects",
         "features": [
-          "50 GB storage",
           "Files ≤ 1 GB",
-          "API access",
+          "Unlimited projects",
           "Email support"
         ]
       },
       "pro": {
         "tagline": "For teams that scale",
         "features": [
-          "300 GB storage",
           "Files ≤ 5 GB",
-          "API access",
+          "Unlimited projects",
           "Priority support",
           "Add-ons available"
         ]
@@ -439,9 +436,8 @@
       "business": {
         "tagline": "For companies",
         "features": [
-          "1 TB storage",
           "Files ≤ 20 GB",
-          "API access",
+          "Unlimited projects",
           "Dedicated support",
           "Guaranteed SLA",
           "Add-ons available"
