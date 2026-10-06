@@ -209,7 +209,7 @@ function CountriesTab() {
                   : <EditableField
                       value={c.local_per_xof}
                       type="number"
-                      suffix={` XOF → 1 ${c.currency_code}`}
+                      suffix={` ${c.currency_code} / XOF`}
                       onSave={v => updateRate(c.code, v)}
                     />
                 }
