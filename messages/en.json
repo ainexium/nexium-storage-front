@@ -400,6 +400,11 @@
     "paymentFailed": "Payment failed. Please check your balance and try again.",
     "paymentTimeout": "Payment not confirmed. Please check your balance or try again.",
     "error": "Error",
+    "consumption": "Usage",
+    "storage": "Storage",
+    "apiRequests": "API requests",
+    "unlimited": "Unlimited",
+    "ofQuota": "of quota",
     "status": {
       "pending": "Pending",
       "processing": "Processing",

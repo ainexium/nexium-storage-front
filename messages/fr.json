@@ -400,6 +400,11 @@
     "paymentFailed": "Échec du paiement. Vérifiez votre solde et réessayez.",
     "paymentTimeout": "Paiement non confirmé. Vérifiez votre solde ou réessayez.",
     "error": "Erreur",
+    "consumption": "Consommation",
+    "storage": "Stockage",
+    "apiRequests": "Requêtes API",
+    "unlimited": "Illimitées",
+    "ofQuota": "du quota",
     "status": {
       "pending": "En attente",
       "processing": "Traitement",

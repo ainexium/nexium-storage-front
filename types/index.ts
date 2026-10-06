@@ -167,6 +167,14 @@ export interface Subscription {
   plan: Plan | null;
 }
 
+export interface BillingConsumption {
+  storage_used_bytes: number;
+  storage_quota_bytes: number;
+  api_requests_used: number;
+  api_requests_limit: number | null;
+  month: string;
+}
+
 export interface BillingPaymentsPage {
   payments: BillingPayment[];
   has_more: boolean;

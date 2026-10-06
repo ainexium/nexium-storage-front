@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@/lib/api-client";
-import type {
+import type { BillingConsumption,
   AddonPackage,
   BillingCountry,
   BillingPayment,
@@ -701,6 +701,7 @@ export default function BillingPage() {
   const { data: plans,    isLoading: plansLoading } = useQuery<Plan[]>({ queryKey: ["billing-plans"], queryFn: () => api.get("/api/v1/billing/plans") });
   const { data: paymentsPage } = useQuery<BillingPaymentsPage>({ queryKey: ["billing-payments"], queryFn: () => api.get("/api/v1/billing/payments?limit=10") });
   const { data: countries = [] } = useQuery<BillingCountry[]>({ queryKey: ["billing-countries"], queryFn: () => api.get("/api/v1/billing/countries") });
+  const { data: consumption } = useQuery<BillingConsumption>({ queryKey: ["billing-consumption"], queryFn: () => api.get("/api/v1/billing/consumption") });
 
   const payments = paymentsPage?.payments ?? [];
 
@@ -840,6 +841,51 @@ export default function BillingPage() {
             <Chip status="completed" />
           </div>
         )}
+
+        {consumption && (() => {
+          const storagePct = consumption.storage_quota_bytes > 0
+            ? Math.min(100, (consumption.storage_used_bytes / consumption.storage_quota_bytes) * 100) : 0;
+          const apiPct = consumption.api_requests_limit
+            ? Math.min(100, (consumption.api_requests_used / consumption.api_requests_limit) * 100) : 0;
+          const numFmt = new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR");
+          const bar = (pct: number) => pct > 85 ? "bg-red-400" : pct > 60 ? "bg-amber-400" : "bg-[#9b3dff]";
+          return (
+            <div className="rounded-2xl border border-white/[0.07] bg-white/[0.02] px-6 py-5 mb-10">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-gray-500 mb-4">
+                {t("consumption")} · {consumption.month}
+              </p>
+              <div className="space-y-4">
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                      <HardDrive size={11} /> {t("storage")}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {fmt.bytes(consumption.storage_used_bytes)} / {fmt.bytes(consumption.storage_quota_bytes)} · {storagePct.toFixed(1)}% {t("ofQuota")}
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                    <div className={`h-full rounded-full transition-all ${bar(storagePct)}`} style={{ width: `${storagePct}%` }} />
+                  </div>
+                </div>
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <span className="flex items-center gap-1.5 text-xs text-gray-400">
+                      <Zap size={11} /> {t("apiRequests")}
+                    </span>
+                    <span className="text-xs text-gray-500">
+                      {numFmt.format(consumption.api_requests_used)} / {consumption.api_requests_limit === null ? t("unlimited") : numFmt.format(consumption.api_requests_limit)}
+                      {consumption.api_requests_limit !== null && ` · ${apiPct.toFixed(1)}% ${t("ofQuota")}`}
+                    </span>
+                  </div>
+                  <div className="h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
+                    <div className={`h-full rounded-full transition-all ${bar(apiPct)}`} style={{ width: `${apiPct}%` }} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         <section className="mb-14">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-1">
