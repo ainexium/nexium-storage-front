@@ -56,7 +56,7 @@ export default function RegisterPage() {
             <span className="text-sm text-gray-400 leading-snug">
               {t("termsAccept")}{" "}
               <Link
-                href="/terms"
+                href={"/terms" as never}
                 target="_blank"
                 className="text-[#9b3dff] hover:underline"
               >
