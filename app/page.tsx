@@ -27,8 +27,8 @@ const FW_ROW   = ["Next.js", "React", "Vue", "Django", "Laravel", "Express", "Fa
 export const metadata: Metadata = {
   title: "NEXIUM Storage — Cloud storage for your projects & teams",
   description:
-    "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them. Projects, buckets, API keys and webhooks.",
-  keywords: ["nexium storage", "object storage", "s3 compatible", "file upload api", "cloud storage"],
+    "Cloud object storage with an intuitive dashboard to manage your files and a REST API to integrate them. Projects, buckets, API keys and webhooks.",
+  keywords: ["nexium storage", "object storage", "file upload api", "cloud storage", "rest api"],
   openGraph: {
     title: "NEXIUM Storage — Cloud storage for your projects & teams",
     description: "S3-compatible cloud object storage. Intuitive dashboard, REST API, projects, buckets, API keys.",
