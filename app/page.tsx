@@ -395,6 +395,7 @@ export default async function LandingPage() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-[12px] font-semibold text-white">Projects</p>
+                      <p className="text-[10px] text-gray-600 mt-0.5">3 projects</p>
                     </div>
                     <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#9b3dff] text-white font-medium shrink-0">
                       <Plus size={9} /> New
