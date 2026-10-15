@@ -1,6 +1,6 @@
 import Link from "next/link";
 import {
-  Mail, ArrowRight, ExternalLink,
+  ArrowRight, ExternalLink,
   Package, Key, Link2, Zap, LayoutDashboard, Cloud,
   Shield, Lock, Server, Globe, Upload,
   FolderOpen, BarChart2, Plus, ChevronRight, Copy,
@@ -9,10 +9,9 @@ import {
 import { HeroVisual } from "@/components/hero-visual";
 import { getTranslations } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
-import { AuthRedirect } from "@/components/auth-redirect";
 import { AnimInView } from "@/components/anim-in-view";
 import { CtaFloatingLogos } from "@/components/cta-floating-logos";
-import { NavMobile } from "@/components/nav-mobile";
+import { NavAuth } from "@/components/nav-auth";
 import { techStyle } from "@/lib/tech-colors";
 import { TECH_PATHS } from "@/lib/tech-icons";
 import type { Metadata } from "next";
@@ -94,8 +93,6 @@ export default async function LandingPage() {
 
   return (
     <main className="themed-page min-h-screen bg-[var(--lp-bg)] text-white overflow-x-hidden">
-      <AuthRedirect />
-
       {/* ── NAVBAR ────────────────────────────────────────────── */}
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
@@ -108,26 +105,7 @@ export default async function LandingPage() {
           </span>
           <div className="flex items-center gap-3 sm:gap-5">
             <LanguageSwitcher />
-            {/* Desktop nav links — masqués sous 403px */}
-            <a
-              href={`mailto:${CONTACT_EMAIL}`}
-              className="hidden min-[490px]:flex items-center gap-1.5 text-[12px] text-gray-500 hover:text-gray-300 transition"
-              title={t("contactTitle")}
-            >
-              <Mail size={12} />
-              {t("contact")}
-            </a>
-            <Link href="/login" className="hidden min-[490px]:block text-[14px] text-gray-400 hover:text-white transition">
-              {t("logIn")}
-            </Link>
-            <Link
-              href="/register"
-              className="hidden min-[490px]:block px-3.5 py-1.5 text-[14px] bg-[#9b3dff] hover:bg-[#aa55ff] rounded-md font-semibold transition"
-            >
-              {t("getStarted")}
-            </Link>
-            {/* Burger — visible uniquement sous 403px */}
-            <NavMobile />
+            <NavAuth />
           </div>
         </nav>
       </header>
@@ -417,7 +395,6 @@ export default async function LandingPage() {
                   <div className="flex items-center justify-between mb-3">
                     <div>
                       <p className="text-[12px] font-semibold text-white">Projects</p>
-                      <p className="text-[10px] text-gray-600 mt-0.5">3 projects</p>
                     </div>
                     <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#9b3dff] text-white font-medium shrink-0">
                       <Plus size={9} /> New
