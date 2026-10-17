@@ -28,7 +28,11 @@ export const metadata: Metadata = {
   title: "NEXIUM Storage — Cloud storage for your projects & teams",
   description:
     "Cloud object storage with an intuitive dashboard to manage your files and a REST API to integrate them. Projects, buckets, API keys and webhooks.",
-  keywords: ["nexium storage", "object storage", "file upload api", "cloud storage", "rest api"],
+  keywords: [
+    "nexium storage", "nexium", "nexiumai", "nexiumai.io", "nexium cloud", "nexium storage api",
+    "object storage", "cloud storage", "file upload api", "rest api",
+    "stockage cloud", "stockage objet", "api fichiers",
+  ],
   openGraph: {
     title: "NEXIUM Storage — Cloud storage for your projects & teams",
     description: "S3-compatible cloud object storage. Intuitive dashboard, REST API, projects, buckets, API keys.",
