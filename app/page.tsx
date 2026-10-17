@@ -111,6 +111,12 @@ export default async function LandingPage() {
             <span className="text-gray-500 font-normal">/ storage</span>
           </span>
           <div className="flex items-center gap-3 sm:gap-5">
+            <Link
+              href="/pricing"
+              className="hidden min-[490px]:block text-[13px] text-gray-400 hover:text-white transition"
+            >
+              Pricing
+            </Link>
             <LanguageSwitcher />
             <NavAuth />
           </div>
@@ -666,6 +672,7 @@ export default async function LandingPage() {
                 {t("footerProductsTitle")}
               </p>
               <ul className="flex flex-col gap-2.5">
+                <li><Link href="/pricing" className="text-[13px] text-white/35 hover:text-white transition">{t("footerPricing")}</Link></li>
                 <li><a href="/docs" target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition">{t("footerDoc")}</a></li>
                 <li>
                   <a href="https://www.npmjs.com/package/@ainexium/storage" target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition inline-flex items-center gap-1">
