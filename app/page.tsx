@@ -7,6 +7,7 @@ import {
   Users, Code2, Check,
 } from "lucide-react";
 import { HeroVisual } from "@/components/hero-visual";
+import { HeroButtons } from "@/components/hero-buttons";
 import { getTranslations } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AnimInView } from "@/components/anim-in-view";
@@ -141,22 +142,7 @@ export default async function LandingPage() {
           </AnimInView>
 
           <AnimInView delay={200}>
-            <div className="flex flex-col sm:flex-row gap-3 mb-16">
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
-              >
-                {t("createAccount")} <ArrowRight size={16} />
-              </Link>
-              <Link
-                href="/docs"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 px-6 py-3 border border-white/[0.1] hover:border-white/20 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-white transition"
-              >
-                {t("readDocs")}
-              </Link>
-            </div>
+            <HeroButtons />
           </AnimInView>
 
           <AnimInView delay={280} className="w-full max-w-2xl">
@@ -278,9 +264,9 @@ export default async function LandingPage() {
               href="/docs"
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-[14px] text-gray-400 hover:text-white border border-white/[0.1] hover:border-white/20 px-4 py-2 rounded-lg transition"
+              className="flex items-center gap-1.5 text-[13px] text-gray-400 hover:text-white border border-white/[0.1] hover:border-white/20 px-4 py-2 rounded-lg transition w-fit"
             >
-              {t("stackLink")} <ArrowRight size={13} />
+              {t("stackLink")} <ArrowRight size={13} className="shrink-0" />
             </Link>
           </AnimInView>
 
@@ -374,10 +360,10 @@ export default async function LandingPage() {
                     <span className="text-gray-600 text-[9px]">/ storage</span>
                   </div>
                   {[
-                    { Icon: LayoutDashboard, name: "Overview",  active: false },
-                    { Icon: FolderOpen,      name: "Projects",  active: true  },
-                    { Icon: Key,             name: "API Keys",  active: false },
-                    { Icon: BarChart2,       name: "Usage",     active: false },
+                    { Icon: LayoutDashboard, name: "Overview",    active: false },
+                    { Icon: FolderOpen,      name: "Workspaces",  active: true  },
+                    { Icon: Key,             name: "API Keys",    active: false },
+                    { Icon: BarChart2,       name: "Usage",       active: false },
                   ].map(({ Icon, name, active }) => (
                     <div
                       key={name}
@@ -394,8 +380,8 @@ export default async function LandingPage() {
                 <div className="flex-1 min-w-0 p-4">
                   <div className="flex items-center justify-between mb-3">
                     <div>
-                      <p className="text-[12px] font-semibold text-white">Projects</p>
-                      <p className="text-[10px] text-gray-600 mt-0.5">3 projects</p>
+                      <p className="text-[12px] font-semibold text-white">Workspaces</p>
+                      <p className="text-[10px] text-gray-600 mt-0.5">3 workspaces</p>
                     </div>
                     <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#9b3dff] text-white font-medium shrink-0">
                       <Plus size={9} /> New
@@ -641,6 +627,7 @@ export default async function LandingPage() {
         title={t("ctaTitle")}
         body={t("ctaBody")}
         primary={t("ctaPrimary")}
+        primaryLoggedIn={t("goToDashboard")}
         secondary={t("ctaSecondary")}
       />
 

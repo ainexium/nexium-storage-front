@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
-import { useEffect, useRef } from "react";
+import { ArrowRight, LayoutDashboard } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { AnimInView } from "@/components/anim-in-view";
 import { techStyle } from "@/lib/tech-colors";
 import { TECH_PATHS } from "@/lib/tech-icons";
@@ -10,6 +10,7 @@ interface Props {
   title: string;
   body: string;
   primary: string;
+  primaryLoggedIn: string;
   secondary: string;
 }
 
@@ -55,9 +56,14 @@ function easeInOut(t: number) {
   return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 }
 
-export function CtaFloatingLogos({ title, body, primary, secondary }: Props) {
+export function CtaFloatingLogos({ title, body, primary, primaryLoggedIn, secondary }: Props) {
   const sectionRef  = useRef<HTMLElement>(null);
   const wrapperRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    setLoggedIn(!!localStorage.getItem("access_token"));
+  }, []);
 
   useEffect(() => {
     const section = sectionRef.current;
@@ -149,12 +155,22 @@ export function CtaFloatingLogos({ title, body, primary, secondary }: Props) {
               {body}
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/register"
-                className="flex items-center justify-center gap-2 px-8 py-4 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
-              >
-                {primary} <ArrowRight size={16} />
-              </Link>
+              {loggedIn ? (
+                <Link
+                  href="/dashboard"
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
+                >
+                  <LayoutDashboard size={16} />
+                  {primaryLoggedIn}
+                </Link>
+              ) : (
+                <Link
+                  href="/register"
+                  className="flex items-center justify-center gap-2 px-8 py-4 bg-[#9b3dff] hover:bg-[#aa55ff] rounded-lg text-[14px] font-semibold transition"
+                >
+                  {primary} <ArrowRight size={16} />
+                </Link>
+              )}
               <Link
                 href="/docs"
                 className="flex items-center justify-center gap-2 px-8 py-4 border border-white/[0.1] hover:border-white/20 rounded-lg text-[14px] font-semibold text-gray-300 hover:text-white transition"
