@@ -29,7 +29,9 @@ export const metadata: Metadata = {
   description:
     "Cloud object storage with an intuitive dashboard to manage your files and a REST API to integrate them. Projects, buckets, API keys and webhooks.",
   keywords: [
-    "nexium storage", "nexium", "nexiumai", "nexiumai.io", "nexium cloud", "nexium storage api",
+    "nexium storage", "nexium", "nexiumai", "nexiumai.io",
+    "nexiumai storage", "nexiumai cloud", "nexiumai storage api",
+    "nexium cloud", "nexium storage api",
     "object storage", "cloud storage", "file upload api", "rest api",
     "stockage cloud", "stockage objet", "api fichiers",
   ],
