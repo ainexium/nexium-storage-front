@@ -181,6 +181,7 @@
     "checking": "Checking…",
     "invalidCode": "Invalid or expired code",
     "didntReceive": "Didn't receive it?",
+    "checkSpam": "Also check your spam or junk folder.",
     "resendCode": "Resend code",
     "newPassword": "New password",
     "chooseStrong": "Choose a strong password for your account.",
@@ -243,6 +244,7 @@
     "confirmChange": "Confirm",
     "cancelChange": "Cancel",
     "resendCode": "Resend code",
+    "checkSpam": "Also check your spam or junk folder.",
     "appearance": "Appearance",
     "appearanceDesc": "Choose the display theme for the dashboard.",
     "themeSystem": "System",
@@ -631,6 +633,7 @@
     "err500": "Something went wrong on our end"
   },
   "pricing": {
+    "planDashLink": "Manage plan",
     "eyebrow": "Pricing",
     "title": "Simple, transparent pricing",
     "subtitle": "Start for free. Scale at your own pace. No surprises.",

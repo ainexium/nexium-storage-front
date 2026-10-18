@@ -181,6 +181,7 @@
     "checking": "Vérification…",
     "invalidCode": "Code invalide ou expiré",
     "didntReceive": "Vous ne l'avez pas reçu ?",
+    "checkSpam": "Vérifiez aussi vos spams ou courriers indésirables.",
     "resendCode": "Renvoyer le code",
     "newPassword": "Nouveau mot de passe",
     "chooseStrong": "Choisissez un mot de passe solide pour votre compte.",
@@ -243,6 +244,7 @@
     "confirmChange": "Confirmer",
     "cancelChange": "Annuler",
     "resendCode": "Renvoyer le code",
+    "checkSpam": "Vérifiez aussi vos spams ou courriers indésirables.",
     "appearance": "Apparence",
     "appearanceDesc": "Choisissez le thème d'affichage du dashboard.",
     "themeSystem": "Système",
@@ -631,6 +633,7 @@
     "err500": "Une erreur s'est produite de notre côté"
   },
   "pricing": {
+    "planDashLink": "Gérer le plan",
     "eyebrow": "Tarification",
     "title": "Tarification simple et transparente",
     "subtitle": "Commencez gratuitement. Évoluez à votre rythme. Pas de surprise.",

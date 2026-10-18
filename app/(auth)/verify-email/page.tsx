@@ -157,6 +157,7 @@ export default function VerifyEmailPage() {
             {resending ? t("sending") : t("resendCode")}
           </button>
         </p>
+        <p className="text-xs text-gray-600">{t("checkSpam")}</p>
         <p className="text-sm text-gray-600">
           <Link href="/login" className="hover:text-gray-400 transition">
             {t("backToLogin")}

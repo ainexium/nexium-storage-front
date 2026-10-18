@@ -183,6 +183,7 @@ export default function SettingsPage() {
                     >
                       {t("resendCode")}
                     </button>
+                    <p className="text-xs text-gray-600">{t("checkSpam")}</p>
                   </div>
                 ) : editEmail ? (
                   /* État : saisie d'un nouvel email */

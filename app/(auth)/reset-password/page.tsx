@@ -157,6 +157,7 @@ export default function ResetPasswordPage() {
             {t("resendCode")}
           </Link>
         </p>
+        <p className="text-center text-xs text-gray-600">{t("checkSpam")}</p>
         <p className="text-center text-sm text-gray-600 mt-2">
           <Link href="/login" className="hover:text-gray-400 transition">
             {t("backToLogin")}
