@@ -33,11 +33,8 @@ export default function LoginPage() {
     mutate(d, {
       onError: (err) => {
         if (err.message === "email_not_verified") {
-          if (typeof window !== "undefined") {
-            sessionStorage.setItem("verify_email", d.email);
-          }
           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-          router.push("/verify-email" as any);
+          router.push(`/verify-email?email=${encodeURIComponent(d.email)}` as any);
         }
       },
     });

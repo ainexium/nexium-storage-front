@@ -22,8 +22,7 @@ export default function ForgotPasswordPage() {
     setIsPending(true);
     try {
       await forgotPassword(email);
-      sessionStorage.setItem("reset_email", email);
-      router.push("/reset-password");
+      router.push(`/reset-password?email=${encodeURIComponent(email)}` as any);
     } catch (err) {
       setError(errMsg(err));
     } finally {

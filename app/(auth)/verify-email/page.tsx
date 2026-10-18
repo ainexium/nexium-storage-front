@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useQueryClient } from "@tanstack/react-query";
 import { verifyEmail, resendVerification } from "@/lib/auth";
 import Link from "next/link";
@@ -12,6 +12,7 @@ export default function VerifyEmailPage() {
   const t = useTranslations("auth");
   const errMsg = useErrorMessage();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const qc = useQueryClient();
   const [email, setEmail] = useState("");
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
@@ -22,11 +23,11 @@ export default function VerifyEmailPage() {
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
 
   useEffect(() => {
-    const stored = sessionStorage.getItem("verify_email") ?? "";
+    const stored = searchParams.get("email") ?? "";
     setEmail(stored);
     setTimeout(() => inputRefs.current[0]?.focus(), 50);
     if (stored) resendVerification(stored).catch(() => {});
-  }, []);
+  }, [searchParams]);
 
   async function checkCode(code: string) {
     setError("");
@@ -34,7 +35,6 @@ export default function VerifyEmailPage() {
     try {
       await verifyEmail(email, code);
       qc.invalidateQueries({ queryKey: ["me"] });
-      sessionStorage.removeItem("verify_email");
       router.push("/dashboard");
     } catch (err) {
       setError(errMsg(err) || t("invalidCode"));

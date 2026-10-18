@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { verifyResetCode, resetPassword } from "@/lib/auth";
 import { useTranslations } from "next-intl";
@@ -12,6 +12,7 @@ export default function ResetPasswordPage() {
   const t = useTranslations("auth");
   const errMsg = useErrorMessage();
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [email, setEmail] = useState("");
   const [digits, setDigits] = useState(["", "", "", "", "", ""]);
   const [step, setStep] = useState<"code" | "password">("code");
@@ -25,9 +26,9 @@ export default function ResetPasswordPage() {
   const passwordRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setEmail(sessionStorage.getItem("reset_email") ?? "");
+    setEmail(searchParams.get("email") ?? "");
     setTimeout(() => inputRefs.current[0]?.focus(), 50);
-  }, []);
+  }, [searchParams]);
 
   useEffect(() => {
     if (step === "password") {
@@ -105,7 +106,6 @@ export default function ResetPasswordPage() {
     setIsPending(true);
     try {
       await resetPassword(email, verifiedCode, password);
-      sessionStorage.removeItem("reset_email");
       router.push("/login?reset=1");
     } catch (err) {
       setError(errMsg(err));

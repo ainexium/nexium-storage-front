@@ -289,12 +289,7 @@ function ChannelRow({ ch, onRefresh }: { ch: PaymentChannel; onRefresh: () => vo
     try {
       const form = new FormData();
       form.append("logo", file);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/v1/admin/billing/channels/${ch.id}/logo`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${localStorage.getItem("access_token")}` },
-        body: form,
-      });
-      const data = await res.json();
+      const data = await api.post<{ logo_url?: string }>(`/api/v1/admin/billing/channels/${ch.id}/logo`, form);
       if (data.logo_url) { setLogoUrl(data.logo_url); onRefresh(); }
     } finally { setUploading(false); }
   }
