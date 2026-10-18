@@ -67,24 +67,22 @@ export function NavAuth() {
       <div className={`nav-mobile-dropdown fixed inset-x-0 top-14 z-40 backdrop-blur-md border-b px-6 py-4 flex flex-col gap-3 transition-all duration-200 ease-out ${
         open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
       }`}>
-        {!isDocs && (
-          <Link
-            href="/docs"
-            onClick={() => setOpen(false)}
-            className="nav-mobile-link text-[15px] py-2 border-b transition"
-          >
-            Documentation
-          </Link>
-        )}
-        {!isPricing && (
-          <Link
-            href="/pricing"
-            onClick={() => setOpen(false)}
-            className="nav-mobile-link text-[15px] py-2 border-b transition"
-          >
-            Pricing
-          </Link>
-        )}
+        <Link
+          href="/docs"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setOpen(false)}
+          className="nav-mobile-link text-[15px] py-2 border-b transition"
+        >
+          Documentation
+        </Link>
+        <Link
+          href="/pricing"
+          onClick={() => setOpen(false)}
+          className="nav-mobile-link text-[15px] py-2 border-b transition"
+        >
+          Pricing
+        </Link>
         {loggedIn ? (
           <Link
             href="/dashboard"

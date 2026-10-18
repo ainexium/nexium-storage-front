@@ -7,7 +7,7 @@ import {
   Users, Code2, Check,
 } from "lucide-react";
 import { HeroButtons } from "@/components/hero-buttons";
-import { HeroVideo } from "@/components/hero-video";
+import { HeroVideoClient } from "@/components/hero-video-client";
 import { AnimTerminal } from "@/components/anim-terminal";
 import { AnimDashboardMock } from "@/components/anim-dashboard-mock";
 import { getTranslations } from "next-intl/server";
@@ -105,13 +105,13 @@ export default async function LandingPage() {
       {/* ── NAVBAR ────────────────────────────────────────────── */}
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
         <nav className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          <span className="flex items-center gap-2 font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
+          <Link href="/" className="flex items-center gap-2 font-bold tracking-tight text-[14px] sm:text-[17px] whitespace-nowrap shrink-0">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="22" height="22">
               <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
             </svg>
             <span className="text-[#9b3dff]">NEXIUM</span>
             <span className="text-gray-500 font-normal">/ storage</span>
-          </span>
+          </Link>
           <div className="flex items-center gap-3 sm:gap-5">
             <LandingNavLinks />
             <LanguageSwitcher />
@@ -154,7 +154,7 @@ export default async function LandingPage() {
             <HeroButtons />
           </AnimInView>
 
-          <HeroVideo />
+          <HeroVideoClient />
 
         </div>
       </section>
