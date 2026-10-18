@@ -63,10 +63,6 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={`dark ${roobert.variable} ${pangram.variable} ${roobertMono.variable}`} suppressHydrationWarning>
-      <head>
-        {/* eslint-disable-next-line @next/next/no-sync-scripts */}
-        <script src="/theme-init.js" />
-      </head>
       <body className="bg-[#0a0a0f] text-gray-100 antialiased">
         <ThemeProvider>
           <NextIntlClientProvider locale={locale} messages={messages}>

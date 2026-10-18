@@ -790,3 +790,9 @@ html[data-theme="light"] .lp-header {
     @apply bg-gray-700 rounded-full;
   }
 }
+
+/* Vidstack Plyr — couleur palette NEXIUM */
+:root {
+  --plyr-color-main: #9b3dff;
+  --plyr-video-controls-background: linear-gradient(rgba(0,0,0,0), rgba(0,0,0,0.25));
+}

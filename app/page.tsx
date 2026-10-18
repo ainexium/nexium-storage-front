@@ -6,8 +6,10 @@ import {
   FolderOpen, BarChart2, Plus, ChevronRight,
   Users, Code2, Check,
 } from "lucide-react";
-import { HeroVisual } from "@/components/hero-visual";
 import { HeroButtons } from "@/components/hero-buttons";
+import { HeroVideo } from "@/components/hero-video";
+import { AnimTerminal } from "@/components/anim-terminal";
+import { AnimDashboardMock } from "@/components/anim-dashboard-mock";
 import { getTranslations } from "next-intl/server";
 import { LanguageSwitcher } from "@/components/language-switcher";
 import { AnimInView } from "@/components/anim-in-view";
@@ -119,12 +121,12 @@ export default async function LandingPage() {
       </header>
 
       {/* ── HERO ──────────────────────────────────────────────── */}
-      <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 pt-20 pb-28 overflow-hidden">
+      <section className="relative flex flex-col items-center text-center px-6 pt-28 pb-20 overflow-hidden">
         <div className="glow-blue-hero" />
         <div className="grid-dark" />
         <div className="noise-overlay" />
 
-        <div className="relative z-10 flex flex-col items-center max-w-4xl w-full">
+        <div className="relative z-10 flex flex-col items-center max-w-5xl w-full">
 
           <AnimInView>
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#9b3dff]/30 bg-[#9b3dff]/10 text-[#9b3dff] text-[12px] font-medium mb-8">
@@ -152,17 +154,7 @@ export default async function LandingPage() {
             <HeroButtons />
           </AnimInView>
 
-          <AnimInView delay={280} className="w-full max-w-2xl">
-            <HeroVisual
-              tabDashboard={t("heroTabDashboard")}
-              tabApi={t("heroTabApi")}
-              dragText={t("heroDragText")}
-              dragSubPre={t("heroDragSubPre")}
-              dragSubPost={t("heroDragSubPost")}
-              browseLabel={t("heroBrowse")}
-              uploadComment={t("uploadComment")}
-            />
-          </AnimInView>
+          <HeroVideo />
 
         </div>
       </section>
@@ -344,78 +336,9 @@ export default async function LandingPage() {
             </div>
           </AnimInView>
 
-          {/* Right — fake dashboard */}
+          {/* Right — animated dashboard mock */}
           <AnimInView animation="fade-left" delay={100} className="min-w-0 w-full">
-            <div className="rounded-xl border border-white/[0.07] bg-[var(--lp-bg-deep)] overflow-hidden shadow-2xl">
-              {/* Browser chrome */}
-              <div className="flex items-center gap-2 px-4 py-2.5 border-b border-white/[0.05]">
-                <div className="flex gap-1.5 shrink-0">
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
-                  <span className="w-2.5 h-2.5 rounded-full bg-white/[0.1]" />
-                </div>
-                <div className="flex-1 mx-2 h-5 rounded bg-white/[0.04] flex items-center px-2.5 overflow-hidden">
-                  <span className="text-[10px] text-gray-600 font-mono truncate">console.nexiumai.io/dashboard/projects</span>
-                </div>
-              </div>
-              {/* Layout */}
-              <div className="flex min-h-0">
-                {/* Sidebar — cachée sur mobile */}
-                <div className="hidden min-[490px]:flex flex-col w-[140px] shrink-0 border-r border-white/[0.06] bg-[var(--lp-bg)] px-2 py-3">
-                  <div className="flex items-center gap-1.5 px-1.5 mb-4">
-                    <span className="text-[#9b3dff] font-bold text-[10px] tracking-tight">NEXIUM</span>
-                    <span className="text-gray-600 text-[9px]">/ storage</span>
-                  </div>
-                  {[
-                    { Icon: LayoutDashboard, name: "Overview",    active: false },
-                    { Icon: FolderOpen,      name: "Workspaces",  active: true  },
-                    { Icon: Key,             name: "API Keys",    active: false },
-                    { Icon: BarChart2,       name: "Usage",       active: false },
-                  ].map(({ Icon, name, active }) => (
-                    <div
-                      key={name}
-                      className={`flex items-center gap-2 px-2 py-1.5 rounded-md mb-0.5 text-[11px] ${
-                        active ? "bg-white/[0.07] text-white font-medium" : "text-gray-500"
-                      }`}
-                    >
-                      <Icon size={11} className={active ? "text-white" : "text-gray-600"} />
-                      {name}
-                    </div>
-                  ))}
-                </div>
-                {/* Content */}
-                <div className="flex-1 min-w-0 p-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <div>
-                      <p className="text-[12px] font-semibold text-white">Workspaces</p>
-                      <p className="text-[10px] text-gray-600 mt-0.5">3 workspaces</p>
-                    </div>
-                    <span className="flex items-center gap-1 text-[10px] px-2 py-1 rounded-md bg-[#9b3dff] text-white font-medium shrink-0">
-                      <Plus size={9} /> New
-                    </span>
-                  </div>
-                  {[
-                    { name: "my-app",      info: "4 buckets · 45.2 MB" },
-                    { name: "api-backend", info: "2 buckets · 12.1 MB" },
-                    { name: "ml-assets",   info: "1 bucket  · 2.1 GB"  },
-                  ].map(({ name, info }, i) => (
-                    <div
-                      key={name}
-                      className={`flex items-center gap-2.5 py-2.5 ${i < 2 ? "border-b border-white/[0.04]" : ""}`}
-                    >
-                      <div className="w-6 h-6 rounded bg-white/[0.05] border border-white/[0.07] flex items-center justify-center shrink-0">
-                        <FolderOpen size={11} className="text-gray-500" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[11px] text-gray-200 font-mono truncate">{name}</p>
-                        <p className="text-[9px] text-gray-600">{info}</p>
-                      </div>
-                      <ChevronRight size={11} className="text-gray-700 shrink-0" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <AnimDashboardMock />
           </AnimInView>
 
         </div>
@@ -529,30 +452,7 @@ export default async function LandingPage() {
               </div>
               <h3 className="text-[15px] font-semibold text-white mb-2">{steps[2].title}</h3>
               <p className="text-[14px] text-gray-500 leading-[1.65] mb-6">{steps[2].body}</p>
-              <div className="rounded-xl border border-white/[0.07] bg-[var(--lp-bg-deep)] overflow-hidden">
-                <div className="flex items-center gap-1.5 px-4 py-2.5 border-b border-white/[0.05] bg-black/20">
-                  <span className="w-2 h-2 rounded-full bg-red-500/50" />
-                  <span className="w-2 h-2 rounded-full bg-yellow-500/50" />
-                  <span className="w-2 h-2 rounded-full bg-green-500/50" />
-                  <span className="ml-1.5 text-[11px] text-gray-600 font-mono">terminal</span>
-                </div>
-                <div className="p-5 font-mono text-[12px] space-y-1.5">
-                  <p>
-                    <span className="text-[#9b3dff]">curl</span>{" "}
-                    <span className="text-green-400">-X POST</span> \
-                  </p>
-                  <p className="pl-3 text-[11px] text-orange-300">
-                    &quot;Authorization: Bearer nx_live_...&quot; \
-                  </p>
-                  <p className="pl-3 text-[11px] text-orange-300">
-                    &quot;file=@photo.jpg&quot;
-                  </p>
-                  <p className="text-gray-600 pt-1 text-[11px]">// → 201 Created</p>
-                  <p className="text-purple-400 text-[11px]">
-                    {`{ "url": "cdn.nexiumai.io/…" }`}
-                  </p>
-                </div>
-              </div>
+              <AnimTerminal />
             </AnimInView>
 
           </div>

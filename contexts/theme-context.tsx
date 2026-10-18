@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import { createContext, useContext, useState, useEffect, useLayoutEffect } from "react";
 
 export type ThemePreference = "system" | "dark" | "light";
 type Theme = "dark" | "light";
@@ -41,10 +41,18 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [preference, setPreferenceState] = useState<ThemePreference>("system");
   const [theme, setTheme] = useState<Theme>("dark");
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const stored = getStored();
+    const resolved = resolve(stored);
     setPreferenceState(stored);
-    setTheme(resolve(stored));
+    setTheme(resolved);
+    if (resolved === "dark") {
+      document.documentElement.classList.add("dark");
+      document.documentElement.setAttribute("data-theme", "dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+      document.documentElement.setAttribute("data-theme", "light");
+    }
   }, []);
 
   useEffect(() => {
