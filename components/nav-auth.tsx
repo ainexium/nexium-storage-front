@@ -2,15 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LayoutDashboard, Mail, Menu, X } from "lucide-react";
 
 const CONTACT_EMAIL = "ai.nexium@gmail.com";
 
 export function NavAuth() {
-  const t = useTranslations("landing");
+  const t        = useTranslations("landing");
+  const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen]         = useState(false);
+
+  const isPricing = pathname === "/pricing" || pathname.startsWith("/pricing/");
+  const isDocs    = pathname === "/docs"    || pathname.startsWith("/docs/");
 
   useEffect(() => {
     setLoggedIn(!!localStorage.getItem("access_token"));
@@ -62,13 +67,24 @@ export function NavAuth() {
       <div className={`nav-mobile-dropdown fixed inset-x-0 top-14 z-40 backdrop-blur-md border-b px-6 py-4 flex flex-col gap-3 transition-all duration-200 ease-out ${
         open ? "opacity-100 translate-y-0 pointer-events-auto" : "opacity-0 -translate-y-2 pointer-events-none"
       }`}>
-        <Link
-          href="/pricing"
-          onClick={() => setOpen(false)}
-          className="nav-mobile-link text-[15px] py-2 border-b transition"
-        >
-          Pricing
-        </Link>
+        {!isDocs && (
+          <Link
+            href="/docs"
+            onClick={() => setOpen(false)}
+            className="nav-mobile-link text-[15px] py-2 border-b transition"
+          >
+            Documentation
+          </Link>
+        )}
+        {!isPricing && (
+          <Link
+            href="/pricing"
+            onClick={() => setOpen(false)}
+            className="nav-mobile-link text-[15px] py-2 border-b transition"
+          >
+            Pricing
+          </Link>
+        )}
         {loggedIn ? (
           <Link
             href="/dashboard"

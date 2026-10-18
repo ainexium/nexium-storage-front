@@ -1,9 +1,9 @@
 import Link from "next/link";
 import {
-  ArrowRight, ExternalLink,
+  ArrowRight,
   Package, Key, Link2, Zap, LayoutDashboard, Cloud,
   Shield, Lock, Server, Globe, Upload,
-  FolderOpen, BarChart2, Plus, ChevronRight, Copy,
+  FolderOpen, BarChart2, Plus, ChevronRight,
   Users, Code2, Check,
 } from "lucide-react";
 import { HeroVisual } from "@/components/hero-visual";
@@ -13,12 +13,12 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { AnimInView } from "@/components/anim-in-view";
 import { CtaFloatingLogos } from "@/components/cta-floating-logos";
 import { NavAuth } from "@/components/nav-auth";
+import { LandingNavLinks } from "@/components/landing-nav-links";
+import { LandingFooter } from "@/components/landing-footer";
 import { techStyle } from "@/lib/tech-colors";
 import { TECH_PATHS } from "@/lib/tech-icons";
 import type { Metadata } from "next";
 
-const CONTACT_EMAIL = "ai.nexium@gmail.com";
-const CONTACT_WHATSAPP = "+2250503020385";
 
 /* ── Marquee rows ─────────────────────────────────────────── */
 const LANG_ROW = ["Node.js", "Python", "Go", "PHP", "Ruby", "Java", "Rust", "Swift", "Kotlin", "Dart", ".NET", "Elixir"];
@@ -111,12 +111,7 @@ export default async function LandingPage() {
             <span className="text-gray-500 font-normal">/ storage</span>
           </span>
           <div className="flex items-center gap-3 sm:gap-5">
-            <Link
-              href="/pricing"
-              className="hidden min-[490px]:block text-[13px] text-gray-400 hover:text-white transition"
-            >
-              Pricing
-            </Link>
+            <LandingNavLinks />
             <LanguageSwitcher />
             <NavAuth />
           </div>
@@ -643,94 +638,7 @@ export default async function LandingPage() {
         secondary={t("ctaSecondary")}
       />
 
-      {/* ── FOOTER ────────────────────────────────────────────── */}
-      <footer className="border-t border-white/[0.09]">
-        <div className="max-w-6xl mx-auto border-x border-white/[0.09]">
-
-          {/* 4-column links grid */}
-          <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_1fr_1fr] border-b border-white/[0.09]">
-
-            {/* Brand column */}
-            <div className="px-10 py-10 border-b md:border-b-0 md:border-r border-white/[0.09]">
-              <div className="flex items-center gap-2 mb-3">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#9b3dff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" width="20" height="20">
-                  <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
-                </svg>
-                <span className="font-bold text-[18px] tracking-tight">
-                  <span className="text-[#9b3dff]">NEXIUM</span>
-                  <span className="text-white/25 font-normal ml-1.5">/ storage</span>
-                </span>
-              </div>
-              <p className="text-[13px] text-white/30 leading-[1.6] max-w-[240px]">
-                {t("footerTagline")}
-              </p>
-            </div>
-
-            {/* Products column */}
-            <div className="px-8 py-10 border-b md:border-b-0 md:border-r border-white/[0.09]">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 mb-4">
-                {t("footerProductsTitle")}
-              </p>
-              <ul className="flex flex-col gap-2.5">
-                <li><Link href="/pricing" className="text-[13px] text-white/35 hover:text-white transition">{t("footerPricing")}</Link></li>
-                <li><a href="/docs" target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition">{t("footerDoc")}</a></li>
-                <li>
-                  <a href="https://www.npmjs.com/package/@ainexium/storage" target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition inline-flex items-center gap-1">
-                    {t("footerSdkJs")} <ExternalLink size={10} className="opacity-50" />
-                  </a>
-                </li>
-                <li>
-                  <a href="https://pypi.org/project/nexium-storage/" target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition inline-flex items-center gap-1">
-                    {t("footerSdkPy")} <ExternalLink size={10} className="opacity-50" />
-                  </a>
-                </li>
-              </ul>
-            </div>
-
-            {/* Company column */}
-            <div className="px-8 py-10 border-b md:border-b-0 md:border-r border-white/[0.09]">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 mb-4">
-                {t("footerCompanyTitle")}
-              </p>
-              <ul className="flex flex-col gap-2.5">
-                <li><a href="/" className="text-[13px] text-white/35 hover:text-white transition">{t("footerHome")}</a></li>
-              </ul>
-            </div>
-
-            {/* Contact column */}
-            <div className="px-8 py-10">
-              <p className="text-[11px] font-semibold uppercase tracking-widest text-white/25 mb-4">
-                {t("footerContactTitle")}
-              </p>
-              <ul className="flex flex-col gap-2.5">
-                <li><a href={`mailto:${CONTACT_EMAIL}`} className="text-[13px] text-white/35 hover:text-white transition">{CONTACT_EMAIL}</a></li>
-                <li>
-                  <a href={`https://wa.me/${CONTACT_WHATSAPP.replace(/\+/g, "")}`} target="_blank" rel="noopener noreferrer" className="text-[13px] text-white/35 hover:text-white transition">
-                    WhatsApp
-                  </a>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          {/* Bottom bar — copyright + language switcher */}
-          <div className="flex items-center justify-between px-10 py-4">
-            <p className="text-[12px] text-white/25">
-              {t("rights", { year: new Date().getFullYear() })}{" "}
-              <a
-                href="https://nexiumai.io"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-[#9b3dff] hover:text-[#aa55ff] transition"
-              >
-                NEXIUM.AI
-              </a>
-              {" · "}{t("rightsReserved")}
-            </p>
-            <LanguageSwitcher />
-          </div>
-        </div>
-      </footer>
+      <LandingFooter />
     </main>
   );
 }

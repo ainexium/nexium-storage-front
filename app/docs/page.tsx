@@ -1,6 +1,7 @@
 ﻿"use client";
 
 import Link from "next/link";
+import { LandingFooter } from "@/components/landing-footer";
 import { useState, useEffect, useRef } from "react";
 import {
   BookOpen, Key, Upload, List, Download, Trash2,
@@ -663,6 +664,7 @@ export default function DocsPage() {
   }, []);
 
   return (
+    <>
     <div className="themed-page min-h-screen bg-[var(--lp-bg)]">
       <nav className="lp-header flex items-center justify-between px-8 py-5 border-b border-gray-800 sticky top-0 backdrop-blur z-10">
         <Link href="/" className="flex items-center gap-2 text-xl font-bold tracking-tight">
@@ -673,6 +675,9 @@ export default function DocsPage() {
           <span className="text-gray-300 text-base font-medium">{t("brand")}</span>
         </Link>
         <div className="flex items-center gap-4">
+          <Link href="/pricing" className="hidden sm:block text-sm text-gray-400 hover:text-white transition">
+            Pricing
+          </Link>
           <LanguageSwitcher />
           {loggedIn ? (
             <Link href="/dashboard" className="text-sm text-gray-400 hover:text-white transition">
@@ -680,7 +685,7 @@ export default function DocsPage() {
             </Link>
           ) : (
             <>
-              <Link href="/login" className="text-sm text-gray-400 hover:text-white transition">
+              <Link href="/login" className="hidden sm:block text-sm text-gray-400 hover:text-white transition">
                 {t("logIn")}
               </Link>
               <Link
@@ -902,5 +907,7 @@ export default function DocsPage() {
         </div>
       </div>
     </div>
+    <LandingFooter />
+    </>
   );
 }
