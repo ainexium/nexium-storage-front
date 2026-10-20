@@ -12,7 +12,7 @@ const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
-  `connect-src 'self' ${apiOrigin} blob:`,
+  `connect-src 'self' ${apiOrigin} https://*.r2.cloudflarestorage.com blob:`,
   "img-src 'self' data: blob: https:",
   "media-src 'self' blob:",
   "font-src 'self'",
