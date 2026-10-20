@@ -1,5 +1,11 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
+function getLocaleCookie(): string {
+  if (typeof document === "undefined") return "en";
+  const match = document.cookie.match(/(?:^|;\s*)NEXT_LOCALE=([^;]+)/);
+  return match ? match[1] : "en";
+}
+
 let isRefreshing = false;
 let refreshQueue: Array<(token: string) => void> = [];
 
@@ -44,6 +50,7 @@ class APIClient {
       ...(init.headers as Record<string, string>),
     };
     if (token) headers["Authorization"] = `Bearer ${token}`;
+    headers["x-nexium-locale"] = getLocaleCookie();
     if (!(init.body instanceof FormData)) {
       headers["Content-Type"] = "application/json";
     }
