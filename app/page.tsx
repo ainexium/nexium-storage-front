@@ -128,12 +128,6 @@ export default async function LandingPage() {
 
         <div className="relative z-10 flex flex-col items-center max-w-5xl w-full">
 
-          <AnimInView>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#9b3dff]/30 bg-[#9b3dff]/10 text-[#9b3dff] text-[12px] font-medium mb-8">
-              {t("badge")}
-            </div>
-          </AnimInView>
-
           <AnimInView delay={70}>
             <h1
               className="font-medium leading-[1.08] tracking-[-0.03em] mb-6"

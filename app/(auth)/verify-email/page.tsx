@@ -91,14 +91,16 @@ export default function VerifyEmailPage() {
   }
 
   async function handleResend() {
-    if (!email || resending) return;
+    const emailToUse = email || searchParams.get("email") || "";
+    if (!emailToUse || resending) return;
     setResending(true);
+    setError("");
     try {
-      await resendVerification(email);
+      await resendVerification(emailToUse);
       setResent(true);
       setTimeout(() => setResent(false), 4000);
-    } catch {
-      // silent
+    } catch (err) {
+      setError(errMsg(err));
     } finally {
       setResending(false);
     }
@@ -107,9 +109,9 @@ export default function VerifyEmailPage() {
   return (
     <div className="w-full max-w-sm">
       <h1 className="text-2xl font-bold text-center mb-2">{t("checkInbox")}</h1>
-      <p className="text-gray-400 text-sm text-center mb-1">{t("weSentCode")}</p>
-      <p className="text-sm text-center font-mono text-white mb-8">
-        {email || t("yourEmailAddress")}
+      <p className="text-gray-400 text-sm text-center mb-8">
+        {t("weSentCode")}{" "}
+        <span className="text-white font-mono">{email || t("yourEmailAddress")}</span>
       </p>
 
       <div className="flex gap-2 justify-center mb-6">
