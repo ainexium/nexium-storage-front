@@ -47,34 +47,68 @@ function fileTypeInfo(mime: string): { bg: string; iconColor: string; Icon: Reac
 // ─── Video thumbnail ──────────────────────────────────────────────────────────
 
 function VideoThumbnail({ src, label, iconColor }: { src: string; label: string; iconColor: string }) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const [ready, setReady] = useState(false);
+  const [thumb, setThumb] = useState<string | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    const video = document.createElement("video");
+    video.muted = true;
+    video.playsInline = true;
+    video.preload = "metadata";
+    video.crossOrigin = "anonymous";
+
+    const cleanup = () => {
+      video.src = "";
+      video.load();
+    };
+
+    video.onloadedmetadata = () => {
+      video.currentTime = Math.min(1, (video.duration || 10) * 0.1);
+    };
+
+    video.onseeked = () => {
+      if (cancelled) return;
+      try {
+        const canvas = document.createElement("canvas");
+        canvas.width = video.videoWidth || 320;
+        canvas.height = video.videoHeight || 180;
+        const ctx = canvas.getContext("2d");
+        if (ctx) {
+          ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+          setThumb(canvas.toDataURL("image/jpeg", 0.75));
+        }
+      } catch {
+        // CORS not ready yet — silently keep placeholder
+      }
+      cleanup();
+    };
+
+    video.onerror = cleanup;
+    video.src = src;
+
+    return () => {
+      cancelled = true;
+      cleanup();
+    };
+  }, [src]);
 
   return (
     <div className="relative w-full h-full bg-slate-900">
-      <video
-        ref={videoRef}
-        src={src}
-        preload="metadata"
-        muted
-        playsInline
-        className={`w-full h-full object-cover transition-opacity duration-200 ${ready ? "opacity-100" : "opacity-0"}`}
-        onLoadedMetadata={() => { if (videoRef.current) videoRef.current.currentTime = 0.5; }}
-        onSeeked={() => setReady(true)}
-      />
-      {!ready && (
+      {thumb ? (
+        <>
+          <img src={thumb} alt="" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/25">
+            <div className="w-9 h-9 rounded-full bg-black/50 flex items-center justify-center">
+              <Play size={16} className="text-white" fill="white" />
+            </div>
+          </div>
+        </>
+      ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <div className="w-12 h-12 rounded-full bg-white/10 flex items-center justify-center">
             <Play size={22} className={iconColor} fill="currentColor" />
           </div>
           {label && <span className="text-xs font-mono text-gray-500 mt-2">{label}</span>}
-        </div>
-      )}
-      {ready && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/25">
-          <div className="w-9 h-9 rounded-full bg-black/50 flex items-center justify-center">
-            <Play size={16} className="text-white" fill="white" />
-          </div>
         </div>
       )}
     </div>
@@ -547,7 +581,7 @@ function GridCard({ f, actions, renamingId, renameValue, setRenameValue, submitR
   const info = fileTypeInfo(f.mime_type);
 
   return (
-    <div className="group relative rounded-xl border border-gray-800/60 bg-[#111118] overflow-hidden flex flex-col hover:border-gray-700 transition-colors">
+    <div className="group relative rounded-xl border border-ds-border bg-ds-bg-card overflow-hidden flex flex-col hover:border-ds-border-strong transition-colors">
       {/* Preview area */}
       <div
         className={`relative w-full aspect-[4/3] overflow-hidden flex items-center justify-center ${isImage(f.mime_type) && f.url ? "" : info.bg} ${isPreviewable(f.mime_type) ? "cursor-pointer" : ""}`}
@@ -594,18 +628,18 @@ function GridCard({ f, actions, renamingId, renameValue, setRenameValue, submitR
               if (e.key === "Escape") cancelRename();
             }}
             onBlur={() => submitRename(f.id)}
-            className="w-full text-xs bg-[#0a0a0f] border border-[#9b3dff] rounded px-1.5 py-0.5 focus:outline-none text-white"
+            className="w-full text-xs bg-ds-bg-base text-ds-text-primary border border-[#9b3dff] rounded px-1.5 py-0.5 focus:outline-none"
           />
         ) : (
           <p
-            className="text-xs text-gray-300 truncate cursor-default"
+            className="text-xs text-ds-text-primary truncate cursor-default"
             title={f.filename}
             onDoubleClick={() => actions.startRename(f)}
           >
             {f.filename}
           </p>
         )}
-        <p className="text-[10px] text-gray-600 mt-0.5">{formatBytes(f.size_bytes)}</p>
+        <p className="text-[10px] text-ds-text-muted mt-0.5">{formatBytes(f.size_bytes)}</p>
       </div>
     </div>
   );
@@ -756,12 +790,13 @@ function PreviewModal({ file, onClose }: { file: StoredFile; onClose: () => void
           ) : isVid ? (
             <div className="bg-black flex items-center justify-center" style={{ minHeight: 300 }}>
               <video
+                key={url}
+                src={url}
                 controls
-                autoPlay={false}
+                autoPlay
                 className="w-full max-h-[75vh]"
                 style={{ outline: "none" }}
               >
-                <source src={url} type={file.mime_type} />
                 {t("noVideo")}
               </video>
             </div>

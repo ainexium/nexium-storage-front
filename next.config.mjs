@@ -8,13 +8,21 @@ const apiOrigin = (() => {
   catch { return "http://localhost:8080"; }
 })();
 
+const isDev = process.env.NODE_ENV !== "production";
+
 const csp = [
   "default-src 'self'",
   "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
   "style-src 'self' 'unsafe-inline'",
   `connect-src 'self' ${apiOrigin} https://*.r2.cloudflarestorage.com blob:`,
   "img-src 'self' data: blob: https:",
-  "media-src 'self' blob:",
+  [
+    "media-src 'self' blob:",
+    isDev ? apiOrigin : null,
+    "https://cdn.nexiumai.io",
+    "https://pub-f7e6f18207444635847e5f9ae13fbfab.r2.dev",
+    "https://*.r2.cloudflarestorage.com",
+  ].filter(Boolean).join(" "),
   "font-src 'self'",
   "object-src 'none'",
   "base-uri 'self'",

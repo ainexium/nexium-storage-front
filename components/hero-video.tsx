@@ -22,7 +22,9 @@ export function HeroVideo() {
   const scale   = useTransform(scrollYProgress, [0, 1], [0.82, 1]);
   const y       = useTransform(scrollYProgress, [0, 1], [40, 0]);
 
-  const src = locale === "fr" ? "/hero-fr.mp4" : "/hero-en.mp4";
+  const src = locale === "fr"
+    ? "https://cdn.nexiumai.io/assets/hero-fr.mp4"
+    : "https://cdn.nexiumai.io/assets/hero-en.mp4";
 
   return (
     <div ref={ref} className="w-full mt-14" style={{ perspective: "1400px" }}>
