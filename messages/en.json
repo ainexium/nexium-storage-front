@@ -207,6 +207,7 @@
     "billing": "Billing",
     "docs": "Docs",
     "settings": "Settings",
+    "trash": "Trash",
     "adminPanel": "Admin panel",
     "signOut": "Sign out",
     "users": "Users",
@@ -421,6 +422,8 @@
         "tagline": "Try it and get started",
         "features": [
           "Files ≤ 100 MB",
+          "Unlimited projects",
+          "Trash: 7 days",
           "Community support"
         ]
       },
@@ -429,6 +432,8 @@
         "features": [
           "Files ≤ 1 GB",
           "Unlimited projects",
+          "Trash: 30 days",
+          "Webhooks",
           "Email support"
         ]
       },
@@ -437,6 +442,8 @@
         "features": [
           "Files ≤ 5 GB",
           "Unlimited projects",
+          "Trash: 60 days",
+          "Webhooks",
           "Priority support",
           "Add-ons available"
         ]
@@ -446,6 +453,8 @@
         "features": [
           "Files ≤ 20 GB",
           "Unlimited projects",
+          "Trash: 90 days",
+          "Webhooks",
           "Dedicated support",
           "Guaranteed SLA",
           "Add-ons available"
@@ -633,6 +642,26 @@
     "err429": "Rate limit exceeded — wait before retrying (Retry-After header provided)",
     "err500": "Something went wrong on our end"
   },
+  "trash": {
+    "title": "Trash",
+    "subtitle": "Files moved to trash are automatically deleted after your plan's retention period.",
+    "empty": "Your trash is empty",
+    "emptyDesc": "Deleted files will appear here. You can restore them or permanently delete them.",
+    "emptyBtn": "Empty trash",
+    "emptyConfirm": "Permanently delete all files in trash?",
+    "restoreBtn": "Restore",
+    "deleteBtn": "Delete permanently",
+    "retentionNote": "Files are kept for {days} days before permanent deletion",
+    "retentionFree": "7 days (Free plan)",
+    "retentionStarter": "30 days (Starter)",
+    "retentionPro": "60 days (Pro)",
+    "retentionBusiness": "90 days (Business)",
+    "expiresIn": "Expires in {days}d",
+    "expiresToday": "Expires today",
+    "expired": "Expired",
+    "from": "From",
+    "deletedOn": "Deleted"
+  },
   "pricing": {
     "planDashLink": "Manage plan",
     "eyebrow": "Pricing",
@@ -648,10 +677,10 @@
     "loginNote": "Already have an account?",
     "loginLink": "Sign in",
     "plans": {
-      "free":     { "tagline": "Try it and get started",    "storage": "10 GB",  "maxFile": "100 MB", "support": "Community",  "features": ["Unlimited projects", "Dashboard & API", "REST API access"] },
-      "starter":  { "tagline": "For serious projects",      "storage": "50 GB",  "maxFile": "1 GB",   "support": "Email",       "features": ["Unlimited projects", "Dashboard & API", "REST API access", "Webhooks"] },
-      "pro":      { "tagline": "For teams that scale",      "storage": "300 GB", "maxFile": "5 GB",   "support": "Priority",    "features": ["Unlimited projects", "Dashboard & API", "REST API access", "Webhooks", "Storage add-ons"] },
-      "business": { "tagline": "For companies",             "storage": "1 TB",   "maxFile": "20 GB",  "support": "Dedicated + SLA", "features": ["Unlimited projects", "Dashboard & API", "REST API access", "Webhooks", "Storage add-ons", "Guaranteed SLA"] }
+      "free":     { "tagline": "Try it and get started",    "storage": "10 GB",  "apiReq": "10,000 req / mo",    "features": ["Files ≤ 100 MB", "Unlimited projects", "Trash: 7 days", "Community support"] },
+      "starter":  { "tagline": "For serious projects",      "storage": "50 GB",  "apiReq": "500,000 req / mo",   "features": ["Files ≤ 1 GB", "Unlimited projects", "Trash: 30 days", "Webhooks", "Email support"] },
+      "pro":      { "tagline": "For teams that scale",      "storage": "300 GB", "apiReq": "5,000,000 req / mo", "features": ["Files ≤ 5 GB", "Unlimited projects", "Trash: 60 days", "Webhooks", "Priority support", "Storage add-ons"] },
+      "business": { "tagline": "For companies",             "storage": "1 TB",   "apiReq": "Unlimited req / mo", "features": ["Files ≤ 20 GB", "Unlimited projects", "Trash: 90 days", "Webhooks", "Dedicated support", "Guaranteed SLA", "Storage add-ons"] }
     },
     "countriesEyebrow": "Available across West Africa and beyond",
     "countriesTitle": "Pay from your country",

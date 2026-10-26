@@ -170,7 +170,7 @@ export function PricingPlans() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
           {PLANS.map(({ slug, priceXOF, recommended }) => {
             const cfg       = PLAN_CONFIG[slug];
-            const planData  = t.raw(`plans.${slug}`) as { tagline: string; storage: string; maxFile: string; support: string; features: string[] };
+            const planData  = t.raw(`plans.${slug}`) as { tagline: string; storage: string; apiReq: string; features: string[] };
             const isFree    = priceXOF === 0;
             const price     = fmtPrice(priceXOF, country, locale);
 
@@ -208,38 +208,27 @@ export function PricingPlans() {
                     </div>
                   )}
                   <p className={`text-[13px] font-semibold mt-1.5 ${cfg.accent}`}>{planData.storage}</p>
+                  <p className="flex items-center gap-1 text-[12px] text-gray-500 mt-1">
+                    <Zap size={11} className="shrink-0" />
+                    {planData.apiReq}
+                  </p>
                 </div>
 
-                <div className="space-y-2.5 mb-6">
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-gray-500">{t("planMaxFile")}</span>
-                    <span className="font-medium text-gray-300">{planData.maxFile}</span>
-                  </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-gray-500">{t("planProjects")}</span>
-                    <span className="font-medium text-gray-300">{t("unlimited")}</span>
-                  </div>
-                  <div className="flex justify-between text-[13px]">
-                    <span className="text-gray-500">{t("planSupport")}</span>
-                    <span className="font-medium text-gray-300">{planData.support}</span>
-                  </div>
-                </div>
-
-                <div className="border-t border-white/[0.06] pt-5 mb-7 space-y-2.5 flex-1">
+                <ul className="space-y-2.5 mb-7 flex-1">
                   {planData.features.map((f) => (
-                    <div key={f} className="flex items-start gap-2.5 text-[13px] text-gray-400">
-                      <Check size={13} strokeWidth={2.5} className="text-[#9b3dff] mt-0.5 shrink-0" />
+                    <li key={f} className="flex items-center gap-2.5 text-[13px] text-gray-400">
+                      <Check size={13} strokeWidth={2.5} className="text-[#9b3dff] shrink-0" />
                       {f}
-                    </div>
+                    </li>
                   ))}
-                </div>
+                </ul>
 
                 <Link
                   href={loggedIn ? "/dashboard/billing" : "/register"}
-                  className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-[13px] font-semibold transition-colors ${cfg.btnCls}`}
+                  className={`flex items-center justify-center gap-1.5 w-full py-2.5 rounded-xl text-[13px] font-semibold transition-colors ${cfg.btnCls} ${slug === "free" ? "bill-free-btn" : ""} ${slug === "starter" || slug === "business" ? "bill-choose-btn" : ""}`}
                 >
                   {loggedIn
-                    ? <><LayoutDashboard size={13} /> {locale === "fr" ? "Gérer mon plan" : "Manage my plan"}</>
+                    ? <>{locale === "fr" ? "Gérer mon plan" : "Manage my plan"} <ArrowRight size={13} /></>
                     : isFree
                       ? <>{t("ctaFree")} <ArrowRight size={13} /></>
                       : <>{t("ctaPaid")} <ArrowRight size={13} /></>

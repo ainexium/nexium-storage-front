@@ -207,6 +207,7 @@
     "billing": "Facturation",
     "docs": "Docs",
     "settings": "Paramètres",
+    "trash": "Corbeille",
     "adminPanel": "Panneau admin",
     "signOut": "Déconnexion",
     "users": "Utilisateurs",
@@ -421,6 +422,8 @@
         "tagline": "Pour tester et démarrer",
         "features": [
           "Fichiers ≤ 100 MB",
+          "Projets illimités",
+          "Corbeille : 7 jours",
           "Support communauté"
         ]
       },
@@ -429,6 +432,8 @@
         "features": [
           "Fichiers ≤ 1 GB",
           "Projets illimités",
+          "Corbeille : 30 jours",
+          "Webhooks",
           "Support email"
         ]
       },
@@ -437,6 +442,8 @@
         "features": [
           "Fichiers ≤ 5 GB",
           "Projets illimités",
+          "Corbeille : 60 jours",
+          "Webhooks",
           "Support prioritaire",
           "Add-ons disponibles"
         ]
@@ -446,6 +453,8 @@
         "features": [
           "Fichiers ≤ 20 GB",
           "Projets illimités",
+          "Corbeille : 90 jours",
+          "Webhooks",
           "Support dédié",
           "SLA garanti",
           "Add-ons disponibles"
@@ -633,6 +642,26 @@
     "err429": "Limite de débit dépassée — attendez avant de réessayer (en-tête Retry-After fourni)",
     "err500": "Une erreur s'est produite de notre côté"
   },
+  "trash": {
+    "title": "Corbeille",
+    "subtitle": "Les fichiers supprimés sont automatiquement effacés après la période de rétention de votre plan.",
+    "empty": "La corbeille est vide",
+    "emptyDesc": "Les fichiers supprimés apparaîtront ici. Vous pouvez les restaurer ou les supprimer définitivement.",
+    "emptyBtn": "Vider la corbeille",
+    "emptyConfirm": "Supprimer définitivement tous les fichiers de la corbeille ?",
+    "restoreBtn": "Restaurer",
+    "deleteBtn": "Supprimer définitivement",
+    "retentionNote": "Les fichiers sont conservés {days} jours avant suppression définitive",
+    "retentionFree": "7 jours (Plan Gratuit)",
+    "retentionStarter": "30 jours (Starter)",
+    "retentionPro": "60 jours (Pro)",
+    "retentionBusiness": "90 jours (Business)",
+    "expiresIn": "Expire dans {days}j",
+    "expiresToday": "Expire aujourd'hui",
+    "expired": "Expiré",
+    "from": "Depuis",
+    "deletedOn": "Supprimé le"
+  },
   "pricing": {
     "planDashLink": "Gérer le plan",
     "eyebrow": "Tarification",
@@ -648,10 +677,10 @@
     "loginNote": "Déjà un compte ?",
     "loginLink": "Se connecter",
     "plans": {
-      "free":     { "tagline": "Essayez et démarrez",           "storage": "10 Go",  "maxFile": "100 Mo", "support": "Communauté",      "features": ["Projets illimités", "Dashboard & API", "Accès API REST"] },
-      "starter":  { "tagline": "Pour les projets sérieux",      "storage": "50 Go",  "maxFile": "1 Go",   "support": "Email",            "features": ["Projets illimités", "Dashboard & API", "Accès API REST", "Webhooks"] },
-      "pro":      { "tagline": "Pour les équipes qui évoluent", "storage": "300 Go", "maxFile": "5 Go",   "support": "Prioritaire",      "features": ["Projets illimités", "Dashboard & API", "Accès API REST", "Webhooks", "Add-ons stockage"] },
-      "business": { "tagline": "Pour les entreprises",          "storage": "1 To",   "maxFile": "20 Go",  "support": "Dédié + SLA",      "features": ["Projets illimités", "Dashboard & API", "Accès API REST", "Webhooks", "Add-ons stockage", "SLA garanti"] }
+      "free":     { "tagline": "Essayez et démarrez",           "storage": "10 Go",  "apiReq": "10 000 req / mois",    "features": ["Fichiers ≤ 100 Mo", "Projets illimités", "Corbeille : 7 jours", "Support communauté"] },
+      "starter":  { "tagline": "Pour les projets sérieux",      "storage": "50 Go",  "apiReq": "500 000 req / mois",   "features": ["Fichiers ≤ 1 Go", "Projets illimités", "Corbeille : 30 jours", "Webhooks", "Support email"] },
+      "pro":      { "tagline": "Pour les équipes qui évoluent", "storage": "300 Go", "apiReq": "5 000 000 req / mois", "features": ["Fichiers ≤ 5 Go", "Projets illimités", "Corbeille : 60 jours", "Webhooks", "Support prioritaire", "Add-ons stockage"] },
+      "business": { "tagline": "Pour les entreprises",          "storage": "1 To",   "apiReq": "Requêtes illimitées",  "features": ["Fichiers ≤ 20 Go", "Projets illimités", "Corbeille : 90 jours", "Webhooks", "Support dédié", "SLA garanti", "Add-ons stockage"] }
     },
     "countriesEyebrow": "Disponible en Afrique de l'Ouest et au-delà",
     "countriesTitle": "Payez depuis votre pays",

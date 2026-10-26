@@ -334,14 +334,6 @@ html[data-theme="light"] .lp-header {
   border-top-color: rgba(0, 0, 0, 0.07) !important;
 }
 
-/* Solid violet bg: always white text regardless of theme */
-[data-theme="light"] .themed-page [class*="bg-[#9b3dff]"]:not([class*="bg-[#9b3dff]/"]) {
-  color: #ffffff !important;
-}
-[data-theme="light"] .themed-page [class*="bg-[#9b3dff]"]:not([class*="bg-[#9b3dff]/"]) * {
-  color: #ffffff !important;
-}
-
 /* Text */
 [data-theme="light"] .themed-page .text-white   { color: #0f0f14 !important; }
 [data-theme="light"] .themed-page .text-gray-100 { color: #1a1a24 !important; }
@@ -351,6 +343,14 @@ html[data-theme="light"] .lp-header {
 [data-theme="light"] .themed-page .text-gray-500 { color: #888899 !important; }
 [data-theme="light"] .themed-page .text-gray-600 { color: #aaaabc !important; }
 [data-theme="light"] .themed-page .text-gray-700 { color: #bbbbcc !important; }
+
+/* Solid violet bg: always white text — must come AFTER text overrides to win source order */
+[data-theme="light"] .themed-page [class~="bg-[#9b3dff]"] {
+  color: #ffffff !important;
+}
+[data-theme="light"] .themed-page [class~="bg-[#9b3dff]"] * {
+  color: #ffffff !important;
+}
 
 /* All white/transparent borders → dark/transparent */
 [data-theme="light"] .themed-page [class*="border-white/"] {
@@ -728,15 +728,22 @@ html[data-theme="light"] .lp-header {
 }
 
 /* Choose Starter/Business buttons: same bright purple styling as dark mode */
-[data-theme="light"] .dash-page .bill-choose-btn {
+[data-theme="light"] .dash-page .bill-choose-btn,
+[data-theme="light"] .pricing-page .bill-choose-btn {
   color: #9b3dff !important;
   border-color: rgba(155, 61, 255, 0.45) !important;
   background-color: transparent !important;
 }
-[data-theme="light"] .dash-page .bill-choose-btn:hover {
+[data-theme="light"] .dash-page .bill-choose-btn:hover,
+[data-theme="light"] .pricing-page .bill-choose-btn:hover {
   background-color: #9b3dff !important;
   color: #ffffff !important;
   border-color: #9b3dff !important;
+}
+/* Free button light mode override */
+[data-theme="light"] .pricing-page .bill-free-btn {
+  border-color: rgba(155, 61, 255, 0.25) !important;
+  color: #6b6b80 !important;
 }
 
 /* ── Font size increases ─────────────────────────── */

@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  LayoutDashboard, FolderOpen, Key, BarChart2, BookOpen, Settings, LogOut, CreditCard, Menu, X,
+  LayoutDashboard, FolderOpen, Key, BarChart2, BookOpen, Settings, LogOut, CreditCard, Menu, X, Trash2,
 } from "lucide-react";
 import { useLogout, useMe } from "@/hooks/use-auth";
 import { useEffect, useState } from "react";
@@ -27,6 +27,7 @@ const nav = [
   { href: "/dashboard/api-keys", key: "apiKeys",     icon: Key },
   { href: "/dashboard/usage",    key: "usage",       icon: BarChart2 },
   { href: "/dashboard/billing",  key: "billing",     icon: CreditCard },
+  { href: "/dashboard/trash",    key: "trash",       icon: Trash2 },
   { href: "/docs",               key: "docs",        icon: BookOpen, external: true },
   { href: "/dashboard/settings", key: "settings",    icon: Settings },
 ] as const;

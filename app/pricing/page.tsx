@@ -77,7 +77,7 @@ export default async function PricingPage() {
   ];
 
   return (
-    <main className="themed-page min-h-screen bg-[var(--lp-bg)] text-white overflow-x-hidden">
+    <main className="themed-page pricing-page min-h-screen bg-[var(--lp-bg)] text-white overflow-x-hidden">
 
       {/* ── NAVBAR ──────────────────────────────────────────── */}
       <header className="lp-header fixed top-0 inset-x-0 z-50 backdrop-blur-md border-b border-white/[0.06]">
