@@ -15,8 +15,7 @@ interface OnboardingStatus {
   completed: boolean;
 }
 
-const ONBOARDING_DISMISSED_KEY = "nexium_onboarding_dismissed";
-const ONBOARDING_DONE_KEY      = "nexium_onboarding_done";
+const ONBOARDING_DONE_KEY = "nexium_onboarding_done";
 
 function OnboardingChecklist() {
   const t = useTranslations("dashboard");
@@ -25,10 +24,9 @@ function OnboardingChecklist() {
 
   useEffect(() => {
     setMounted(true);
-    // Permanently gone only when all tasks are done; otherwise just session-dismiss
+    // Permanently gone only when all tasks are done
     const permanentlyDone = localStorage.getItem(ONBOARDING_DONE_KEY) === "1";
-    const sessionDismissed = sessionStorage.getItem(ONBOARDING_DISMISSED_KEY) === "1";
-    setDismissed(permanentlyDone || sessionDismissed);
+    setDismissed(permanentlyDone);
   }, []);
 
   const { data } = useQuery<OnboardingStatus>({
@@ -68,7 +66,7 @@ function OnboardingChecklist() {
         <div className="flex items-center gap-3 shrink-0">
           <span className="text-[11px] text-gray-600">{completedCount}/3</span>
           <button
-            onClick={() => { sessionStorage.setItem(ONBOARDING_DISMISSED_KEY, "1"); setDismissed(true); }}
+            onClick={() => setDismissed(true)}
             className="p-1 rounded-md text-gray-600 hover:text-gray-400 hover:bg-white/[0.06] transition"
             aria-label="Dismiss"
           >
