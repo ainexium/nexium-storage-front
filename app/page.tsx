@@ -39,7 +39,7 @@ export const metadata: Metadata = {
   ],
   openGraph: {
     title: "NEXIUM Storage — Cloud storage for your projects & teams",
-    description: "S3-compatible cloud object storage. Intuitive dashboard, REST API, projects, buckets, API keys.",
+    description: "Cloud object storage for developers. Intuitive dashboard, REST API, projects, buckets, API keys.",
     url: "https://console.nexiumai.io",
     siteName: "NEXIUM Storage",
     type: "website",
@@ -55,7 +55,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary",
     title: "NEXIUM Storage — Cloud storage for your projects & teams",
-    description: "S3-compatible cloud object storage. Intuitive dashboard, REST API, projects, buckets, API keys.",
+    description: "Cloud object storage for developers. Intuitive dashboard, REST API, projects, buckets, API keys.",
     images: ["https://console.nexiumai.io/og-icon.png"],
   },
   alternates: { canonical: "https://console.nexiumai.io" },

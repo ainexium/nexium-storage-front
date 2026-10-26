@@ -1,11 +1,115 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useQuery, useQueries } from "@tanstack/react-query";
 import { api } from "@/lib/api-client";
 import type { Project, UsageSummary, SubscriptionResponse } from "@/types";
 import Link from "next/link";
-import { ChevronRight, HardDrive, ArrowRight, Sparkles } from "lucide-react";
+import { ChevronRight, HardDrive, ArrowRight, Sparkles, Check, X } from "lucide-react";
 import { useLocale, useTranslations } from "next-intl";
+
+interface OnboardingStatus {
+  has_project: boolean;
+  has_file: boolean;
+  has_api_key: boolean;
+  completed: boolean;
+}
+
+const ONBOARDING_DISMISSED_KEY = "nexium_onboarding_dismissed";
+
+function OnboardingChecklist() {
+  const t = useTranslations("dashboard");
+  const [dismissed, setDismissed] = useState(true); // start hidden to avoid flash
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setDismissed(localStorage.getItem(ONBOARDING_DISMISSED_KEY) === "1");
+  }, []);
+
+  const { data } = useQuery<OnboardingStatus>({
+    queryKey: ["onboarding"],
+    queryFn: () => api.get("/api/v1/auth/onboarding"),
+    staleTime: 30 * 1000,
+  });
+
+  useEffect(() => {
+    if (data?.completed) {
+      // Auto-dismiss after a short delay when all steps are done
+      const timer = setTimeout(() => {
+        localStorage.setItem(ONBOARDING_DISMISSED_KEY, "1");
+        setDismissed(true);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [data?.completed]);
+
+  if (!mounted || dismissed) return null;
+
+  const steps = [
+    { key: "step1", done: data?.has_project ?? false, label: t("onboardingStep1"), desc: t("onboardingStep1Desc"), href: "/dashboard/projects" },
+    { key: "step2", done: data?.has_file ?? false,    label: t("onboardingStep2"), desc: t("onboardingStep2Desc"), href: "/dashboard/projects" },
+    { key: "step3", done: data?.has_api_key ?? false, label: t("onboardingStep3"), desc: t("onboardingStep3Desc"), href: "/dashboard/api-keys" },
+  ];
+
+  const completedCount = steps.filter(s => s.done).length;
+
+  return (
+    <div className="rounded-xl border border-[#9b3dff]/20 bg-[#9b3dff]/[0.04] p-5 mb-8">
+      <div className="flex items-start justify-between gap-4 mb-4">
+        <div>
+          <p className="text-[14px] font-semibold text-white">{t("onboardingTitle")}</p>
+          <p className="text-[12px] text-gray-500 mt-0.5">{t("onboardingSubtitle")}</p>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <span className="text-[11px] text-gray-600">{completedCount}/3</span>
+          <button
+            onClick={() => { localStorage.setItem(ONBOARDING_DISMISSED_KEY, "1"); setDismissed(true); }}
+            className="p-1 rounded-md text-gray-600 hover:text-gray-400 hover:bg-white/[0.06] transition"
+            aria-label="Dismiss"
+          >
+            <X size={13} />
+          </button>
+        </div>
+      </div>
+
+      {/* Progress bar */}
+      <div className="h-1 rounded-full bg-white/[0.06] overflow-hidden mb-4">
+        <div
+          className="h-full rounded-full bg-[#9b3dff] transition-all duration-500"
+          style={{ width: `${(completedCount / 3) * 100}%` }}
+        />
+      </div>
+
+      <div className="space-y-2">
+        {steps.map((step) => (
+          <Link
+            key={step.key}
+            href={step.done ? "#" : step.href as Parameters<typeof Link>[0]["href"]}
+            className={`flex items-center gap-3 p-3 rounded-lg transition ${
+              step.done ? "opacity-60 cursor-default" : "hover:bg-white/[0.04] cursor-pointer"
+            }`}
+          >
+            <div className={`w-5 h-5 rounded-full border flex items-center justify-center shrink-0 transition ${
+              step.done
+                ? "bg-[#9b3dff] border-[#9b3dff]"
+                : "border-white/20 bg-white/[0.03]"
+            }`}>
+              {step.done && <Check size={10} strokeWidth={3} className="text-white" />}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className={`text-[13px] font-medium leading-tight ${step.done ? "line-through text-gray-500" : "text-gray-200"}`}>
+                {step.label}
+              </p>
+              <p className="text-[11px] text-gray-600 mt-0.5">{step.desc}</p>
+            </div>
+            {!step.done && <ArrowRight size={12} className="text-gray-600 shrink-0" />}
+          </Link>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 function formatBytes(b: number) {
   if (b < 1024) return `${b} B`;
@@ -128,6 +232,9 @@ export default function DashboardPage() {
           <p className="text-[11px] text-gray-600 mt-1.5">{usedPct.toFixed(1)}% {locale === "en" ? "of quota used" : "du quota utilisé"}</p>
         </div>
       </div>
+
+      {/* Onboarding checklist */}
+      <OnboardingChecklist />
 
       {/* Recent projects */}
       <div>

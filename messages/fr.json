@@ -225,7 +225,16 @@
     "recentProjects": "Projets récents",
     "viewAll": "Tout voir",
     "noProjects": "Aucun projet pour le moment.",
-    "createFirstProject": "Créer votre premier projet →"
+    "createFirstProject": "Créer votre premier projet →",
+    "onboardingTitle": "Démarrez en 3 étapes",
+    "onboardingSubtitle": "Complétez ces étapes pour tirer le meilleur de NEXIUM Storage.",
+    "onboardingStep1": "Créez votre premier projet",
+    "onboardingStep1Desc": "Un projet regroupe vos buckets, clés API et webhooks.",
+    "onboardingStep2": "Uploadez un fichier",
+    "onboardingStep2Desc": "Via le dashboard ou avec l'API.",
+    "onboardingStep3": "Générez une clé API",
+    "onboardingStep3Desc": "Pour intégrer NEXIUM Storage dans votre application.",
+    "onboardingDone": "Tout est prêt ! Vous êtes opérationnel."
   },
   "settings": {
     "title": "Paramètres",

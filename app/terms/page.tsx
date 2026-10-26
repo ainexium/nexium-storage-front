@@ -92,7 +92,7 @@ function ContentFR() {
         <p>
           NEXIUM Storage est une plateforme de stockage d'objets en nuage (cloud) permettant aux
           utilisateurs de stocker, organiser, partager et accéder à leurs fichiers via un tableau
-          de bord web et une API REST compatible S3.
+          de bord web et une API REST propriétaire.
         </p>
         <p>Le Service comprend :</p>
         <ul className="space-y-1.5 ml-1">
@@ -362,7 +362,7 @@ function ContentEN() {
       <Section id="service" title="2. Service description">
         <p>
           NEXIUM Storage is a cloud object storage platform that lets users store, organize, share
-          and access their files through a web dashboard and an S3-compatible REST API.
+          and access their files through a web dashboard and a proprietary REST API.
         </p>
         <p>The Service includes:</p>
         <ul className="space-y-1.5 ml-1">

@@ -45,7 +45,7 @@ export const metadata: Metadata = {
     template: "%s — NEXIUM Storage",
   },
   description:
-    "S3-compatible cloud object storage. An intuitive dashboard to manage your files, a REST API to integrate them. Projects, buckets, API keys, webhooks.",
+    "Cloud object storage for developers. An intuitive dashboard to manage your files, a REST API and SDK to integrate them. Projects, buckets, API keys, webhooks.",
   metadataBase: new URL("https://console.nexiumai.io"),
   openGraph: {
     siteName: "NEXIUM Storage",
