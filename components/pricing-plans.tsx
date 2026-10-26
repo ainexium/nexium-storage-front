@@ -15,7 +15,11 @@ interface Country {
 }
 interface Channel { name: string; slug: string; logo_url?: string; is_active: boolean; maintenance_note?: string; }
 
+const isIntCode = (code: string) => code.startsWith("INT");
+
 const STATIC_COUNTRIES: Country[] = [
+  { code: "INT_USD", name: "International", flag_emoji: "🌍", currency_code: "USD", local_per_xof: 0.001639, is_active: true },
+  { code: "INT_EUR", name: "International", flag_emoji: "🌍", currency_code: "EUR", local_per_xof: 0.001524, is_active: true },
   { code: "CI", name: "Côte d'Ivoire", flag_emoji: "🇨🇮", currency_code: "XOF", local_per_xof: 1,     is_active: true },
   { code: "SN", name: "Sénégal",        flag_emoji: "🇸🇳", currency_code: "XOF", local_per_xof: 1,     is_active: true },
   { code: "ML", name: "Mali",           flag_emoji: "🇲🇱", currency_code: "XOF", local_per_xof: 1,     is_active: true },
@@ -53,9 +57,13 @@ const PLANS = [
 
 function fmtPrice(xof: number, country: Country | null, locale: string) {
   if (xof === 0) return null;
-  const local = country ? Math.round(xof * country.local_per_xof) : xof;
-  const cur   = country?.currency_code ?? "XOF";
-  return { amount: new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(local), cur };
+  if (!country) return { amount: new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(xof), cur: "XOF", approx: false };
+  const raw    = xof * country.local_per_xof;
+  const isInt  = isIntCode(country.code);
+  const amount = isInt
+    ? new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(raw)
+    : new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(raw < 1 ? parseFloat(raw.toFixed(2)) : Math.round(raw));
+  return { amount, cur: country.currency_code, approx: isInt };
 }
 
 /* ── Country selector dropdown ──────────────────────────── */
@@ -71,6 +79,9 @@ function CountryPicker({ countries, selected, onSelect }: {
     return () => document.removeEventListener("mousedown", close);
   }, []);
 
+  const intList   = countries.filter(c =>  isIntCode(c.code));
+  const localList = countries.filter(c => !isIntCode(c.code));
+
   return (
     <div ref={ref} className="relative inline-block">
       <button
@@ -79,8 +90,11 @@ function CountryPicker({ countries, selected, onSelect }: {
       >
         {selected ? (
           <><span className="text-lg leading-none">{selected.flag_emoji}</span>
-            <span className="text-gray-300">{selected.name}</span>
-            <span className="text-[11px] text-gray-600 font-mono">{selected.currency_code}</span></>
+            <span className="text-gray-300">
+              {isIntCode(selected.code) ? `${selected.name} · ${selected.currency_code}` : selected.name}
+            </span>
+            {!isIntCode(selected.code) && <span className="text-[11px] text-gray-600 font-mono">{selected.currency_code}</span>}
+          </>
         ) : (
           <span className="text-gray-500">XOF (default)</span>
         )}
@@ -90,7 +104,30 @@ function CountryPicker({ countries, selected, onSelect }: {
       {open && (
         <div className="absolute left-0 top-full mt-1.5 z-50 w-64 rounded-xl border border-white/[0.1] bg-[#0c0c14] shadow-2xl overflow-hidden">
           <div className="max-h-64 overflow-y-auto">
-            {countries.map((c) => (
+            {intList.length > 0 && (
+              <>
+                <div className="px-4 py-1.5">
+                  <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">International</span>
+                </div>
+                {intList.map(c => (
+                  <button
+                    key={c.code}
+                    onClick={() => { onSelect(c); setOpen(false); }}
+                    className={`w-full flex items-center gap-3 px-4 py-2.5 text-left hover:bg-white/[0.05] transition text-[13px] ${
+                      selected?.code === c.code ? "bg-[#9b3dff]/[0.08] text-[#9b3dff]" : "text-gray-300"
+                    }`}
+                  >
+                    <span className="text-lg leading-none">{c.flag_emoji}</span>
+                    <span className="flex-1">{c.name}</span>
+                    <span className="text-[11px] text-[#9b3dff] font-mono font-semibold">{c.currency_code}</span>
+                  </button>
+                ))}
+                <div className="px-4 py-1.5 border-t border-white/[0.06]">
+                  <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">Afrique</span>
+                </div>
+              </>
+            )}
+            {localList.map(c => (
               <button
                 key={c.code}
                 onClick={() => { onSelect(c); setOpen(false); }}
@@ -131,14 +168,14 @@ export function PricingPlans() {
       .catch(() => { /* use static fallback */ });
   }, []);
 
-  /* Auto-detect country from timezone */
+  /* Auto-detect country from timezone, fallback to INT_USD for unknown */
   useEffect(() => {
     if (country || countries.length === 0) return;
     try {
       const tz   = Intl.DateTimeFormat().resolvedOptions().timeZone;
       const code = TIMEZONE_TO_COUNTRY[tz];
       const found = code ? countries.find(c => c.code === code) : undefined;
-      setCountry(found ?? null);
+      setCountry(found ?? countries.find(c => c.code === "INT_USD") ?? null);
     } catch { /* not critical */ }
   }, [countries, country]);
 
@@ -199,6 +236,7 @@ export function PricingPlans() {
                     <div className="text-4xl font-black text-white tracking-tight">{t("freeLabel")}</div>
                   ) : (
                     <div className="flex items-end gap-1.5">
+                      {price?.approx && <span className="text-2xl font-black text-gray-500 leading-none mb-0.5">~</span>}
                       <span className="text-4xl font-black text-white tracking-tight leading-none">
                         {price?.amount}
                       </span>

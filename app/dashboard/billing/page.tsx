@@ -40,12 +40,17 @@ const fmt = {
     if (b >= 1_073_741_824)    return `${(b / 1_073_741_824).toFixed(0)} GB`;
     return `${(b / 1_048_576).toFixed(0)} MB`;
   },
-  currency(xof: number, country: BillingCountry | null, locale: string) {
+  currency(xof: number, country: BillingCountry | null, locale: string, isInt = false) {
     if (!country) {
       return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(xof) + " XOF";
     }
-    const local = Math.round(xof * country.local_per_xof);
-    return new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(local) + " " + country.currency_code;
+    const raw = xof * country.local_per_xof;
+    const isInternal = isInt || country.code?.startsWith("INT");
+    const formatted = isInternal
+      ? new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(raw)
+      : new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(raw < 1 ? parseFloat(raw.toFixed(2)) : Math.round(raw));
+    const prefix = isInternal ? "~" : "";
+    return prefix + formatted + " " + country.currency_code;
   },
   date(d: string | null, locale: string) {
     if (!d) return null;
@@ -88,6 +93,8 @@ function Chip({ status }: { status: string }) {
 
 // ─── country selector ─────────────────────────────────────────────────────────
 
+const isIntCode = (code?: string) => (code ?? "").startsWith("INT");
+
 function CountrySelector({
   countries,
   selected,
@@ -109,6 +116,9 @@ function CountrySelector({
     return () => document.removeEventListener("mousedown", handle);
   }, []);
 
+  const localCountries = countries.filter(c => !isIntCode(c.code));
+  const intCountries   = countries.filter(c =>  isIntCode(c.code));
+
   return (
     <div ref={ref} className="relative">
       <button
@@ -118,8 +128,12 @@ function CountrySelector({
         {selected ? (
           <>
             <span className="text-lg leading-none">{selected.flag_emoji}</span>
-            <span className="font-medium text-gray-200">{selected.name}</span>
-            <span className="text-xs text-gray-600 font-mono">{selected.currency_code}</span>
+            <span className="font-medium text-gray-200">
+              {isIntCode(selected.code) ? `${selected.name} · ${selected.currency_code}` : selected.name}
+            </span>
+            {!isIntCode(selected.code) && (
+              <span className="text-xs text-gray-600 font-mono">{selected.currency_code}</span>
+            )}
           </>
         ) : (
           <span className="text-gray-500">{t("selectCountry")}</span>
@@ -128,8 +142,30 @@ function CountrySelector({
       </button>
 
       {open && (
-        <div className="absolute top-full mt-1.5 left-0 z-50 w-56 bg-[#0f0f18] border border-white/[0.1] rounded-xl shadow-2xl overflow-hidden">
-          {countries.map(c => (
+        <div className="absolute top-full mt-1.5 left-0 z-50 w-60 bg-[#0f0f18] border border-white/[0.1] rounded-xl shadow-2xl overflow-hidden max-h-72 overflow-y-auto">
+          {intCountries.length > 0 && (
+            <>
+              <div className="px-3.5 py-1.5">
+                <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">{t("internationalLabel")}</span>
+              </div>
+              {intCountries.map(c => (
+                <button
+                  key={c.code}
+                  onClick={() => { onSelect(c); setOpen(false); }}
+                  className={`flex items-center gap-2.5 w-full px-3.5 py-2.5 text-sm transition-all hover:bg-white/[0.05]
+                    ${selected?.code === c.code ? "bg-[#9b3dff]/10 text-white" : "text-gray-300"}`}
+                >
+                  <span className="text-base leading-none">{c.flag_emoji}</span>
+                  <span className="font-medium">{c.name}</span>
+                  <span className="ml-auto text-[11px] text-[#9b3dff] font-mono font-semibold">{c.currency_code}</span>
+                </button>
+              ))}
+              <div className="px-3.5 py-1.5 border-t border-white/[0.06]">
+                <span className="text-[10px] font-semibold text-gray-600 uppercase tracking-wider">{t("africaLabel")}</span>
+              </div>
+            </>
+          )}
+          {localCountries.map(c => (
             <button
               key={c.code}
               onClick={() => { onSelect(c); setOpen(false); }}
@@ -215,17 +251,21 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
   const intervalRef               = useRef<ReturnType<typeof setInterval> | null>(null);
   const pollCountRef              = useRef(0);
 
-  const [phoneCountry, setPhoneCountry] = useState<string>(initialCountry?.code ?? "CI");
+  const isIntCountry = isIntCode(initialCountry?.code);
+  const [phoneCountry, setPhoneCountry] = useState<string>(isIntCountry ? "CI" : (initialCountry?.code ?? "CI"));
   const [modalCountry, setModalCountry] = useState<BillingCountry | null>(initialCountry);
 
-  // Active country codes for PhoneInput restriction (exclude INT pseudo-country)
-  const activeCodes = allCountries.filter(c => c.code !== "INT").map(c => c.code) as any[];
+  // Active country codes for PhoneInput restriction (exclude INT* pseudo-countries)
+  const activeCodes = allCountries.filter(c => !isIntCode(c.code)).map(c => c.code) as any[];
 
-  const { data: channels = [] } = useQuery<PaymentChannel[]>({
+  const { data: rawChannels = [] } = useQuery<PaymentChannel[]>({
     queryKey: ["billing-channels", phoneCountry],
     queryFn: () => api.get(`/api/v1/billing/channels?country=${phoneCountry}`),
-    enabled: !!phoneCountry,
+    enabled: !!phoneCountry && !isIntCountry,
   });
+  // Keep only active MM channels; per-country card_* entries are never shown
+  // (card payment is handled globally via card_int)
+  const channels = rawChannels.filter(ch => !ch.slug.startsWith("card_") && (ch.is_active || !!ch.maintenance_note));
 
   const { data: intChannels = [] } = useQuery<PaymentChannel[]>({
     queryKey: ["billing-channels", "INT"],
@@ -233,6 +273,14 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
   });
 
   const visibleIntChannels = intChannels.filter(ch => ch.is_active);
+  const isIntChannel = isIntCountry || visibleIntChannels.some(ch => ch.slug === channel);
+
+  // Auto-select first INT channel when country is International
+  useEffect(() => {
+    if (isIntCountry && visibleIntChannels.length > 0 && !channel) {
+      setChannel(visibleIntChannels[0].slug);
+    }
+  }, [isIntCountry, visibleIntChannels.length]);
 
   function handleCountryChange(code: string | undefined) {
     if (!code) return;
@@ -243,7 +291,15 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
     if (found) setModalCountry(found);
   }
 
-  const countryCode = phoneCountry;
+  // When switching to an INT channel, clear phone (not needed)
+  function handleChannelSelect(slug: string) {
+    setChannel(slug);
+    if (visibleIntChannels.some(ch => ch.slug === slug)) {
+      setPhone(undefined);
+    }
+  }
+
+  const effectiveCountryCode = isIntChannel ? "INT" : phoneCountry;
 
   useEffect(() => {
     if (step !== "pending" || !pendingID) return;
@@ -269,9 +325,12 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
   async function submit() {
     setLoading(true); setErrMsg("");
     try {
-      const d = await onPay(channel, phone ?? "", countryCode);
+      const d = await onPay(channel, phone ?? "", effectiveCountryCode);
       setPendingID(d.id); setPollStatus(d.status);
-      if (d.redirect_url) setRedirectURL(d.redirect_url);
+      if (d.redirect_url) {
+        setRedirectURL(d.redirect_url);
+        if (isIntChannel) window.open(d.redirect_url, "_blank");
+      }
       if (d.status === "completed") { setStep("done"); setTimeout(onSuccess, 1400); }
       else setStep("pending");
     } catch (e) {
@@ -314,7 +373,9 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
               </div>
               <div className="text-center">
                 <p className="text-[15px] font-semibold text-white mb-1">{t("waitingConfirm")}</p>
-                {redirectURL ? (
+                {redirectURL && isIntChannel ? (
+                  <p className="text-xs text-gray-500 leading-relaxed">{t("cardPendingHint")}</p>
+                ) : redirectURL ? (
                   <p className="text-xs text-gray-500 leading-relaxed">{t("waveHint")}</p>
                 ) : (
                   <p className="text-xs text-gray-500 leading-relaxed">
@@ -326,7 +387,7 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
               {redirectURL && (
                 <a href={redirectURL} target="_blank" rel="noopener noreferrer"
                   className="flex items-center gap-2 px-5 py-2.5 rounded-xl border border-[#9b3dff]/40 text-[#9b3dff] hover:bg-[#9b3dff] hover:text-white hover:border-[#9b3dff] text-sm font-semibold transition-all">
-                  {t("openWave")}
+                  {isIntChannel ? t("openPaymentPage") : t("openWave")}
                 </a>
               )}
               <Chip status={pollStatus || "pending"} />
@@ -351,33 +412,45 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
                 <div className="text-xs text-red-300 bg-red-500/[0.08] border border-red-500/15 rounded-xl px-4 py-3">{errMsg}</div>
               )}
 
-              <div className="bill-channel-section">
-                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("operator")}</p>
-                <ChannelGrid channels={channels} selected={channel} onSelect={setChannel} t={t} />
-                {visibleIntChannels.length > 0 && (
-                  <div className="mt-3">
-                    <p className="text-[11px] font-medium text-gray-600 uppercase tracking-wider mb-2">{t("international")}</p>
-                    <ChannelGrid channels={visibleIntChannels} selected={channel} onSelect={setChannel} t={t} />
-                  </div>
-                )}
-              </div>
+              {!isIntCountry && (
+                <div className="bill-channel-section space-y-3">
+                  {channels.length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("operator")}</p>
+                      <ChannelGrid channels={channels} selected={channel} onSelect={handleChannelSelect} t={t} />
+                    </div>
+                  )}
+                  {visibleIntChannels.length > 0 && (
+                    <div>
+                      <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("cardLabel")}</p>
+                      <ChannelGrid channels={visibleIntChannels} selected={channel} onSelect={handleChannelSelect} t={t} />
+                    </div>
+                  )}
+                </div>
+              )}
 
-              <div>
-                <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("number")}</p>
-                <PhoneInput
-                  defaultCountry={countryCode as any}
-                  countries={activeCodes}
-                  value={phone}
-                  onChange={setPhone}
-                  onCountryChange={handleCountryChange}
-                  international
-                  countryCallingCodeEditable={false}
-                  className="phone-input"
-                />
-                {phone && !isValidPhoneNumber(phone) && (
-                  <p className="text-[11px] text-red-400 mt-1.5">{t("invalidPhone")}</p>
-                )}
-              </div>
+              {!isIntChannel && (
+                <div>
+                  <p className="text-[11px] font-medium text-gray-500 uppercase tracking-wider mb-2.5">{t("number")}</p>
+                  <PhoneInput
+                    defaultCountry={phoneCountry as any}
+                    countries={activeCodes}
+                    value={phone}
+                    onChange={setPhone}
+                    onCountryChange={handleCountryChange}
+                    international
+                    countryCallingCodeEditable={false}
+                    className="phone-input"
+                  />
+                  {phone && !isValidPhoneNumber(phone) && (
+                    <p className="text-[11px] text-red-400 mt-1.5">{t("invalidPhone")}</p>
+                  )}
+                </div>
+              )}
+
+              {isIntChannel && (
+                <p className="text-[12px] text-gray-500 leading-relaxed px-1">{t("cardRedirectHint")}</p>
+              )}
 
               <div className="pt-1">
                 <div className="px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.06] mb-3 space-y-1">
@@ -397,7 +470,7 @@ function PaymentModal({ title, priceXOF, allCountries, initialCountry, badge, on
                 </div>
                 <button
                   onClick={submit}
-                  disabled={loading || !channel || !phone || !isValidPhoneNumber(phone ?? "")}
+                  disabled={loading || !channel || (!isIntChannel && (!phone || !isValidPhoneNumber(phone ?? "")))}
                   className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-[#9b3dff] hover:bg-[#aa55ff] active:scale-[0.98] disabled:opacity-35 disabled:cursor-not-allowed text-sm font-semibold text-white transition-all"
                 >
                   {loading ? <Loader2 size={15} className="animate-spin" /> : <CreditCard size={15} />}
@@ -427,7 +500,11 @@ function PlanCard({
   const features = tp.raw(`${slug}.features` as `${typeof slug}.features`) as string[];
   const tagline = tp(`${slug}.tagline` as `${typeof slug}.tagline`);
 
-  const localPrice = country ? Math.round(plan.price_xof * country.local_per_xof) : plan.price_xof;
+  const isIntCountryCode = country?.code?.startsWith("INT") ?? false;
+  const _raw = country ? plan.price_xof * country.local_per_xof : plan.price_xof;
+  const localPrice = isIntCountryCode
+    ? parseFloat(_raw.toFixed(2))
+    : (_raw < 1 ? parseFloat(_raw.toFixed(2)) : Math.round(_raw));
   const currency = country?.currency_code ?? "XOF";
 
   return (
@@ -458,8 +535,9 @@ function PlanCard({
           <div className="text-4xl font-black text-white tracking-tight">{t("free")}</div>
         ) : (
           <div className="flex items-end gap-1.5">
+            {isIntCountryCode && <span className="text-2xl font-black text-gray-500 leading-none mb-0.5">~</span>}
             <span className="text-4xl font-black text-white tracking-tight leading-none">
-              {new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR").format(localPrice)}
+              {new Intl.NumberFormat(locale === "en" ? "en-US" : "fr-FR", isIntCountryCode ? { minimumFractionDigits: 2, maximumFractionDigits: 2 } : {}).format(localPrice)}
             </span>
             <span className="text-xs text-gray-600 mb-1.5">{currency} / {locale === "en" ? "mo" : "mois"}</span>
           </div>
@@ -732,7 +810,7 @@ export default function BillingPage() {
     const cachedGeo = localStorage.getItem("nx-geo-country");
     if (cachedGeo) {
       const match = countries.find(c => c.code === cachedGeo);
-      setSelectedCountry(match ?? countries.find(c => c.code === "CI") ?? countries[0]);
+      setSelectedCountry(match ?? countries.find(c => c.code === "INT_USD") ?? countries[0]);
       return;
     }
 
@@ -743,7 +821,8 @@ export default function BillingPage() {
         const code = data.country ?? "";
         localStorage.setItem("nx-geo-country", code);
         const match = countries.find(c => c.code === code);
-        setSelectedCountry(match ?? countries.find(c => c.code === "CI") ?? countries[0]);
+        // Unknown country (outside Africa) → default to International USD
+        setSelectedCountry(match ?? countries.find(c => c.code === "INT_USD") ?? countries[0]);
       })
       .catch(() => {
         setSelectedCountry(countries.find(c => c.code === "CI") ?? countries[0]);
