@@ -60,6 +60,7 @@ export function LandingFooter() {
             </p>
             <ul className="flex flex-col gap-2.5">
               <li><a href="/" className="text-[13px] text-white/35 hover:text-white transition">{t("footerHome")}</a></li>
+              <li><Link href="/terms" className="text-[13px] text-white/35 hover:text-white transition">{t("footerTerms")}</Link></li>
             </ul>
           </div>
 
