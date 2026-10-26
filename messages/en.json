@@ -197,7 +197,10 @@
     "newCodeSent": "New code sent — check your inbox.",
     "termsAccept": "I agree to the",
     "termsLink": "terms of service",
-    "termsRequired": "You must accept the terms of service"
+    "termsRequired": "You must accept the terms of service",
+    "continueWithGoogle": "Continue with Google",
+    "continueWithGitHub": "Continue with GitHub",
+    "orContinueWith": "or"
   },
   "nav": {
     "overview": "Overview",
