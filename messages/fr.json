@@ -201,7 +201,12 @@
     "continueWithGoogle": "Continuer avec Google",
     "continueWithGitHub": "Continuer avec GitHub",
     "orContinueWith": "ou",
-    "resendIn": "Renvoyer dans {seconds}s"
+    "resendIn": "Renvoyer dans {seconds}s",
+    "terms": "CGU",
+    "privacy": "Politique de confidentialité",
+    "termsAgree": "En créant un compte, vous acceptez nos",
+    "signUp": "S'inscrire",
+    "oauthNotFound": "Aucun compte trouvé. Veuillez"
   },
   "nav": {
     "overview": "Aperçu",

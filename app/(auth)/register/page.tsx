@@ -10,7 +10,7 @@ import { PasswordInput } from "@/components/ui";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
-type FormData = { name: string; email: string; password: string; termsAccepted: boolean };
+type FormData = { name: string; email: string; password: string };
 
 export default function RegisterPage() {
   const t = useTranslations("auth");
@@ -20,7 +20,6 @@ export default function RegisterPage() {
       name: z.string().min(2, t("nameMin")),
       email: z.string().email(t("invalidEmail")),
       password: z.string().min(8, t("passwordMin")),
-      termsAccepted: z.literal(true, { errorMap: () => ({ message: t("termsRequired") }) }),
     })),
   });
 
@@ -31,7 +30,7 @@ export default function RegisterPage() {
 
       <div className="flex flex-col gap-2.5 mb-5">
         <a
-          href={`${API_URL}/api/v1/auth/oauth/google`}
+          href={`${API_URL}/api/v1/auth/oauth/google?mode=register`}
           className="flex items-center justify-center gap-2.5 w-full py-2.5 rounded-lg border border-gray-700 bg-gray-900 hover:bg-gray-800 text-sm font-medium transition"
         >
           <svg width="18" height="18" viewBox="0 0 48 48" fill="none">
@@ -43,7 +42,7 @@ export default function RegisterPage() {
           {t("continueWithGoogle")}
         </a>
         <a
-          href={`${API_URL}/api/v1/auth/oauth/github`}
+          href={`${API_URL}/api/v1/auth/oauth/github?mode=register`}
           className="flex items-center justify-center gap-2.5 w-full py-2.5 rounded-lg border border-gray-700 bg-gray-900 hover:bg-gray-800 text-sm font-medium transition"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
@@ -88,29 +87,6 @@ export default function RegisterPage() {
           {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
         </div>
 
-        <div>
-          <label className="flex items-start gap-2.5 cursor-pointer">
-            <input
-              {...register("termsAccepted")}
-              type="checkbox"
-              className="mt-0.5 w-4 h-4 shrink-0 accent-[#9b3dff] cursor-pointer"
-            />
-            <span className="text-sm text-gray-400 leading-snug">
-              {t("termsAccept")}{" "}
-              <Link
-                href={"/terms" as never}
-                target="_blank"
-                className="text-[#9b3dff] hover:underline"
-              >
-                {t("termsLink")}
-              </Link>
-            </span>
-          </label>
-          {errors.termsAccepted && (
-            <p className="mt-1 text-xs text-red-400">{errors.termsAccepted.message}</p>
-          )}
-        </div>
-
         {error && (
           <p className="text-xs text-red-400 bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
             {error.message}
@@ -124,6 +100,13 @@ export default function RegisterPage() {
         >
           {isPending ? t("creatingAccount") : t("createAccount")}
         </button>
+
+        <p className="text-center text-xs text-gray-600 mt-3">
+          {t("termsAgree")}{" "}
+          <Link href={"/terms" as never} target="_blank" className="hover:text-gray-400 transition">{t("terms")}</Link>
+          {" & "}
+          <Link href={"/privacy" as never} target="_blank" className="hover:text-gray-400 transition">{t("privacy")}</Link>
+        </p>
       </form>
 
       <p className="text-center text-sm text-gray-500 mt-6">

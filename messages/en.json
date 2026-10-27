@@ -201,7 +201,12 @@
     "continueWithGoogle": "Continue with Google",
     "continueWithGitHub": "Continue with GitHub",
     "orContinueWith": "or",
-    "resendIn": "Resend in {seconds}s"
+    "resendIn": "Resend in {seconds}s",
+    "terms": "Terms",
+    "privacy": "Privacy Policy",
+    "termsAgree": "By creating an account, you agree to our",
+    "signUp": "Sign up",
+    "oauthNotFound": "No account found. Please"
   },
   "nav": {
     "overview": "Overview",
