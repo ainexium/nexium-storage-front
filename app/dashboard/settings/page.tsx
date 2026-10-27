@@ -155,9 +155,18 @@ export default function SettingsPage() {
                 {hasPending ? (
                   /* État : code envoyé, en attente de vérification */
                   <div className="space-y-2">
-                    <p className="text-xs text-amber-400">
-                      {t("emailPending", { email: user!.pending_email ?? "" })}
-                    </p>
+                    <div className="flex items-center justify-between gap-2">
+                      <p className="text-xs text-amber-400">
+                        {t("emailPending", { email: user!.pending_email ?? "" })}
+                      </p>
+                      <button
+                        onClick={() => cancelEmail.mutate()}
+                        disabled={cancelEmail.isPending}
+                        className="text-xs text-red-400/70 hover:text-red-400 disabled:opacity-40 transition-colors shrink-0"
+                      >
+                        {t("cancelChange")}
+                      </button>
+                    </div>
                     <div className="flex items-center gap-2">
                       <input
                         value={emailCode}
@@ -172,12 +181,6 @@ export default function SettingsPage() {
                         className="px-2.5 py-1 rounded bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-xs font-medium transition-colors"
                       >
                         {t("confirmChange")}
-                      </button>
-                      <button
-                        onClick={() => cancelEmail.mutate()}
-                        className="text-xs text-gray-500 hover:text-gray-300 transition-colors"
-                      >
-                        {t("cancelChange")}
                       </button>
                     </div>
                     {canResend ? (
