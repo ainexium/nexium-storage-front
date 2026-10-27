@@ -3,6 +3,7 @@ export interface User {
   name: string;
   email: string;
   pending_email?: string;
+  has_password: boolean;
   is_admin: boolean;
   is_super_admin: boolean;
   is_verified: boolean;

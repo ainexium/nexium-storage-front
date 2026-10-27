@@ -3,10 +3,11 @@
 import { useEffect, useRef, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { verifyResetCode, resetPassword } from "@/lib/auth";
+import { verifyResetCode, resetPassword, forgotPassword } from "@/lib/auth";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { PasswordInput } from "@/components/ui";
+import { useResendTimer } from "@/hooks/use-resend-timer";
 
 export default function ResetPasswordPage() {
   const t = useTranslations("auth");
@@ -20,8 +21,11 @@ export default function ResetPasswordPage() {
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
   const [error, setError] = useState("");
+  const [resent, setResent] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
   const [isPending, setIsPending] = useState(false);
+  const [isResending, setIsResending] = useState(false);
+  const { seconds, startTimer, canResend } = useResendTimer();
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
   const passwordRef = useRef<HTMLInputElement>(null);
 
@@ -35,6 +39,22 @@ export default function ResetPasswordPage() {
       setTimeout(() => passwordRef.current?.focus(), 50);
     }
   }, [step]);
+
+  async function handleResend() {
+    if (!email || isResending) return;
+    setIsResending(true);
+    setError("");
+    try {
+      await forgotPassword(email);
+      setResent(true);
+      startTimer();
+      setTimeout(() => setResent(false), 3000);
+    } catch {
+      // silencieux — même comportement que forgot-password
+    } finally {
+      setIsResending(false);
+    }
+  }
 
   async function checkCode(code: string) {
     setError("");
@@ -151,11 +171,24 @@ export default function ResetPasswordPage() {
           </p>
         )}
 
+        {resent && (
+          <p className="text-xs text-green-400 bg-green-400/10 border border-green-400/20 rounded-lg px-3 py-2 mb-3 text-center">
+            {t("newCodeSent")}
+          </p>
+        )}
         <p className="text-center text-sm text-gray-600">
           {t("didntReceive")}{" "}
-          <Link href="/forgot-password" className="text-[#9b3dff] hover:underline">
-            {t("resendCode")}
-          </Link>
+          {canResend ? (
+            <button
+              onClick={handleResend}
+              disabled={isResending}
+              className="text-[#9b3dff] hover:underline disabled:opacity-40"
+            >
+              {isResending ? "…" : t("resendCode")}
+            </button>
+          ) : (
+            <span className="text-gray-600">{t("resendIn", { seconds })}</span>
+          )}
         </p>
         <p className="text-center text-xs text-gray-600">{t("checkSpam")}</p>
         <p className="text-center text-sm text-gray-600 mt-2">

@@ -11,6 +11,7 @@ import { LanguageSwitcher } from "@/components/language-switcher";
 import { PasswordInput } from "@/components/ui";
 import { useErrorMessage } from "@/hooks/use-error-message";
 import { useTheme, type ThemePreference } from "@/contexts/theme-context";
+import { useResendTimer } from "@/hooks/use-resend-timer";
 
 export default function SettingsPage() {
   const t = useTranslations("settings");
@@ -34,6 +35,7 @@ export default function SettingsPage() {
 
   const [saved, setSaved] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const { seconds: resendSeconds, startTimer: startResendTimer, canResend } = useResendTimer();
 
   function flash(msg: string) {
     setSaved(msg);
@@ -54,13 +56,14 @@ export default function SettingsPage() {
 
   // Demande de changement d'email (envoie le code)
   const requestEmail = useMutation({
-    mutationFn: () => api.post("/api/v1/auth/me/email/request", { email }),
-    onSuccess: () => {
+    mutationFn: (emailToSend: string) => api.post("/api/v1/auth/me/email/request", { email: emailToSend }),
+    onSuccess: (_, emailToSend) => {
       qc.setQueryData(["me"], (prev: User | undefined) =>
-        prev ? { ...prev, pending_email: email } : prev
+        prev ? { ...prev, pending_email: emailToSend } : prev
       );
       setEditEmail(false);
       setEmailCode("");
+      startResendTimer();
     },
     onError: (e) => setError(errMsg(e)),
   });
@@ -177,12 +180,17 @@ export default function SettingsPage() {
                         {t("cancelChange")}
                       </button>
                     </div>
-                    <button
-                      onClick={() => { setEditEmail(true); setEmail(user!.pending_email ?? ""); }}
-                      className="text-xs text-gray-600 hover:text-gray-400 transition-colors"
-                    >
-                      {t("resendCode")}
-                    </button>
+                    {canResend ? (
+                      <button
+                        onClick={() => requestEmail.mutate(user!.pending_email ?? "")}
+                        disabled={requestEmail.isPending}
+                        className="text-xs text-gray-600 hover:text-gray-400 disabled:opacity-40 transition-colors"
+                      >
+                        {requestEmail.isPending ? "…" : t("resendCode")}
+                      </button>
+                    ) : (
+                      <span className="text-xs text-gray-600">{t("resendIn", { seconds: resendSeconds })}</span>
+                    )}
                     <p className="text-xs text-gray-600">{t("checkSpam")}</p>
                   </div>
                 ) : editEmail ? (
@@ -191,7 +199,7 @@ export default function SettingsPage() {
                     <input autoFocus type="email" value={email} onChange={(e) => setEmail(e.target.value)}
                       className="px-2 py-1 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm text-gray-200 transition-colors" />
                     <button
-                      onClick={() => requestEmail.mutate()}
+                      onClick={() => requestEmail.mutate(email)}
                       disabled={requestEmail.isPending || !email}
                       className="px-2.5 py-1 rounded bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-xs font-medium transition-colors"
                     >
@@ -223,12 +231,19 @@ export default function SettingsPage() {
         <h2 className="text-xs font-medium text-gray-500 uppercase tracking-widest mb-3">{t("password")}</h2>
         <div className="rounded-xl border border-white/[0.07] overflow-hidden">
           <div className="px-5 py-3.5">
-            {editPassword ? (
+            {!user?.has_password && !editPassword ? (
+              <div className="flex items-center justify-between">
+                <span className="text-sm text-gray-500">{t("noPassword")}</span>
+                <button onClick={() => startEdit("password")} className="text-xs text-gray-600 hover:text-gray-400 transition-colors">{t("setPassword")}</button>
+              </div>
+            ) : editPassword ? (
               <div className="space-y-3">
-                <PasswordInput placeholder={t("currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
+                {user?.has_password && (
+                  <PasswordInput placeholder={t("currentPassword")} value={currentPw} onChange={(e) => setCurrentPw(e.target.value)} className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
+                )}
                 <PasswordInput placeholder={t("newPasswordMin")} value={newPw} onChange={(e) => setNewPw(e.target.value)} className="w-full px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
                 <div className="flex gap-2">
-                  <button onClick={() => update.mutate({ current_password: currentPw, new_password: newPw })} disabled={update.isPending || !currentPw || !newPw}
+                  <button onClick={() => update.mutate({ current_password: currentPw, new_password: newPw })} disabled={update.isPending || (!user?.has_password ? !newPw : !currentPw || !newPw)}
                     className="px-3 py-1.5 rounded bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">{t("updatePassword")}</button>
                   <button onClick={() => { setEditPassword(false); setCurrentPw(""); setNewPw(""); }} className="text-sm text-gray-500 hover:text-gray-300 transition-colors">{tc("cancel")}</button>
                 </div>

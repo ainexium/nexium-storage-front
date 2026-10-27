@@ -200,7 +200,8 @@
     "termsRequired": "You must accept the terms of service",
     "continueWithGoogle": "Continue with Google",
     "continueWithGitHub": "Continue with GitHub",
-    "orContinueWith": "or"
+    "orContinueWith": "or",
+    "resendIn": "Resend in {seconds}s"
   },
   "nav": {
     "overview": "Overview",
@@ -252,12 +253,15 @@
     "newPasswordMin": "New password (min. 8 chars)",
     "updatePassword": "Update password",
     "change": "Change",
+    "noPassword": "No password — signed in with Google or GitHub",
+    "setPassword": "Set a password",
     "language": "Language",
     "emailPending": "Verification sent to {email}",
     "emailCode": "Enter the 6-digit code",
     "confirmChange": "Confirm",
     "cancelChange": "Cancel",
     "resendCode": "Resend code",
+    "resendIn": "Resend in {seconds}s",
     "checkSpam": "Also check your spam or junk folder.",
     "appearance": "Appearance",
     "appearanceDesc": "Choose the display theme for the dashboard.",

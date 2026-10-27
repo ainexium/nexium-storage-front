@@ -6,6 +6,7 @@ import { z } from "zod";
 import Link from "next/link";
 import { useRegister } from "@/hooks/use-auth";
 import { useTranslations } from "next-intl";
+import { PasswordInput } from "@/components/ui";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080";
 
@@ -62,7 +63,6 @@ export default function RegisterPage() {
         {[
           { name: "name" as const, label: t("name"), type: "text", placeholder: "Ayepo Audrey" },
           { name: "email" as const, label: t("email"), type: "email", placeholder: "kader@gmail.com" },
-          { name: "password" as const, label: t("password"), type: "password", placeholder: t("min8") },
         ].map((field) => (
           <div key={field.name}>
             <label className="block text-sm font-medium text-gray-300 mb-1.5">{field.label}</label>
@@ -77,6 +77,16 @@ export default function RegisterPage() {
             )}
           </div>
         ))}
+
+        <div>
+          <label className="block text-sm font-medium text-gray-300 mb-1.5">{t("password")}</label>
+          <PasswordInput
+            {...register("password")}
+            placeholder={t("min8")}
+            className="w-full px-4 py-2.5 rounded-lg bg-gray-900 border border-gray-700 focus:border-[#9b3dff] focus:ring-1 focus:ring-[#9b3dff] outline-none text-sm transition"
+          />
+          {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password.message}</p>}
+        </div>
 
         <div>
           <label className="flex items-start gap-2.5 cursor-pointer">

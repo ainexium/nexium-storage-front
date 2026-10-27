@@ -200,7 +200,8 @@
     "termsRequired": "Vous devez accepter les conditions d'utilisation",
     "continueWithGoogle": "Continuer avec Google",
     "continueWithGitHub": "Continuer avec GitHub",
-    "orContinueWith": "ou"
+    "orContinueWith": "ou",
+    "resendIn": "Renvoyer dans {seconds}s"
   },
   "nav": {
     "overview": "Aperçu",
@@ -252,12 +253,15 @@
     "newPasswordMin": "Nouveau mot de passe (8 car. min.)",
     "updatePassword": "Mettre à jour le mot de passe",
     "change": "Modifier",
+    "noPassword": "Aucun mot de passe — connecté via Google ou GitHub",
+    "setPassword": "Définir un mot de passe",
     "language": "Langue",
     "emailPending": "Code envoyé à {email}",
     "emailCode": "Entrez le code à 6 chiffres",
     "confirmChange": "Confirmer",
     "cancelChange": "Annuler",
     "resendCode": "Renvoyer le code",
+    "resendIn": "Renvoyer dans {seconds}s",
     "checkSpam": "Vérifiez aussi vos spams ou courriers indésirables.",
     "appearance": "Apparence",
     "appearanceDesc": "Choisissez le thème d'affichage du dashboard.",

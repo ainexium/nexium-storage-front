@@ -7,6 +7,7 @@ import { verifyEmail, resendVerification } from "@/lib/auth";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
+import { useResendTimer } from "@/hooks/use-resend-timer";
 
 export default function VerifyEmailPage() {
   const t = useTranslations("auth");
@@ -21,12 +22,13 @@ export default function VerifyEmailPage() {
   const [resent, setResent] = useState(false);
   const [resending, setResending] = useState(false);
   const inputRefs = useRef<Array<HTMLInputElement | null>>([]);
+  const { seconds, startTimer, canResend } = useResendTimer();
 
   useEffect(() => {
     const stored = searchParams.get("email") ?? "";
     setEmail(stored);
     setTimeout(() => inputRefs.current[0]?.focus(), 50);
-    if (stored) resendVerification(stored).catch(() => {});
+    if (stored) { resendVerification(stored).catch(() => {}); startTimer(); }
   }, [searchParams]);
 
   async function checkCode(code: string) {
@@ -98,6 +100,7 @@ export default function VerifyEmailPage() {
     try {
       await resendVerification(emailToUse);
       setResent(true);
+      startTimer();
       setTimeout(() => setResent(false), 4000);
     } catch (err) {
       setError(errMsg(err));
@@ -151,13 +154,17 @@ export default function VerifyEmailPage() {
       <div className="text-center space-y-2">
         <p className="text-sm text-gray-500">
           {t("didntReceive")}{" "}
-          <button
-            onClick={handleResend}
-            disabled={resending}
-            className="text-[#9b3dff] hover:underline disabled:opacity-50"
-          >
-            {resending ? t("sending") : t("resendCode")}
-          </button>
+          {canResend ? (
+            <button
+              onClick={handleResend}
+              disabled={resending}
+              className="text-[#9b3dff] hover:underline disabled:opacity-50"
+            >
+              {resending ? t("sending") : t("resendCode")}
+            </button>
+          ) : (
+            <span className="text-gray-600">{t("resendIn", { seconds })}</span>
+          )}
         </p>
         <p className="text-xs text-gray-600">{t("checkSpam")}</p>
         <p className="text-sm text-gray-600">
