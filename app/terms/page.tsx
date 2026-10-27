@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 const EFFECTIVE_DATE_FR = "24 septembre 2026";
 const EFFECTIVE_DATE_EN = "September 24, 2026";
-const CONTACT_EMAIL = "ai.nexium@gmail.com";
+const CONTACT_EMAIL = "support@nexiumai.io";
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
   return (
