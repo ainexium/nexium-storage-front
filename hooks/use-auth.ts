@@ -39,11 +39,8 @@ export function useRegister() {
     mutationFn: ({ name, email, password }: { name: string; email: string; password: string }) =>
       register(name, email, password, true),
     onSuccess: (data) => {
-      if (typeof window !== "undefined") {
-        sessionStorage.setItem("verify_email", data.email);
-      }
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      router.push("/verify-email" as any);
+      router.push(`/verify-email?email=${encodeURIComponent(data.email)}` as any);
     },
   });
 }
