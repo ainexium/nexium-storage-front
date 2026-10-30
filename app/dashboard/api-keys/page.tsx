@@ -225,7 +225,7 @@ export default function APIKeysPage() {
                   <div className="flex items-center gap-1 mt-1">
                     <FolderOpen size={10} className="text-violet-400" />
                     <span className="text-[10px] text-violet-400">
-                      {k.allowed_bucket_ids.length} dossier{k.allowed_bucket_ids.length > 1 ? "s" : ""}
+                      {t("folderCount", { count: k.allowed_bucket_ids.length })}
                     </span>
                   </div>
                 )}

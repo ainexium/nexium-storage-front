@@ -5,7 +5,7 @@ import Link from "next/link";
 import { Menu, X, Mail } from "lucide-react";
 import { useTranslations } from "next-intl";
 
-const CONTACT_EMAIL = "ai.nexium@gmail.com";
+const CONTACT_EMAIL = "support@nexiumai.io";
 
 export function NavMobile() {
   const t = useTranslations("landing");

@@ -4,7 +4,7 @@ import { ExternalLink } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { LanguageSwitcher } from "@/components/language-switcher";
 
-const CONTACT_EMAIL = "ai.nexium@gmail.com";
+const CONTACT_EMAIL = "support@nexiumai.io";
 const CONTACT_WHATSAPP = "+2250503020385";
 
 export function LandingFooter() {

@@ -6,7 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { LayoutDashboard, Mail, Menu, X } from "lucide-react";
 
-const CONTACT_EMAIL = "ai.nexium@gmail.com";
+const CONTACT_EMAIL = "support@nexiumai.io";
 
 export function NavAuth() {
   const t        = useTranslations("landing");
