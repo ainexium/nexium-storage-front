@@ -5,7 +5,7 @@ import { api } from "@/lib/api-client";
 import type { AdminUser } from "@/types";
 import { useMe } from "@/hooks/use-auth";
 import { useState } from "react";
-import { ShieldCheck, Crown, Plus, HardDrive } from "lucide-react";
+import { ShieldCheck, Crown, Plus, HardDrive, Trash2 } from "lucide-react";
 import { ConfirmModal } from "@/components/confirm-modal";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
@@ -40,6 +40,7 @@ export default function AdminUsersPage() {
   const [createError, setCreateError] = useState<string | null>(null);
 
   const [confirmRole, setConfirmRole] = useState<{ user: AdminUser; promote: boolean } | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<AdminUser | null>(null);
   const [editingQuota, setEditingQuota] = useState<{ userId: string; current: number | null } | null>(null);
   const [quotaInput, setQuotaInput] = useState("");
 
@@ -63,6 +64,11 @@ export default function AdminUsersPage() {
     mutationFn: ({ id, quotaGb }: { id: string; quotaGb: number | null }) =>
       api.patch(`/api/v1/admin/users/${id}/quota`, { quota_gb: quotaGb }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-users"] }); setEditingQuota(null); },
+  });
+
+  const deleteUser = useMutation({
+    mutationFn: (id: string) => api.delete(`/api/v1/admin/users/${id}`),
+    onSuccess: () => { qc.invalidateQueries({ queryKey: ["admin-users"] }); setConfirmDelete(null); },
   });
 
   return (
@@ -112,13 +118,14 @@ export default function AdminUsersPage() {
         </div>
       ) : (
         <div className="rounded-xl border border-white/[0.07] overflow-hidden">
-          <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 px-5 py-2.5 text-xs text-gray-600 border-b border-white/[0.07] bg-white/[0.02]">
+          <div className="grid grid-cols-[1fr_auto_auto_auto_auto_auto_auto] gap-4 px-5 py-2.5 text-xs text-gray-600 border-b border-white/[0.07] bg-white/[0.02]">
             <span>{t("user")}</span>
             <span>{t("lastActive")}</span>
             <span>{t("storageQuota")}</span>
             <span>{t("files")}</span>
             <span>{t("quota")}</span>
             <span>{t("role")}</span>
+            <span />
           </div>
           <div className="divide-y divide-white/[0.07]">
             {users.map((u) => {
@@ -134,7 +141,7 @@ export default function AdminUsersPage() {
               );
 
               return (
-                <div key={u.id} className="grid grid-cols-[1fr_auto_auto_auto_auto_auto] gap-4 items-center px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
+                <div key={u.id} className="grid grid-cols-[1fr_auto_auto_auto_auto_auto_auto] gap-4 items-center px-5 py-3.5 hover:bg-white/[0.02] transition-colors">
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">
                       <span className="text-sm font-medium truncate">{u.name}</span>
@@ -220,6 +227,18 @@ export default function AdminUsersPage() {
                       </span>
                     )}
                   </div>
+
+                  <div className="flex items-center justify-end">
+                    {isSuperAdmin && !isMe && !u.is_super_admin && (
+                      <button
+                        onClick={() => setConfirmDelete(u)}
+                        className="p-1 text-gray-700 hover:text-red-400 transition-colors"
+                        title={t("deleteUser")}
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                  </div>
                 </div>
               );
             })}
@@ -238,6 +257,16 @@ export default function AdminUsersPage() {
           confirmLabel={confirmRole.promote ? t("promote") : t("revoke")}
           onConfirm={() => updateRole.mutate({ id: confirmRole.user.id, isAdmin: confirmRole.promote })}
           onCancel={() => setConfirmRole(null)}
+        />
+      )}
+
+      {confirmDelete && (
+        <ConfirmModal
+          title={t("deleteUserTitle", { name: confirmDelete.name })}
+          description={t("deleteUserBody")}
+          confirmLabel={t("deleteUser")}
+          onConfirm={() => deleteUser.mutate(confirmDelete.id)}
+          onCancel={() => setConfirmDelete(null)}
         />
       )}
     </div>
