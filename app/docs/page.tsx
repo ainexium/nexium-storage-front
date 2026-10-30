@@ -479,7 +479,7 @@ yarn add @ainexium/storage`,
 
   python: `pip install nexium-storage
 
-# For file upload support (uses requests under the hood):
+# If you want to upload files from your Python backend using storage.upload():
 pip install "nexium-storage[requests]"`,
 };
 
