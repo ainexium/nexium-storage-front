@@ -9,6 +9,7 @@ export function saveTokens(pair: TokenPair) {
 export function clearTokens() {
   localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
+  localStorage.removeItem("nexium_onboarding_done");
 }
 
 export function getAccessToken(): string | null {
