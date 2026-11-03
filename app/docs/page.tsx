@@ -721,9 +721,6 @@ export default function DocsPage() {
 
         <div className="flex-1 space-y-16 min-w-0">
           <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#9b3dff]/30 bg-[#9b3dff]/10 text-[#9b3dff] text-xs font-medium mb-5">
-              {t("badge")}
-            </div>
             <h1 className="text-4xl font-bold mb-4">{t("title")}</h1>
             <p className="text-gray-400 text-lg leading-relaxed">
               {t("intro")}

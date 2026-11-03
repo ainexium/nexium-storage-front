@@ -33,7 +33,6 @@
     "contactTitle": "Envoyer un e-mail",
     "logIn": "Connexion",
     "getStarted": "Commencer",
-    "badge": "V0 · Developer Preview",
     "heroTitle": "Stockage objet pour vos",
     "heroAccent": "projets & équipes",
     "heroBody": "Uploadez et gérez vos fichiers depuis un dashboard intuitif ou intégrez-les via API REST. Simple pour les équipes, puissant pour les développeurs.",
@@ -607,7 +606,6 @@
     "dashboard": "Dashboard →",
     "logIn": "Connexion",
     "getStarted": "Commencer",
-    "badge": "V0 · Developer Preview",
     "title": "Guide d'intégration",
     "intro": "NEXIUM Storage vous permet d'uploader, servir et gérer des fichiers depuis n'importe quelle app via une API REST simple. Intégrez en quelques minutes. Aucune connaissance AWS requise.",
     "nav": {
