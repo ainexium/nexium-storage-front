@@ -14,6 +14,7 @@ interface Country {
   currency_code: string; local_per_xof: number; is_active: boolean;
 }
 interface Channel { name: string; slug: string; logo_url?: string; is_active: boolean; maintenance_note?: string; }
+interface Plan { id: string; slug: string; price_xof: number; is_active: boolean; }
 
 const isIntCode = (code: string) => code.startsWith("INT");
 
@@ -48,11 +49,11 @@ const PLAN_CONFIG = {
   business: { accent: "text-[#9b3dff]",   border: "border-white/[0.08] hover:border-[#9b3dff]/50", btnCls: "border border-[#9b3dff]/40 text-[#9b3dff] hover:bg-[#9b3dff] hover:text-white hover:border-[#9b3dff]" },
 } as const;
 
-const PLANS = [
-  { slug: "free"    as const, priceXOF: 0 },
-  { slug: "starter" as const, priceXOF: 2500 },
-  { slug: "pro"     as const, priceXOF: 6000,  recommended: true },
-  { slug: "business"as const, priceXOF: 15000 },
+const STATIC_PLANS: Plan[] = [
+  { id: "free",     slug: "free",     price_xof: 0,     is_active: true },
+  { id: "starter",  slug: "starter",  price_xof: 2500,  is_active: true },
+  { id: "pro",      slug: "pro",      price_xof: 6000,  is_active: true },
+  { id: "business", slug: "business", price_xof: 15000, is_active: true },
 ];
 
 function fmtPrice(xof: number, country: Country | null, locale: string) {
@@ -155,10 +156,19 @@ export function PricingPlans() {
   const [countries, setCountries] = useState<Country[]>(STATIC_COUNTRIES);
   const [country,   setCountry]   = useState<Country | null>(null);
   const [channels,  setChannels]  = useState<Channel[]>([]);
+  const [plans,     setPlans]     = useState<Plan[]>(STATIC_PLANS);
   const [loggedIn,  setLoggedIn]  = useState(false);
 
   /* Auth check */
   useEffect(() => { setLoggedIn(!!localStorage.getItem("access_token")); }, []);
+
+  /* Fetch plans from API, fallback to static */
+  useEffect(() => {
+    fetch(`${API_URL}/api/v1/billing/plans`)
+      .then(r => r.ok ? r.json() : Promise.reject())
+      .then((data: Plan[]) => { if (Array.isArray(data) && data.length) setPlans(data); })
+      .catch(() => { /* use static fallback */ });
+  }, []);
 
   /* Fetch countries from API, fallback to static */
   useEffect(() => {
@@ -205,11 +215,13 @@ export function PricingPlans() {
 
         {/* Plan cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 mb-8">
-          {PLANS.map(({ slug, priceXOF, recommended }) => {
-            const cfg       = PLAN_CONFIG[slug];
+          {plans.filter(p => p.is_active).map((plan) => {
+            const slug      = plan.slug as keyof typeof PLAN_CONFIG;
+            const cfg       = PLAN_CONFIG[slug] ?? PLAN_CONFIG.starter;
             const planData  = t.raw(`plans.${slug}`) as { tagline: string; storage: string; apiReq: string; features: string[] };
-            const isFree    = priceXOF === 0;
-            const price     = fmtPrice(priceXOF, country, locale);
+            const isFree    = plan.price_xof === 0;
+            const recommended = slug === "pro";
+            const price     = fmtPrice(plan.price_xof, country, locale);
 
             return (
               <div
