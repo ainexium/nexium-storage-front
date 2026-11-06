@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Terms of service for NEXIUM Storage.",
 };
 
-const EFFECTIVE_DATE_FR = "24 septembre 2026";
-const EFFECTIVE_DATE_EN = "September 24, 2026";
+const EFFECTIVE_DATE_FR = "6 novembre 2026";
+const EFFECTIVE_DATE_EN = "November 6, 2026";
 const CONTACT_EMAIL = "support@nexiumai.io";
 
 function Section({ id, title, children }: { id: string; title: string; children: React.ReactNode }) {
@@ -131,12 +131,23 @@ function ContentFR() {
         <p>Vous vous engagez à utiliser le Service uniquement à des fins licites. Il est strictement interdit de :</p>
         <ul className="space-y-1.5 ml-1">
           <Li>Stocker, diffuser ou partager des contenus illégaux, diffamatoires, obscènes, menaçants ou portant atteinte aux droits de tiers</Li>
+          <Li>Uploader, stocker ou diffuser tout contenu représentant des abus sexuels sur mineurs (CSAM) ou toute violence extrême — ces actes constituent des infractions pénales graves dans la quasi-totalité des pays et feront l'objet d'un signalement immédiat aux autorités compétentes</Li>
           <Li>Utiliser le Service pour distribuer des logiciels malveillants, virus ou tout code nuisible</Li>
           <Li>Tenter d'accéder sans autorisation aux systèmes, serveurs ou données d'autres utilisateurs</Li>
           <Li>Automatiser la création de comptes pour contourner les quotas du plan gratuit</Li>
           <Li>Revendre ou sous-licencier l'accès au Service sans autorisation écrite préalable de NEXIUM.AI</Li>
           <Li>Effectuer des actions susceptibles de perturber ou de surcharger l'infrastructure du Service</Li>
         </ul>
+        <p>
+          NEXIUM.AI applique des mécanismes automatisés de détection de contenus illicites au niveau de
+          l'infrastructure de stockage (Cloudflare R2). Tout contenu détecté comme illicite est supprimé
+          immédiatement et peut faire l'objet d'un signalement aux autorités compétentes, sans préavis à l'utilisateur.
+        </p>
+        <p>
+          Pour signaler un contenu illicite hébergé sur le Service, contactez-nous à{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#9b3dff] hover:underline">{CONTACT_EMAIL}</a>.
+          Toute demande de retrait sera traitée dans les meilleurs délais.
+        </p>
         <p>
           NEXIUM.AI se réserve le droit de suspendre ou supprimer immédiatement tout compte qui
           contreviendrait à ces règles, sans préavis ni remboursement.
@@ -399,12 +410,23 @@ function ContentEN() {
         <p>You agree to use the Service only for lawful purposes. It is strictly prohibited to:</p>
         <ul className="space-y-1.5 ml-1">
           <Li>Store, distribute or share illegal, defamatory, obscene, threatening or third-party rights-infringing content</Li>
+          <Li>Upload, store or distribute any Child Sexual Abuse Material (CSAM) or extreme violence imagery — these acts constitute serious criminal offences in virtually every jurisdiction and will be reported immediately to the relevant authorities</Li>
           <Li>Use the Service to distribute malware, viruses or any harmful code</Li>
           <Li>Attempt to gain unauthorized access to other users' systems, servers or data</Li>
           <Li>Automate account creation to circumvent free plan quotas</Li>
           <Li>Resell or sublicense access to the Service without prior written authorization from NEXIUM.AI</Li>
           <Li>Perform actions likely to disrupt or overload the Service infrastructure</Li>
         </ul>
+        <p>
+          NEXIUM.AI applies automated detection mechanisms for unlawful content at the storage
+          infrastructure level (Cloudflare R2). Any content detected as unlawful is immediately removed
+          and may be reported to the relevant authorities without prior notice to the user.
+        </p>
+        <p>
+          To report unlawful content hosted on the Service, contact us at{" "}
+          <a href={`mailto:${CONTACT_EMAIL}`} className="text-[#9b3dff] hover:underline">{CONTACT_EMAIL}</a>.
+          All takedown requests will be processed as quickly as possible.
+        </p>
         <p>
           NEXIUM.AI reserves the right to immediately suspend or delete any account that violates
           these rules, without notice or refund.
