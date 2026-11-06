@@ -168,7 +168,7 @@ export default function AdminUsersPage() {
                       <span className="text-sm font-medium truncate">{u.name}</span>
                       {u.is_super_admin && <Crown size={11} className="text-yellow-400 shrink-0" />}
                       {u.is_admin && !u.is_super_admin && <ShieldCheck size={11} className="text-[#9b3dff] shrink-0" />}
-                      {!u.is_verified && <AlertCircle size={11} className="text-orange-400 shrink-0" title="Non vérifié" />}
+                      {!u.is_verified && <AlertCircle size={11} className="text-orange-400 shrink-0" />}
                       {isMe && <span className="text-[10px] text-gray-600">{t("you")}</span>}
                     </div>
                     <span className="text-xs text-gray-500 truncate block">{u.email}</span>
@@ -256,7 +256,6 @@ export default function AdminUsersPage() {
                         onClick={() => verifyUser.mutate(u.id)}
                         disabled={verifyUser.isPending}
                         className="p-1 text-gray-700 hover:text-green-400 transition-colors disabled:opacity-40"
-                        title="Vérifier le compte"
                       >
                         <BadgeCheck size={13} />
                       </button>
