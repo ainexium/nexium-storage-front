@@ -91,6 +91,7 @@ export interface AdminUser {
   email: string;
   is_admin: boolean;
   is_super_admin: boolean;
+  is_verified: boolean;
   created_at: string;
   last_active_at: string;
   project_count: number;

@@ -5,7 +5,7 @@ import { api } from "@/lib/api-client";
 import type { AdminUser } from "@/types";
 import { useMe } from "@/hooks/use-auth";
 import { useState } from "react";
-import { ShieldCheck, Crown, Plus, HardDrive, Trash2 } from "lucide-react";
+import { ShieldCheck, Crown, Plus, HardDrive, Trash2, BadgeCheck, AlertCircle } from "lucide-react";
 import { ConfirmModal } from "@/components/confirm-modal";
 import { useTranslations } from "next-intl";
 import { useErrorMessage } from "@/hooks/use-error-message";
@@ -37,6 +37,8 @@ export default function AdminUsersPage() {
   const [newName, setNewName] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [newIsAdmin, setNewIsAdmin] = useState(false);
+  const [newVerified, setNewVerified] = useState(true);
   const [createError, setCreateError] = useState<string | null>(null);
 
   const [confirmRole, setConfirmRole] = useState<{ user: AdminUser; promote: boolean } | null>(null);
@@ -44,14 +46,20 @@ export default function AdminUsersPage() {
   const [editingQuota, setEditingQuota] = useState<{ userId: string; current: number | null } | null>(null);
   const [quotaInput, setQuotaInput] = useState("");
 
-  const createAdmin = useMutation({
-    mutationFn: (data: { name: string; email: string; password: string }) =>
+  const createUser = useMutation({
+    mutationFn: (data: { name: string; email: string; password: string; is_admin: boolean; verified: boolean }) =>
       api.post("/api/v1/admin/users", data),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["admin-users"] });
-      setCreating(false); setNewName(""); setNewEmail(""); setNewPassword(""); setCreateError(null);
+      setCreating(false); setNewName(""); setNewEmail(""); setNewPassword("");
+      setNewIsAdmin(false); setNewVerified(true); setCreateError(null);
     },
     onError: (e) => setCreateError(errMsg(e) || t("createFailed")),
+  });
+
+  const verifyUser = useMutation({
+    mutationFn: (id: string) => api.patch(`/api/v1/admin/users/${id}/verify`, {}),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["admin-users"] }),
   });
 
   const updateRole = useMutation({
@@ -86,7 +94,7 @@ export default function AdminUsersPage() {
         )}
       </div>
 
-      {/* Create admin form */}
+      {/* Create user form */}
       {creating && isSuperAdmin && (
         <div className="mb-6 rounded-xl border border-white/[0.07] bg-white/[0.02] p-4">
           <p className="text-xs font-medium text-gray-300 mb-3">{t("createAdmin")}</p>
@@ -98,11 +106,24 @@ export default function AdminUsersPage() {
               className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
             <PasswordInput placeholder={t("passwordMin")} value={newPassword} onChange={e => setNewPassword(e.target.value)} className="px-3 py-1.5 rounded bg-white/[0.04] border border-white/[0.1] focus:border-white/20 outline-none text-sm transition-colors placeholder:text-gray-600" />
           </div>
+          <div className="flex flex-wrap items-center gap-4 mb-3">
+            <label className="flex items-center gap-2 text-xs text-gray-400 cursor-pointer select-none">
+              <input type="checkbox" checked={newVerified} onChange={e => setNewVerified(e.target.checked)}
+                className="w-3.5 h-3.5 accent-[#9b3dff]" />
+              Vérifié directement
+              <span className="text-gray-600">{newVerified ? "— pas d'email envoyé" : "— email de vérification envoyé"}</span>
+            </label>
+            <label className="flex items-center gap-2 text-xs text-gray-400 cursor-pointer select-none">
+              <input type="checkbox" checked={newIsAdmin} onChange={e => setNewIsAdmin(e.target.checked)}
+                className="w-3.5 h-3.5 accent-[#9b3dff]" />
+              Admin
+            </label>
+          </div>
           <div className="flex gap-2">
-            <button onClick={() => createAdmin.mutate({ name: newName, email: newEmail, password: newPassword })}
-              disabled={!newName.trim() || !newEmail.trim() || newPassword.length < 8 || createAdmin.isPending}
+            <button onClick={() => createUser.mutate({ name: newName, email: newEmail, password: newPassword, is_admin: newIsAdmin, verified: newVerified })}
+              disabled={!newName.trim() || !newEmail.trim() || newPassword.length < 8 || createUser.isPending}
               className="px-3 py-1.5 rounded bg-[#9b3dff] hover:bg-[#aa55ff] disabled:opacity-40 text-sm font-medium transition-colors">
-              {createAdmin.isPending ? t("creating") : t("createAdminBtn")}
+              {createUser.isPending ? t("creating") : t("createAdminBtn")}
             </button>
             <button onClick={() => { setCreating(false); setCreateError(null); }}
               className="px-3 py-1.5 rounded border border-white/[0.08] text-sm text-gray-400 hover:text-white transition-colors">
@@ -147,6 +168,7 @@ export default function AdminUsersPage() {
                       <span className="text-sm font-medium truncate">{u.name}</span>
                       {u.is_super_admin && <Crown size={11} className="text-yellow-400 shrink-0" />}
                       {u.is_admin && !u.is_super_admin && <ShieldCheck size={11} className="text-[#9b3dff] shrink-0" />}
+                      {!u.is_verified && <AlertCircle size={11} className="text-orange-400 shrink-0" title="Non vérifié" />}
                       {isMe && <span className="text-[10px] text-gray-600">{t("you")}</span>}
                     </div>
                     <span className="text-xs text-gray-500 truncate block">{u.email}</span>
@@ -228,7 +250,17 @@ export default function AdminUsersPage() {
                     )}
                   </div>
 
-                  <div className="flex items-center justify-end">
+                  <div className="flex items-center justify-end gap-0.5">
+                    {isSuperAdmin && !u.is_verified && !u.is_super_admin && (
+                      <button
+                        onClick={() => verifyUser.mutate(u.id)}
+                        disabled={verifyUser.isPending}
+                        className="p-1 text-gray-700 hover:text-green-400 transition-colors disabled:opacity-40"
+                        title="Vérifier le compte"
+                      >
+                        <BadgeCheck size={13} />
+                      </button>
+                    )}
                     {isSuperAdmin && !isMe && !u.is_super_admin && (
                       <button
                         onClick={() => setConfirmDelete(u)}
